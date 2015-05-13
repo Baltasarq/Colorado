@@ -1,3 +1,6 @@
+bin
+*.userprefs
+
 # Compiled Object files
 *.slo
 *.lo
