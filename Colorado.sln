@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colorado", "Colorado.csproj", "{12F5964C-2BDE-4379-915B-E55322B5DE75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AnyCPU = Debug|AnyCPU
+		Release|AnyCPU = Release|AnyCPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12F5964C-2BDE-4379-915B-E55322B5DE75}.Debug|AnyCPU.ActiveCfg = Debug|Any CPU
+		{12F5964C-2BDE-4379-915B-E55322B5DE75}.Debug|AnyCPU.Build.0 = Debug|Any CPU
+		{12F5964C-2BDE-4379-915B-E55322B5DE75}.Release|AnyCPU.ActiveCfg = Release|Any CPU
+		{12F5964C-2BDE-4379-915B-E55322B5DE75}.Release|AnyCPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

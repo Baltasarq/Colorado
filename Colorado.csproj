@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{12F5964C-2BDE-4379-915B-E55322B5DE75}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Colorado</RootNamespace>
+    <AssemblyName>Colorado</AssemblyName>
+    <StartupObject>Colorado.Gui.MainClass</StartupObject>
+    <ApplicationIcon>Res\colorado.ico</ApplicationIcon>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeExecute" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="GtkUtil">
+      <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.MainWindow.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgSearch.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgImport.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgCsvExport.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgExport.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgProperties.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgClean.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgIncDec.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgCopy.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgFill.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgFormulae.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="core\AppInfo.cs" />
+    <Compile Include="core\CsvDocument.cs" />
+    <Compile Include="core\ExportOptions.cs" />
+    <Compile Include="core\Formula.cs" />
+    <Compile Include="core\Position.cs" />
+    <Compile Include="core\Formulas\AverageFormula.cs" />
+    <Compile Include="core\Formulas\CountFormula.cs" />
+    <Compile Include="core\Formulas\CountNonBlankFormula.cs" />
+    <Compile Include="core\Formulas\MaxFormula.cs" />
+    <Compile Include="core\Formulas\MinFormula.cs" />
+    <Compile Include="core\Formulas\ProductFormula.cs" />
+    <Compile Include="core\Formulas\SubFormula.cs" />
+    <Compile Include="core\Formulas\SumFormula.cs" />
+    <Compile Include="gui\DlgClean.cs" />
+    <Compile Include="gui\DlgCopy.cs" />
+    <Compile Include="gui\DlgCsvExport.cs" />
+    <Compile Include="gui\DlgExport.cs" />
+    <Compile Include="gui\DlgFill.cs" />
+    <Compile Include="gui\DlgFormulae.cs" />
+    <Compile Include="gui\DlgImport.cs" />
+    <Compile Include="gui\DlgIncDec.cs" />
+    <Compile Include="gui\DlgProperties.cs" />
+    <Compile Include="gui\DlgSearch.cs" />
+    <Compile Include="gui\Main.cs" />
+    <Compile Include="gui\MainWindow.cs" />
+    <Compile Include="core\Filler.cs" />
+    <Compile Include="core\Fillers\NumberFiller.cs" />
+    <Compile Include="core\Fillers\FixedFiller.cs" />
+    <Compile Include="core\Delimiter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Res\colorado.ico" />
+    <EmbeddedResource Include="Res\colorado.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Res\" />
+    <Folder Include="core\" />
+    <Folder Include="gui\" />
+    <Folder Include="core\Fillers\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo generateGettext="False" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
