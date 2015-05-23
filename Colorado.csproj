@@ -22,11 +22,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="BeforeExecute" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -38,11 +33,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>glib-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
     <Reference Include="GtkUtil">
       <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
     </Reference>
@@ -62,35 +67,38 @@
     <Compile Include="gtk-gui\Colorado.Gui.DlgFill.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgFormulae.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="core\AppInfo.cs" />
-    <Compile Include="core\CsvDocument.cs" />
-    <Compile Include="core\ExportOptions.cs" />
-    <Compile Include="core\Formula.cs" />
-    <Compile Include="core\Position.cs" />
-    <Compile Include="core\Formulas\AverageFormula.cs" />
-    <Compile Include="core\Formulas\CountFormula.cs" />
-    <Compile Include="core\Formulas\CountNonBlankFormula.cs" />
-    <Compile Include="core\Formulas\MaxFormula.cs" />
-    <Compile Include="core\Formulas\MinFormula.cs" />
-    <Compile Include="core\Formulas\ProductFormula.cs" />
-    <Compile Include="core\Formulas\SubFormula.cs" />
-    <Compile Include="core\Formulas\SumFormula.cs" />
-    <Compile Include="gui\DlgClean.cs" />
-    <Compile Include="gui\DlgCopy.cs" />
-    <Compile Include="gui\DlgCsvExport.cs" />
-    <Compile Include="gui\DlgExport.cs" />
-    <Compile Include="gui\DlgFill.cs" />
-    <Compile Include="gui\DlgFormulae.cs" />
-    <Compile Include="gui\DlgImport.cs" />
-    <Compile Include="gui\DlgIncDec.cs" />
-    <Compile Include="gui\DlgProperties.cs" />
-    <Compile Include="gui\DlgSearch.cs" />
-    <Compile Include="gui\Main.cs" />
-    <Compile Include="gui\MainWindow.cs" />
-    <Compile Include="core\Filler.cs" />
-    <Compile Include="core\Fillers\NumberFiller.cs" />
-    <Compile Include="core\Fillers\FixedFiller.cs" />
-    <Compile Include="core\Delimiter.cs" />
+    <Compile Include="Core\AppInfo.cs" />
+    <Compile Include="Core\CsvDocument.cs" />
+    <Compile Include="Core\ExportOptions.cs" />
+    <Compile Include="Core\Formula.cs" />
+    <Compile Include="Core\Position.cs" />
+    <Compile Include="Core\Formulas\AverageFormula.cs" />
+    <Compile Include="Core\Formulas\CountFormula.cs" />
+    <Compile Include="Core\Formulas\CountNonBlankFormula.cs" />
+    <Compile Include="Core\Formulas\MaxFormula.cs" />
+    <Compile Include="Core\Formulas\MinFormula.cs" />
+    <Compile Include="Core\Formulas\ProductFormula.cs" />
+    <Compile Include="Core\Formulas\SubFormula.cs" />
+    <Compile Include="Core\Formulas\SumFormula.cs" />
+    <Compile Include="Gui\DlgClean.cs" />
+    <Compile Include="Gui\DlgCopy.cs" />
+    <Compile Include="Gui\DlgCsvExport.cs" />
+    <Compile Include="Gui\DlgExport.cs" />
+    <Compile Include="Gui\DlgFill.cs" />
+    <Compile Include="Gui\DlgFormulae.cs" />
+    <Compile Include="Gui\DlgImport.cs" />
+    <Compile Include="Gui\DlgIncDec.cs" />
+    <Compile Include="Gui\DlgProperties.cs" />
+    <Compile Include="Gui\DlgSearch.cs" />
+    <Compile Include="Gui\Main.cs" />
+    <Compile Include="Gui\MainWindow.cs" />
+    <Compile Include="Core\Filler.cs" />
+    <Compile Include="Core\Fillers\NumberFiller.cs" />
+    <Compile Include="Core\Fillers\FixedFiller.cs" />
+    <Compile Include="Core\Delimiter.cs" />
+    <Compile Include="Core\FormulaManager.cs" />
+    <Compile Include="Core\CsvDocumentPersistence.cs" />
+    <Compile Include="Core\Data.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -102,9 +110,9 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Res\" />
-    <Folder Include="core\" />
-    <Folder Include="gui\" />
-    <Folder Include="core\Fillers\" />
+    <Folder Include="Core\" />
+    <Folder Include="Gui\" />
+    <Folder Include="Core\Fillers\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

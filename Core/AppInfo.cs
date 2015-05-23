@@ -1,5 +1,5 @@
 
-using System;
+using System.Globalization;
 
 namespace Colorado.Core {
 	
@@ -30,5 +30,24 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ";
+
+        /// <summary>
+        /// Gets the decimal mark from the system settings.
+        /// </summary>
+        /// <value>The decimal mark, as a char.</value>
+        public static CsvDocument.DecimalSeparator DecimalMark {
+            get {
+                CsvDocument.DecimalSeparator toret = CsvDocument.DecimalSeparator.Point;
+
+                char separator = CultureInfo.CurrentUICulture.
+                    NumberFormat.NumberDecimalSeparator[ 0 ];
+
+                if ( separator == ',' ) {
+                    toret = CsvDocument.DecimalSeparator.Comma;
+                }
+
+                return toret;
+            }
+        }
 	}
 }

@@ -60,16 +60,16 @@ namespace Colorado.Core {
             // The number of cells to affect
             if ( numCells < 0 ) {
                 if ( this.Direction == FillDirection.Column ) {
-                    this.numCells = ( this.Document.Rows - this.Row ) - 1;
+                    this.numCells = ( this.Document.Data.NumRows - this.Row ) - 1;
                 }
                 else {
-                    this.numCells = ( this.Document.Columns - this.Column ) - 1;
+                    this.numCells = ( this.Document.Data.NumColumns - this.Column ) - 1;
                 }
             }
 
             // Prepare and set the first value
             this.CalculateInternalDirection();
-            this.Document.Data[ this.CellPosition.Row ][ this.CellPosition.Column ] = this.Value;
+            this.Document.Data[ this.CellPosition.Row, this.CellPosition.Column ] = this.Value;
             return;
         }
 
@@ -79,7 +79,7 @@ namespace Colorado.Core {
                 this.numCells -= 1;
                 this.NextValue();
                 this.position = this.position.Inc( this.internalDir );
-                this.Document.Data[ this.CellPosition.Row ][ this.CellPosition.Column ] = this.value;
+                this.Document.Data[ this.CellPosition.Row, this.CellPosition.Column ] = this.value;
             }
         }
 

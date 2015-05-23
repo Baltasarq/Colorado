@@ -32,12 +32,21 @@ namespace Colorado.Core {
 			this.name = name;
 			this.includeRowNumbers = false;
 			this.includeTableBorder = false;
-			this.Delimiter = doc.Delimiter.Raw;
+            this.delimiter = new Delimiter( doc.Delimiter.Raw );
 			this.QuotedText = doc.SurroundText;
+            this.Format = SelectionType.Html;
 
-			this.columnsIncluded = new List<int>( doc.Headers.Length );
+			this.columnsIncluded = new List<int>( doc.Data.NumColumns );
 			this.FillDefaultColumnsIncluded();
 		}
+
+        /// <summary>
+        /// Gets or sets the format of the export.
+        /// </summary>
+        /// <value>The format, as a SelectionType enum.</value>
+        public SelectionType Format {
+            get; set;
+        }
 		
 		/// <summary>
 		/// Gets or sets whether the text is quoted or not.
@@ -54,10 +63,9 @@ namespace Colorado.Core {
 		/// This is only used when the export format is CSV
 		/// By default, has the same value as on the document.
 		/// </summary>
-		public char Delimiter {
-			get { return delimiter;  }
-			set { delimiter = value; }
-		}
+        public Delimiter Delimiter {
+            get { return delimiter; }
+        }
 		
 		/// <summary>
 		/// Gets the whole set of selected fields.
@@ -124,7 +132,7 @@ namespace Colorado.Core {
 	
 		private string name;
 		private List<int> columnsIncluded;
-		private char delimiter;
+		private Delimiter delimiter;
 		private bool quotedText;
 	}
 

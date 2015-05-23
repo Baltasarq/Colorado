@@ -49,7 +49,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void PrepareDocument(CsvDocument doc)
 	{
 		this.document = doc;
-		this.Document.clientUpdater += this.UpdateFromData;
+		this.Document.ClientUpdater += this.UpdateFromData;
 	}	
 	
 	private void ActivateIde()
@@ -116,7 +116,7 @@ public partial class MainWindow : Gtk.Window {
 		
 		try {
 			// Create liststore
-			var types = new System.Type[ document.Columns + 1 ];
+			var types = new System.Type[ document.Data.NumColumns + 1 ];
 			for(int typeNumber = 0; typeNumber < types.Length; ++typeNumber) {
 				types[ typeNumber ] = typeof( string );
 			}
@@ -140,14 +140,14 @@ public partial class MainWindow : Gtk.Window {
 	 		tvTable.AppendColumn( column );
 			
 			// Create columns belonging to the document
-			for(int columnNumber = 0; columnNumber < document.Headers.Length; ++columnNumber) {
+			for(int colNum = 0; colNum < document.Data.NumColumns; ++colNum) {
 				column = new Gtk.TreeViewColumn();
 				column.Expand = true;
 				cell = new Gtk.CellRendererText();
-				column.Title = document.Headers[ columnNumber ];
+				column.Title = document.Data.ColumnInfo[ colNum ].Header;
 				column.PackStart( cell, true );
 				cell.Editable = true;
-				column.AddAttribute( cell, "text", columnNumber + 1 );
+				column.AddAttribute( cell, "text", colNum + 1 );
 				cell.Edited += OnTreeViewCellEdited;
 				
 		 		tvTable.AppendColumn( column );
@@ -155,7 +155,7 @@ public partial class MainWindow : Gtk.Window {
 			
 			// Insert data
 			var row = new List<string>();
-			for (int i = 0; i < document.Rows; ++i) {
+			for (int i = 0; i < document.Data.NumRows; ++i) {
 				row.Clear();
 				row.AddRange( document.Data[ i ] );
 				row.Insert( 0, Convert.ToString( i + 1 ) );
@@ -247,17 +247,23 @@ public partial class MainWindow : Gtk.Window {
 	/// </param>
 	protected void OpenDocument(string fileName, char delimiter, bool firstRowForHeaders)
 	{	
+        this.ActivateIde( false );
 		this.SetStatus( "Loading..." );
 		
 		// Load document
 		try {
-			if ( delimiter == '\0' )
-					this.PrepareDocument( new CsvDocument( fileName, firstRowForHeaders ) );
-			else 	this.PrepareDocument( new CsvDocument( fileName, delimiter, firstRowForHeaders ) );
+			var loader = new CsvDocumentPersistence();
+
+			if ( delimiter == '\0' ) {
+				loader.Load( fileName, firstRowForHeaders: firstRowForHeaders );
+			} else {
+				loader.Load( fileName, delimiter, firstRowForHeaders );
+			}
+
+			this.PrepareDocument( loader.Document );
 
 			// Show it
 			this.lastFileName = fileName;
-			this.SetTitle();
 			this.ShowDocument();
 			this.ShowProjectInfo();
 			this.ActivateIde();
@@ -266,7 +272,6 @@ public partial class MainWindow : Gtk.Window {
 			this.document = null;
 		}
 
-		this.SetStatus();
 		return;
 	}
 	
@@ -290,7 +295,11 @@ public partial class MainWindow : Gtk.Window {
 	{
 		this.CloseDocument();
 		
-		if ( Util.DlgOpen( AppInfo.Name, "Open CSV", this, ref lastFileName, CsvDocument.FileFilter ) )
+		if ( Util.DlgOpen( AppInfo.Name,
+							"Open CSV",
+							this,
+							ref lastFileName,
+							CsvDocumentPersistence.FileFilter ) )
 		{
 			this.OpenDocument( lastFileName, '\0', true );
 		}
@@ -340,16 +349,15 @@ public partial class MainWindow : Gtk.Window {
 	{
 		string delimiter = this.Document.Delimiter.Name;
 		string text = "field";
+        string number = "4";
 		
 		if ( this.document.SurroundText ) {
 			text = "\"field\"";
 		}
+
+        number += Document.GetDecimalMark() + "5";
 		
-		this.lblType.Text = '(' + text
-						+ delimiter + text + delimiter
-						+ "...)"
-		;
-		
+        lblType.Text = '(' + text + delimiter + number + delimiter + "...)";
 		return;
 	}
 
@@ -456,18 +464,18 @@ public partial class MainWindow : Gtk.Window {
 		
 			// Store data
 			try {
-				this.document.Data[ row ][ col - NumFixedColumns ] = args.NewText;
+				this.document.Data[ row, col - NumFixedColumns ] = args.NewText;
 				this.tvTable.Model.SetValue( rowPointer, col, args.NewText );
 					
 				if ( args.NewText == "" ) {
-					this.Document.RemoveFormula( row, col - NumFixedColumns );
+					this.Document.FormulaManager.RemoveFormula( row, col - NumFixedColumns );
 				}
 					
 				this.Document.Changed = true;
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, "Passing coordinates to data:\n"
-				              + "Rows: " + document.Rows + "\n"
-				              + "Columns: " + document.Columns + "\n"
+				              + "Rows: " + document.Data.NumRows + "\n"
+				              + "Columns: " + document.Data.NumColumns + "\n"
 				              + exc.Message
 				);
 			}
@@ -483,7 +491,7 @@ public partial class MainWindow : Gtk.Window {
 			if ( this.document != null ) {
 				if ( this.document.Changed ) {
 					if ( this.document.HasName ) {
-							this.document.SaveCsvData();
+							new CsvDocumentPersistence( Document ).SaveCsvData();
 						} else {
 							this.OnSaveAs( sender, e );
 						}
@@ -502,11 +510,16 @@ public partial class MainWindow : Gtk.Window {
 	{
 		try {
 			if ( this.document != null ) {
-				if ( Util.DlgOpen( AppInfo.Name, "Save CSV as...", this, ref lastFileName, CsvDocument.FileFilter ) )
+				if ( Util.DlgOpen(
+						AppInfo.Name, "Save CSV as...",
+						this,
+						ref lastFileName,
+						CsvDocumentPersistence.FileFilter ) )
 				{
 					this.document.FileName = this.lastFileName;
 					this.lastFileName = this.document.FileName;
-					this.document.SaveCsvData( new ExportOptions( this.lastFileName, this.document ) );
+					new CsvDocumentPersistence( Document ).SaveCsvData(
+							new ExportOptions( this.lastFileName, this.document ) );
 					this.SetTitle();
 				}
 			} else {
@@ -531,39 +544,25 @@ public partial class MainWindow : Gtk.Window {
 					if ( fn.Trim().Length > 0 ) {
 						this.lastFileName = fn;
 						options = new ExportOptions( lastFileName, document );
+                        options.Format = dlg.Selection;
 						options.IncludeRowNumbers = dlg.IncludeRowNumbers;
 						options.IncludeTableBorder = dlg.IncludeTableBorder;
 						options.ColumnsIncluded = dlg.ColumnsIncluded;
-						var selection = dlg.Selection;
-						
-						switch( selection ) {
-							case ExportOptions.SelectionType.Rtf:
-								this.document.SaveCsvDataAsRtf( options );
-								Util.MsgInfo( this, AppInfo.Name, "Rtf file generated" );
-								break;
-							case ExportOptions.SelectionType.Html:
-								this.document.SaveCsvDataAsHtml( options );
-								Util.MsgInfo( this, AppInfo.Name, "Html file generated" );
-								break;
-							case ExportOptions.SelectionType.Excel:
-								this.document.SaveCsvDataAsExcel( options );
-								Util.MsgInfo( this, AppInfo.Name, "Excel file generated" );
-								break;
-							case ExportOptions.SelectionType.Csv:
-								var dlgCsv = new DlgCsvExport( this, document );
-								if ( ( (Gtk.ResponseType) dlgCsv.Run() ) == Gtk.ResponseType.Ok ) {
-								    options.Delimiter = dlgCsv.Delimiter;
-								    options.QuotedText = dlgCsv.SurroundWithDoubleQuotes;
-									this.document.SaveCsvData( options );
-									Util.MsgInfo( this, AppInfo.Name, "Csv file generated" );
-								}
-							
-								dlgCsv.Destroy();
-								break;
-							default:
-								Util.MsgError( this, AppInfo.Name, "Internal: conversion not understood" );
-								break;
-						}
+
+                        // If CSV export, get more data
+                        if ( dlg.Selection == ExportOptions.SelectionType.Csv )
+                        {
+                                var dlgCsv = new DlgCsvExport( this, document );
+                                if ( ( (Gtk.ResponseType) dlgCsv.Run() ) == Gtk.ResponseType.Ok ) {
+                                    options.Delimiter.Name = dlgCsv.Delimiter;
+                                    options.QuotedText = dlgCsv.SurroundWithDoubleQuotes;
+                                }
+
+                                dlgCsv.Destroy();
+                        }
+                        
+                        new CsvDocumentPersistence( Document ).Save( options );
+                        Util.MsgInfo( this, AppInfo.Name, options.Format.ToString() + " file generated" );
 					}
 				} catch(Exception exc) {
 					Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -589,14 +588,15 @@ public partial class MainWindow : Gtk.Window {
 		SetStatus( "Reconfiguring..." );
 			
 		if ( this.document.Changed ) {
-			if ( this.document.Rows != oldRows
-			  || this.document.Columns != oldColumns )
+			if ( this.document.Data.NumRows != oldRows
+			  || this.document.Data.NumColumns != oldColumns )
 			{
 				this.ShowDocument();
 			} else {
 				// Update headers
-				for(int j = 0; j < this.document.Headers.Length; ++j) {
-					this.tvTable.Columns[ j + 1 ].Title = this.document.Headers[ j ];
+				for(int j = 0; j < this.document.Data.ColumnInfo.Length; ++j) {
+					this.tvTable.Columns[ j + NumFixedColumns ].Title =
+							this.document.Data.ColumnInfo[ j ].Header;
 				}
 			}
 			
@@ -610,8 +610,8 @@ public partial class MainWindow : Gtk.Window {
 	{
 		if ( this.document != null ) {
 			var dlg = new DlgProperties( this, this.document );
-			var oldRows = this.document.Rows;
-			var oldColumns = this.document.Columns;
+			var oldRows = this.document.Data.NumRows;
+			var oldColumns = this.document.Data.NumColumns;
 			var answer = Gtk.ResponseType.Apply;
 			
 			do {
@@ -620,8 +620,8 @@ public partial class MainWindow : Gtk.Window {
 				if ( answer == Gtk.ResponseType.Apply ) {
 					dlg.ApplyPreferences();
 					this.UpdateDocumentView( oldRows, oldColumns );
-					oldRows = this.document.Rows;
-					oldColumns = this.document.Columns;
+					oldRows = this.document.Data.NumRows;
+					oldColumns = this.document.Data.NumColumns;
 				}
 			} while( answer != Gtk.ResponseType.Close );
 			
@@ -658,9 +658,9 @@ public partial class MainWindow : Gtk.Window {
 	
 	public void FindText(int rowBegin, string txtToFind)
 	{
-		for(int i = rowBegin; i < this.document.Rows; ++i) {
-			for(int j = 0; j < this.document.Columns; ++j) {
-				var cell = this.document.Data[ i ][ j ].Trim().ToLower();
+		for(int i = rowBegin; i < this.document.Data.NumRows; ++i) {
+			for(int j = 0; j < this.document.Data.NumColumns; ++j) {
+				var cell = this.document.Data[ i, j ].Trim().ToLower();
 				
 				if ( cell.Contains( txtToFind ) ) {
 					int[] path = new int[] { i };
@@ -701,10 +701,10 @@ public partial class MainWindow : Gtk.Window {
 			this.tvTable.Model.GetIter( out rowPointer, rowPath );
 			
 			// Refresh row
-			for(int j = col; j < document.Columns; ++j) {
+			for(int j = col; j < document.Data.NumColumns; ++j) {
 				// do It for each cell
 				this.tvTable.Model.SetValue( rowPointer, j + 1,
-				                       Convert.ToString( this.document.Data[ i ][ j ] )
+				                       Convert.ToString( this.document.Data[ i, j ] )
 				);
 			}
 		}
@@ -728,7 +728,7 @@ public partial class MainWindow : Gtk.Window {
 		GetCurrentCell( out rowBegin, out col );
 		++rowBegin;
 		
-		var dlg = new DlgClean( this, DlgClean.Items.Row, rowBegin, document.Rows );
+		var dlg = new DlgClean( this, DlgClean.Items.Row, rowBegin, document.Data.NumRows );
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			// Adapt from UI to document (headers)
@@ -737,7 +737,7 @@ public partial class MainWindow : Gtk.Window {
 			
 			try {
 				// do it
-				this.document.CleanRows( col, rowBegin, rowEnd );
+				this.document.Data.CleanRows( col, rowBegin, rowEnd );
 				this.RefreshRows( col, rowBegin, rowEnd );
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -763,7 +763,7 @@ public partial class MainWindow : Gtk.Window {
 		GetCurrentCell( out row, out colBegin );
 		++colBegin;
 		
-		var dlg = new DlgClean( this, DlgClean.Items.Column, colBegin, document.Columns );
+		var dlg = new DlgClean( this, DlgClean.Items.Column, colBegin, document.Data.NumColumns );
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			// Adapt from UI to document
@@ -772,7 +772,7 @@ public partial class MainWindow : Gtk.Window {
 			
 			try {
 				// do it
-				this.document.CleanColumns( row, colBegin, colEnd );
+				this.document.Data.CleanColumns( row, colBegin, colEnd );
 				ShowDocument();
 			} catch (System.Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -799,13 +799,13 @@ public partial class MainWindow : Gtk.Window {
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Insert,
 		                         DlgIncDec.Target.Rows,
-		                         row + 1, this.document.Rows
+		                         row + 1, this.document.Data.NumRows
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
-				this.document.InsertRows( dlg.From - NumFixedRows, dlg.Number );
+				this.document.Data.InsertRows( dlg.From - NumFixedRows, dlg.Number );
 				this.ShowDocument();
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -832,13 +832,14 @@ public partial class MainWindow : Gtk.Window {
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Add,
 		                         DlgIncDec.Target.Rows,
-		                         this.document.Rows, int.MaxValue
+		                         this.document.Data.NumRows,
+								 int.MaxValue
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
-				this.document.Rows += dlg.Number;
+				this.document.Data.NumRows += dlg.Number;
 				this.ShowDocument();
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -865,13 +866,13 @@ public partial class MainWindow : Gtk.Window {
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Insert,
 		                         DlgIncDec.Target.Columns,
-		                         col + 1, this.document.Columns
+		                         col + 1, this.document.Data.NumColumns
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
-				this.document.InsertColumns( dlg.From - NumFixedColumns, dlg.Number );
+				this.document.Data.InsertColumns( dlg.From - NumFixedColumns, dlg.Number );
 				this.ShowDocument();
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -898,13 +899,13 @@ public partial class MainWindow : Gtk.Window {
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Add,
 		                         DlgIncDec.Target.Columns,
-		                         this.document.Columns, int.MaxValue
+		                         this.document.Data.NumColumns, int.MaxValue
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
-				this.document.Columns += dlg.Number;
+				this.document.Data.NumColumns += dlg.Number;
 				this.ShowDocument();
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -924,7 +925,7 @@ public partial class MainWindow : Gtk.Window {
 			{
 				// Store the parameters and reload	
 				var fileName = document.FileName;
-				var firstRowForHeaders = document.FirstRowForHeaders;
+				var firstRowForHeaders = document.Data.FirstRowForHeaders;
 				char delimiter = document.Delimiter.Raw;
 				this.document = null;
 			
@@ -965,14 +966,15 @@ public partial class MainWindow : Gtk.Window {
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Erase,
 		                         DlgIncDec.Target.Rows,
-		                         row +1, this.document.Rows
+		                         row +1,
+								 this.document.Data.NumRows
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
 				this.SetStatus( "Removing columns" );
-				this.document.RemoveRows( dlg.From - NumFixedRows, dlg.Number );
+				this.document.Data.RemoveRows( dlg.From - NumFixedRows, dlg.Number );
 				this.ShowDocument();
 				this.SetStatus();
 			} catch(Exception exc) {
@@ -1000,14 +1002,15 @@ public partial class MainWindow : Gtk.Window {
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Erase,
 		                         DlgIncDec.Target.Columns,
-		                         col + 1, this.document.Columns
+		                         col + 1,
+								 this.document.Data.NumColumns
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
 				this.SetStatus( "Removing columns" );
-				this.document.RemoveColumns( dlg.From - NumFixedColumns, dlg.Number );
+				this.document.Data.RemoveColumns( dlg.From - NumFixedColumns, dlg.Number );
 				this.ShowDocument();
 				this.SetStatus();
 			} catch(Exception exc) {
@@ -1029,13 +1032,13 @@ public partial class MainWindow : Gtk.Window {
 			// Get current position
 			this.GetCurrentCell( out row, out col );
 			
-			var dlg = new DlgCopy( this, row +1, document.Rows, DlgCopy.DialogType.Rows );
+			var dlg = new DlgCopy( this, row +1, document.Data.NumRows, DlgCopy.DialogType.Rows );
 			
 			if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 				try {
 					// do it
 					this.SetStatus( "Copying row" );
-					this.document.CopyRow( dlg.From - NumFixedRows, dlg.To - NumFixedRows );
+					this.document.Data.CopyRow( dlg.From - NumFixedRows, dlg.To - NumFixedRows );
 					this.ShowDocument();
 					this.SetStatus();
 				} catch(Exception exc) {
@@ -1066,13 +1069,13 @@ public partial class MainWindow : Gtk.Window {
 		// Get current position
 		this.GetCurrentCell( out row, out col );
 		
-		var dlg = new DlgCopy( this, col + 1, this.document.Columns, DlgCopy.DialogType.Columns );
+		var dlg = new DlgCopy( this, col + 1, this.document.Data.NumColumns, DlgCopy.DialogType.Columns );
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
 				this.SetStatus( "Copying column" );
-				this.document.CopyColumn( dlg.From - NumFixedColumns, dlg.To - NumFixedColumns );
+				this.document.Data.CopyColumn( dlg.From - NumFixedColumns, dlg.To - NumFixedColumns );
 				this.ShowDocument();
 				this.SetStatus();
 			} catch(Exception exc) {
@@ -1291,7 +1294,7 @@ public partial class MainWindow : Gtk.Window {
                     // Back
                     colIndex -= 1;
                     if ( colIndex < 1 ) {
-                        colIndex = document.Columns;
+                        colIndex = document.Data.NumColumns;
                         --rowIndex;
                     }
 
@@ -1299,12 +1302,12 @@ public partial class MainWindow : Gtk.Window {
     			} else {
                     // Advance
                     colIndex += 1;
-                    if ( colIndex > document.Columns ) {
+                    if ( colIndex > document.Data.NumColumns ) {
                         colIndex = 1;
                         ++rowIndex;
                     }
 
-                    rowIndex = Math.Min( rowIndex, document.Rows );
+                    rowIndex = Math.Min( rowIndex, document.Data.NumRows );
     			}
 
                 this.SetCurrentCell( rowIndex, colIndex );
@@ -1353,13 +1356,13 @@ public partial class MainWindow : Gtk.Window {
 		
 		// Chk
 		if( row < 0
-		 || row >= this.Document.Rows )
+		 || row >= this.Document.Data.NumRows )
 		{
 			throw new ArgumentException( "invalid row to set: " + row.ToString(), "row" );
 		}
 		
 		if( col < 0
-		 || col >= ( this.Document.Columns + NumFixedColumns ) )
+		 || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
 		{
 			throw new ArgumentException( "invalid column to set: " + col.ToString(), "col" );
 		}
@@ -1390,7 +1393,7 @@ public partial class MainWindow : Gtk.Window {
 			f.Position = new Position( this.Document, row, col );
 			
 			// Add formula to document
-			this.Document.AddFormula( f );
+			this.Document.FormulaManager.AddFormula( f );
 		}
 		
 		dlg.Destroy();

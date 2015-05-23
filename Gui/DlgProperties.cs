@@ -35,32 +35,38 @@ namespace Colorado.Gui {
 			listHeaders.AppendColumn( column );
 			listHeaders.EnableGridLines = Gtk.TreeViewGridLines.Both;
 			
-			// Add delimiters to the combo
+			// Add delimiters to its combo
 			foreach(string delimiter in Delimiter.PredefinedDelimiterNames) {
-				this.cmbDelimiter.AppendText( delimiter );
+				cmbDelimiter.AppendText( delimiter );
 			}
 			cmbDelimiter.Entry.Text = document.Delimiter.Name;
 
+			// Add decimal separators to its combo
+			foreach (char separator in CsvDocument.DecimalSeparatorChar) {
+				cmbDecimalMark.AppendText( separator.ToString() );
+			}
+			cmbDecimalMark.Active = (int) document.DecimalMark;
+
 			// Set info
 			UpdateColumnsData();
-			sbRows.Value = document.Rows;
-			sbColumns.Value = document.Columns;
+			sbRows.Value = document.Data.NumRows;
+			sbColumns.Value = document.Data.NumColumns;
 			cbSurroundText.Active = document.SurroundText;
-			cbFirstRowHeaders.Active = document.FirstRowForHeaders;
+			cbFirstRowHeaders.Active = document.Data.FirstRowForHeaders;
 		}
 		
-		protected virtual void UpdateColumnsData()
+		protected void UpdateColumnsData()
 		{
 			var listStore = ( (ListStore) listHeaders.Model );
 
 			// Insert data
 			listStore.Clear();
-			foreach(var header in document.Headers) {
-				listStore.AppendValues( header );
+			foreach(ColumnInfo colInfo in document.Data.ColumnInfo) {
+				listStore.AppendValues( colInfo.Header );
 			}
 		}
 		
-		protected virtual void OnHeaderEdited(object sender, EditedArgs args)
+		protected void OnHeaderEdited(object sender, EditedArgs args)
 		{
 			int row;
 			var rowPath = new Gtk.TreePath( args.Path );
@@ -72,7 +78,7 @@ namespace Colorado.Gui {
 			listHeaders.Model.SetValue( rowPointer, 0, args.NewText );
 			
 			// Update info in document
-			document.Headers[ row ] = args.NewText;
+			document.Data.ColumnInfo[ row ].Header = args.NewText;
 			document.Changed = true;
 		}
 		
@@ -86,39 +92,42 @@ namespace Colorado.Gui {
 			{
 				document.Delimiter.Name = delimiter;
 			}
+
+			// Get decimal mark
+			document.DecimalMark = (CsvDocument.DecimalSeparator) cmbDecimalMark.Active;
 			
 			// Get surround text
 			document.SurroundText = cbSurroundText.Active;
 			
 			// Check rows and headers size
-			if ( document.Columns > ( (int) sbColumns.Value ) ) {
+			if ( document.Data.NumColumns > ( (int) sbColumns.Value ) ) {
 				if ( !Util.Ask( this, AppInfo.Name, "The new column value is lower. This will imply data loss. Are you sure ?" ) ) {
-					sbColumns.Value = document.Columns;
-					sbRows.Value = document.Rows;
+					sbColumns.Value = document.Data.NumColumns;
+					sbRows.Value = document.Data.NumRows;
 					return;
 				}
 			}
 			
-			if ( document.Rows > ( (int) sbRows.Value ) ) {
+			if ( document.Data.NumRows > ( (int) sbRows.Value ) ) {
 				if ( !Util.Ask( this, AppInfo.Name, "The new row value is lower. This will imply data loss. Are you sure ?" ) ) {
-					sbColumns.Value = document.Columns;
-					sbRows.Value = document.Rows;
+					sbColumns.Value = document.Data.NumColumns;
+					sbRows.Value = document.Data.NumRows;
 					return;
 				}
 			}
 			
 			// Now yes, modify the size
-			document.Columns = (int) sbColumns.Value;
-			document.Rows = (int) sbRows.Value;
+			document.Data.NumColumns = (int) sbColumns.Value;
+			document.Data.NumRows = (int) sbRows.Value;
 			
 			// Modify headers, if needed
-			if ( document.FirstRowForHeaders != cbFirstRowHeaders.Active ) {
-				document.FirstRowForHeaders = cbFirstRowHeaders.Active;
-				sbRows.Value = Convert.ToDouble( document.Rows );
+			if ( document.Data.FirstRowForHeaders != cbFirstRowHeaders.Active ) {
+				document.Data.FirstRowForHeaders = cbFirstRowHeaders.Active;
+				sbRows.Value = Convert.ToDouble( document.Data.NumRows );
 			}
 		}
 
-		protected virtual void OnApply(object sender, System.EventArgs e)
+		protected void OnApply(object sender, EventArgs e)
 		{
 			ApplyPreferences();
 			UpdateColumnsData();

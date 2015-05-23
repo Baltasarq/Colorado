@@ -24,13 +24,13 @@ namespace Colorado.Gui
 			chkQuotes.Active = doc.SurroundText;
 		}
 		
-		public char Delimiter {
+		public string Delimiter {
 			get {
 				string delimiter = cmbDelimiter.Entry.Text.Trim();
 				
 				if ( delimiter.Length > 0 )
-						return this.cmbDelimiter.Entry.Text[ 0 ];
-				else 	return Core.Delimiter.TabDelimiter;
+						return this.cmbDelimiter.Entry.Text;
+				else 	return Core.Delimiter.TabDelimiterName;
 			}
 		}
 		

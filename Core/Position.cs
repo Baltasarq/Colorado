@@ -154,8 +154,8 @@ namespace Colorado.Core {
 		{
 			return ( this.Row >= 0
 			      && this.Column >= 0
-			      && this.Row < doc.Rows
-			      && this.Column < doc.Columns );
+			      && this.Row < doc.Data.NumRows
+			      && this.Column < doc.Data.NumColumns );
 		}
 		
 		/// <summary>
@@ -177,7 +177,8 @@ namespace Colorado.Core {
 				toret = this.Column - p.Column;
 			}
 			else {
-				toret = ( ( this.Row - p.Row ) * this.Document.Columns ) + ( this.Column - p.Column );
+				toret = ( ( this.Row - p.Row ) * this.Document.Data.NumColumns )
+						+ ( this.Column - p.Column );
 			}
 			
 			return toret;

@@ -52,7 +52,7 @@ namespace Colorado.Gui {
 						Core.AppInfo.Name, "Open",
 						(Gtk.Window) this.Parent,
 						ref lastFileName,
-						Core.CsvDocument.FileFilter ) )
+						Core.CsvDocumentPersistence.FileFilter ) )
 			{
 				this.edFile.Text = lastFileName;
 			}

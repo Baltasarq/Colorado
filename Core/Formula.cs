@@ -57,7 +57,7 @@ namespace Colorado.Core {
 			
 			// Retrieve all data
 			while( pos.IsValid() ) {
-				if ( Double.TryParse( this.Document.Data[ pos.Row ][ pos.Column ], out data ) )
+				if ( Double.TryParse( this.Document.Data[ pos.Row, pos.Column ], out data ) )
 				{
 					toret.Add( data );
 				}

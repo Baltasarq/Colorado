@@ -40,14 +40,14 @@ namespace Colorado.Gui {
 		/// </summary>
 		protected void AddChecksForFields()
 		{
-			fieldChecks = new Gtk.CheckButton[ document.Headers.Length ];
+			fieldChecks = new Gtk.CheckButton[ document.Data.ColumnInfo.Length ];
 			int fieldNum = 0;
 			var vbox = new Gtk.VBox();
 			vbox.Visible = true;
 			this.swScroll.AddWithViewport( vbox );
 			
-			foreach( var header in document.Headers ) {
-				fieldChecks[ fieldNum ] = new Gtk.CheckButton( header );
+			foreach(ColumnInfo colInfo in document.Data.ColumnInfo) {
+				fieldChecks[ fieldNum ] = new Gtk.CheckButton( colInfo.Header );
 				fieldChecks[ fieldNum ].Visible = true;
 				fieldChecks[ fieldNum ].Active = true;
 				vbox.Add( fieldChecks[ fieldNum ] );

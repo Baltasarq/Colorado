@@ -66,6 +66,7 @@ namespace Colorado.Gui
 			this.vbox2 = new global::Gtk.VBox ();
 			this.vbox2.Name = "vbox2";
 			this.vbox2.Spacing = 6;
+			this.vbox2.BorderWidth = ((uint)(5));
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.frame2 = new global::Gtk.Frame ();
 			this.frame2.Name = "frame2";
@@ -232,6 +233,7 @@ namespace Colorado.Gui
 			w1.Add (this.vbox2);
 			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(w1 [this.vbox2]));
 			w20.Position = 0;
+			w20.Padding = ((uint)(5));
 			// Internal child Colorado.Gui.DlgExport.ActionArea
 			global::Gtk.HButtonBox w21 = this.ActionArea;
 			w21.Name = "dialog1_ActionArea";

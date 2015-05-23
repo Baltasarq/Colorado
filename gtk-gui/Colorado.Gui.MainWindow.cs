@@ -431,8 +431,6 @@ namespace Colorado.Gui
 			this.btFillRow.Activated += new global::System.EventHandler (this.OnFillRow);
 			this.btFillColumn.Activated += new global::System.EventHandler (this.OnFillColumn);
 			this.insertFormulaAction.Activated += new global::System.EventHandler (this.OnInsertFormula);
-			this.tvTable.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnTableClicked);
-			this.tvTable.KeyPressEvent += new global::Gtk.KeyPressEventHandler (this.OnTableKeyPressed);
 		}
 	}
 }

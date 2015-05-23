@@ -31,7 +31,7 @@ namespace Colorado.Core {
 			
 			// Retrieve all data
 			while( pos.IsValid() ) {
-				if ( this.Document.Data[ pos.Row ][ pos.Column ] != "" ) {
+				if ( this.Document.Data[ pos.Row, pos.Column ] != "" ) {
 					++toret;
 				}
 

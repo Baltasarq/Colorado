@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("Colorado")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("TSV/CSV Spreadsheet")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("dev::baltasarq")]
 [assembly: AssemblyProduct("")]
 [assembly: AssemblyCopyright("baltasarq")]
 [assembly: AssemblyTrademark("")]
