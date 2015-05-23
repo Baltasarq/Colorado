@@ -1,0 +1,565 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Colorado.Core {
+	/// <summary>
+	/// Represents the whole column info, i.e., type and header.
+	/// </summary>
+	public class ColumnInfo {
+		public const string ColEtq = "col";
+		public enum ColumnType { Text, Number };
+
+		public ColumnInfo() {
+			Type = ColumnType.Text;
+			Header = ColEtq;
+		}
+
+		public ColumnType Type {
+			get; set;
+		}
+
+		public string Header {
+			get; set;
+		}
+	}
+
+	/// <summary>
+	/// Represents the data in the document
+	/// </summary>
+	public class Data {
+		public Data(CsvDocument doc, int numRows, int numCols)
+		{
+			this.owner = doc;
+			this.firstRowForHeaders = true;
+			this.data = new List<List<string>>( numRows );
+			this.columnInfo = new List<ColumnInfo>();
+
+			SetInitialSize( numRows, numCols );
+		}
+
+		/// <summary>
+		/// Gets or sets the cell with the specified numRow numColumn.
+		/// </summary>
+		/// <param name="numRow">Number of row.</param>
+		/// <param name="numColumn">Number of column.</param>
+		public string this[int numRow, int numColumn] {
+			get {
+                ChkValue( numRow, 0, NumRows, "row number" );
+                ChkValue( numColumn, 0, NumColumns, "column number" );
+
+				return this.data[ numRow ][ numColumn ];
+			}
+			set {
+				ChkValue( numRow, 0, NumRows, "row number" );
+                ChkValue( numColumn, 0, NumColumns, "column number" );
+
+				this.data[ numRow ][ numColumn ] = value;
+                Console.WriteLine( "Wrote {0} in ({1}, {2}) giving {3}", value, numRow, numColumn, this.data[ numRow ][ numColumn ] );
+			}
+		}
+
+        /// <summary>
+		/// Gets the complete row with the specified numRow, as a string[].
+		/// </summary>
+		/// <param name="numRow">The row number.</param>
+		public string[] this[int numRow] {
+			get {
+				ChkValue( numRow, 0, this.numRows, "row number" );
+				return this.data[ numRow ].ToArray();
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the number rows.
+		/// </summary>
+		/// <value>The number rows.</value>
+		public int NumRows {
+			get { return numRows; }
+			set { SetNumRows( value ); }
+		}
+
+		/// <summary>
+		/// Gets or sets the number columns.
+		/// </summary>
+		/// <value>The number columns.</value>
+		public int NumColumns {
+			get { return numColumns; }
+			set { SetNumColumns( value ); }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Colorado.Core.Data"/> is changed.
+		/// </summary>
+		/// <value><c>true</c> if changed; otherwise, <c>false</c>.</value>
+		public bool Changed {
+			get; set;
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the first row is for headers.
+		/// When set, moves the first line to headers or viceversa, accordingly.
+		/// </summary>
+		/// <value><c>true</c> if first row for headers; otherwise, <c>false</c>.</value>
+		public bool FirstRowForHeaders {
+			get { return firstRowForHeaders; }
+			set {
+				if ( value != this.firstRowForHeaders ) {
+					if ( value ) {
+						this.MoveFirstRowToHeaders();
+					} else {
+						this.MoveHeadersToFirstRow();
+					}
+
+					this.firstRowForHeaders = value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the columns info.
+		/// </summary>
+		/// <value>The columns info, as a ColumnInfo[].</value>
+		public ColumnInfo[] ColumnInfo {
+			get {
+				return this.columnInfo.ToArray();
+			}
+		}
+
+		/// <summary>
+		/// Gets the owner of this data
+		/// </summary>
+		/// <value>The owner.</value>
+		public CsvDocument Owner {
+			get {
+				return this.owner;
+			}
+		}
+
+		/// <summary>
+		/// Sets the size of the Data, numRows x numCols
+		/// </summary>
+		/// <param name="numRows">Number of rows.</param>
+		/// <param name="numCols">Number of columns.</param>
+		internal void SetInitialSize(int numRows, int numCols)
+		{
+            Console.WriteLine( "Setting {0}x{1}", numRows, numCols );
+			this.data.Clear();
+			this.data.Capacity = numRows;
+
+			for (int i = 0; i < numRows; ++i) {
+				this.data.Add( ( CreateEmptyColumn( numCols ) ) );
+			}
+
+			this.numRows = numRows;
+			this.numColumns = numCols;
+			this.CreateDefaultHeaders();
+			this.Changed = true;
+
+            Console.WriteLine( "[1] Created {0}x{1}", this.numRows, this.numColumns );
+            Console.WriteLine( "[2] Created {0}x{1}", this.data.Count, this.numColumns );
+		}
+
+		private List<string> CreateEmptyColumn(int size)
+		{
+			var toret = new List<string>( size );
+
+			// Fill each column
+			for (int j = 0; j < size; ++j) {
+				toret.Add( "" );
+			}
+
+			return toret;
+		}
+
+		/// <summary>
+		/// Sets the number rows.
+		/// Expands used memory, if needed.
+		/// </summary>
+		/// <param name="numRows">Number rows.</param>
+		public void SetNumRows(int numRows)
+		{
+			if ( this.numRows != numRows
+			  && numRows >= 0 )
+			{
+				Changed = true;
+
+				if ( numRows > this.numRows ) {
+					this.data.Capacity = numRows;
+
+					for (int i = 0; i < ( numRows - this.numRows ); ++i) {
+						this.data.Add( CreateEmptyColumn( this.numColumns ) );
+					}
+				}
+
+				this.data.RemoveRange( numRows, NumRows  - numRows );
+				this.numRows = numRows;
+			}
+		}
+
+		/// <summary>
+		/// Sets the number columns.
+		/// Expands used memory, if needed.
+		/// </summary>
+		/// <param name="numCols">Number cols.</param>
+		public void SetNumColumns(int numCols)
+		{
+			int delta = numCols - this.numColumns;
+
+			if ( numCols != this.numColumns
+			  && numCols >= 0 )
+			{
+				this.Changed = true;
+
+				for (int i = 0; i < this.NumRows; ++i) {
+					var column = this.data[ i ];
+
+					if ( delta > 0 ) {
+						for (int j = 0; j < delta; ++j) {
+							column.AddRange( CreateEmptyColumn( delta ) );
+						}
+					} else {
+						column.RemoveRange( numCols, NumColumns - numCols );
+					}
+				}
+
+				this.numColumns = numCols;
+			}
+
+			// Fix headers
+			CreateNewColumnsInfo( NumColumns );
+		}
+
+		public void CopyRow(int posOrg, int posDest)
+		{
+			// Chk
+			if ( posOrg == posDest ) {
+				return;
+			}
+
+			ChkValue( posOrg, 0, NumRows, "beginning row for copying" );
+			ChkValue( posDest, 0, NumRows, "ending row for copying" );
+			Changed = true;
+
+			// do it
+			for(int j = 0; j < NumColumns; ++j) {
+				this.data[ posDest ][ j ] = this.data[ posOrg ][ j ];
+			}
+		}
+
+		public void CopyColumn(int posOrg, int posDest)
+		{
+			// Chk
+			if ( posOrg == posDest ) {
+				return;
+			}
+
+			ChkValue( posOrg, 0, NumColumns, "beginning row for copying" );
+			ChkValue( posDest, 0, NumColumns, "beginning row for copying" );
+			Changed = true;
+
+			// do it
+			for(int i = 0; i < NumRows; ++i) {
+				this.data[ i ][ posDest ] = this.data[ i ][ posOrg ];
+			}
+		}
+
+		/// <summary>
+		/// Checks any given value for a range [min, max),
+		/// and throws an exception if violated
+		/// </summary>
+		/// <param name="val">
+		/// The <see cref="System.Int32"/> to check
+		/// </param>
+		/// <param name="min">
+		/// The <see cref="System.Int32"/> for the minimum possible value
+		/// </param>
+		/// <param name="max">
+		/// The <see cref="System.Int32"/> for the maximum possible value
+		/// </param>
+		/// <param name="explanation">
+		/// A <see cref="System.String"/> containing info about the value being checked
+		/// </param>
+		public static void ChkValue(int val, int min, int max, string explanation)
+		{
+			if ( val < min
+  			  || val >= max )
+			{
+				throw new ApplicationException(
+					"Value " + Convert.ToString( val )
+					+ " ("
+					+ explanation
+					+ ", outside range ["
+					+ Convert.ToString( min )
+					+ ", "
+					+ Convert.ToString( max )
+					+ ")"
+				);
+			}
+		}
+
+		/// <summary>
+		/// An adapter for <see cref="cleanRows"/>
+		/// </summary>
+		public void CleanRows(int posBeg, int posEnd)
+		{
+			CleanRows( 0, posBeg, posEnd );
+		}
+
+		/// <summary>
+		/// Cleans the contents of some rows. Can throw ApplicationException
+		/// when detecting invalid parameters (negative, etc.)
+		/// </summary>
+		/// <param name="posBeg">
+		/// A <see cref="System.Int32"/> representing the first row
+		/// </param>
+		/// <param name="posEnd">
+		/// A <see cref="System.Int32"/> representing the last row (included)
+		/// </param>
+		/// <param name="colStart">
+		/// A <see cref="System.Int32"/> representing the starting column
+		/// </param>
+		public void CleanRows(int colStart, int posBeg, int posEnd)
+		{
+			// Check
+			ChkValue( posBeg, 0, NumRows, "beginning row" );
+			ChkValue( posEnd, 0, NumRows, "ending row" );
+			ChkValue( colStart, 0, NumColumns, "the beginning column" );
+
+			if ( posBeg > posEnd ) {
+				throw new ApplicationException( "invalid parameters (beg>end)" );
+			}
+
+			// Do it
+			for(int i = posBeg; i <= posEnd; ++i) {
+				for(int j = colStart; j < NumColumns; ++j) {
+					this.data[ i ][ j ] = "";
+				}
+			}
+
+			Changed = true;
+		}
+
+		/// <summary>
+		/// An adapter for <see cref="cleanColumns"/>
+		/// </summary>
+		public void CleanColumns(int posBeg, int posEnd)
+		{
+			CleanColumns( 0, posBeg, posEnd );
+		}
+
+		/// <summary>
+		/// Cleans the contents of some columns. Can throw ApplicationException
+		/// when detecting invalid parameters (negative, etc.)
+		/// </summary>
+		/// <param name="rowStart">
+		/// A <see cref="System.Int32"/> representing the starting row
+		/// </param>
+		/// <param name="posBeg">
+		/// A <see cref="System.Int32"/> representing the first column
+		/// </param>
+		/// <param name="posEnd">
+		/// A <see cref="System.Int32"/> representing the last column (included)
+		/// </param>
+		public void CleanColumns(int rowStart, int posBeg, int posEnd)
+		{
+			// Check
+			ChkValue( posBeg, 0, NumColumns, "the beginning column" );
+			ChkValue( posEnd, 0, NumColumns, "the ending column" );
+			ChkValue( rowStart, 0, NumRows, "the beginning row" );
+
+			if ( posBeg > posEnd ) {
+				throw new ApplicationException( "invalid parameters (beg>end)" );
+			}
+
+			// Do it
+			for(int i = rowStart; i < NumRows; ++i) {
+				for(int j = posBeg; j <= posEnd; ++j) {
+					this.data[ i ][ j ] = "";
+				}
+			}
+
+			Changed = true;
+		}
+
+		/// <summary>
+		/// Inserts some new rows at the given pos.
+		/// </summary>
+		/// <param name="pos">The position to insert in.</param>
+		/// <param name="numRows">Number of blank rows to insert.</param>
+		public void InsertRows(int pos, int numRows)
+		{
+			Owner.FormulaManager.AllowFormulaUpdating = false;
+
+			// Chk
+			ChkValue( pos, 0, NumRows, "row number for insertion" );
+			ChkValue( numRows, 0, NumRows, "number of rows to insert" );
+			Changed = true;
+
+			for (int i = 0; i < numRows; ++i) {
+				this.data.Insert( pos, CreateEmptyColumn( NumColumns ) );
+			}
+
+			// Fix
+			this.numRows += numRows;
+			Owner.FormulaManager.FixFormulasRowsInserted( pos, numRows );
+			Owner.FormulaManager.AllowFormulaUpdating = true;
+		}
+
+		public void RemoveRows(int pos, int numRows)
+		{
+			// Chk
+			Owner.FormulaManager.AllowFormulaUpdating = false;
+			ChkValue( pos, 0, NumRows, "row number for deletion" );
+			ChkValue( numRows, 0, NumRows, "number of rows to remove" );
+			Changed = true;
+
+			this.data.RemoveRange( pos, numRows );
+
+			// Fix
+			this.numRows -= numRows;
+			Owner.FormulaManager.FixFormulasRowsRemoved( pos, numRows );
+			Owner.FormulaManager.AllowFormulaUpdating = true;
+		}
+
+		public void InsertColumns(int pos, int numCols)
+		{
+			// Chk
+			Owner.FormulaManager.AllowFormulaUpdating = false;
+			ChkValue( pos, 0, NumColumns, "column number for insertion" );
+			ChkValue( numCols, 0, int.MaxValue, "number of rows to insert" );
+			Changed = true;
+
+			// For each row...
+			for (int i = 0; i < NumRows; ++i) {
+				this.data[ i ].InsertRange( pos, new string[ numCols ] );
+			}
+
+			// Prepare empty headers
+			for(int j = pos; j < pos + numCols; ++j) {
+				this.columnInfo.Insert( j,
+					new ColumnInfo(){ Header = "NewCol" + Convert.ToString( j + 1 ) } );
+			}
+
+			// Fix
+			this.numColumns += numCols;
+			Owner.FormulaManager.FixFormulasColumnsInserted( pos, numCols );
+			Owner.FormulaManager.AllowFormulaUpdating = true;
+		}
+
+		public void RemoveColumns(int pos, int numCols)
+		{
+			// Chk
+			Owner.FormulaManager.AllowFormulaUpdating = false;
+			ChkValue( pos, 0, NumColumns, "column number for deletion" );
+			ChkValue( numCols, 0, NumColumns, "number of columns to remove" );
+			Changed = true;
+
+			// For each row...
+			for (int i = 0; i < NumRows; ++i) {
+				this.data[ i ].RemoveRange( pos, numCols );
+			}
+
+			// Fix
+			this.numColumns -= numCols;
+			this.columnInfo.RemoveRange( pos, numCols );
+			Owner.FormulaManager.FixFormulasColumnsRemoved( pos, numCols );
+			Owner.FormulaManager.AllowFormulaUpdating = true;
+		}
+
+		/// <summary>
+		/// Creates the new columns info vector, saving the info from the previous one.
+		/// </summary>
+		/// <param name="newColNum">New number of columns.</param>
+		protected void CreateNewColumnsInfo(int newColNum)
+		{
+			int oldCount = this.columnInfo.Count;
+
+			if ( newColNum != oldCount ) {
+				this.columnInfo.AddRange( new ColumnInfo[ newColNum ] );
+
+				// Assign values to new headers: col1, col2...
+				for (int i = oldCount; i < newColNum; ++i) {
+					this.columnInfo[ i ] = new ColumnInfo();
+					this.columnInfo[ i ].Header = Core.ColumnInfo.ColEtq + ( i + 1 ).ToString();
+				}
+			}
+
+			return;
+		}
+
+		/// <summary>
+		/// Creates the default headers, named col1, col2...
+		/// </summary>
+		internal void CreateDefaultHeaders()
+		{
+			CreateNewColumnsInfo( NumColumns );
+			CreateDefaultHeaders( 0 );
+			this.firstRowForHeaders = false;
+		}
+
+		/// <summary>
+		/// Creates the default headers, starting in column "i"
+		/// </summary>
+		/// <param name="i">The index.</param>
+		internal void CreateDefaultHeaders(int i)
+		{
+			for(int j = i; j < NumColumns; ++j) {
+				this.columnInfo[ j ].Header = "Col" + Convert.ToString( j + 1 );
+			}
+
+			return;
+		}
+
+		/// <summary>
+		/// Assigns the headers contents.
+		/// </summary>
+		/// <param name="headers">
+		/// A <see cref="System.String[]"/> vector of headers.
+		/// </param>
+		internal void CreateNamedHeaders(string[] headers)
+		{
+			CreateNewColumnsInfo( headers.Length );
+
+			for(int i = 0; i < this.columnInfo.Count; ++i) {
+				this.columnInfo[ i ].Header = headers[ i ];
+			}
+
+			this.firstRowForHeaders = true;
+		}
+
+		/// <summary>
+		/// Moves the first row to headers.
+		/// </summary>
+		protected void MoveFirstRowToHeaders()
+		{
+			// Copy the data into headers
+			for(int i = 0; i < ColumnInfo.Length; ++i) {
+				ColumnInfo[ i ].Header = this.data[ 0 ][ i ];
+			}
+
+			// Shift rows up
+			RemoveRows( 0, 1 );
+		}
+
+		protected void MoveHeadersToFirstRow()
+		{
+			// Shift rows down
+			InsertRows( 0, 1 );
+
+			// Copy headers to first row
+			for(int j = 0; j < NumColumns; ++j) {
+				this.data[ 0 ][ j ] = this.ColumnInfo[ j ].Header;
+			}
+
+			CreateDefaultHeaders( 0 );
+		}
+
+		private CsvDocument owner;
+		private List<List<string>> data;
+		private List<ColumnInfo> columnInfo;
+		private bool firstRowForHeaders;
+		private int numColumns;
+		private int numRows;
+	}
+}
+
