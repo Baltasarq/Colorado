@@ -268,8 +268,9 @@ public partial class MainWindow : Gtk.Window {
 			this.ShowProjectInfo();
 			this.ActivateIde();
 		} catch(Exception e) {
-			Util.MsgError( this, AppInfo.Name, "Error while loading csv file: '" + e.Message + '\'' );
+			Util.MsgError( this, AppInfo.Name, "Error while loading file: '" + e.Message + '\'' );
 			this.document = null;
+			this.SetStatus();
 		}
 
 		return;
@@ -358,6 +359,11 @@ public partial class MainWindow : Gtk.Window {
         number += Document.GetDecimalMark() + "5";
 		
         lblType.Text = '(' + text + delimiter + number + delimiter + "...)";
+        lblMeasures.Text = "["
+                + Document.Data.NumRows
+                + " x "
+                + Document.Data.NumColumns
+                + "]";
 		return;
 	}
 
@@ -491,7 +497,9 @@ public partial class MainWindow : Gtk.Window {
 			if ( this.document != null ) {
 				if ( this.document.Changed ) {
 					if ( this.document.HasName ) {
+							this.SetStatus( "Saving..." );
 							new CsvDocumentPersistence( Document ).SaveCsvData();
+							this.SetStatus();
 						} else {
 							this.OnSaveAs( sender, e );
 						}
@@ -501,6 +509,7 @@ public partial class MainWindow : Gtk.Window {
 			} else Util.MsgError( this, AppInfo.Name, "No document loaded" );
 		} catch(Exception exc) {
 			Util.MsgError( this, AppInfo.Name, exc.Message );
+			this.SetStatus();
 		}
 
 		return;
@@ -516,14 +525,17 @@ public partial class MainWindow : Gtk.Window {
 						ref lastFileName,
 						CsvDocumentPersistence.FileFilter ) )
 				{
+					this.SetStatus( "Saving..." );
 					this.document.FileName = this.lastFileName;
 					this.lastFileName = this.document.FileName;
 					new CsvDocumentPersistence( Document ).SaveCsvData(
 							new ExportOptions( this.lastFileName, this.document ) );
 					this.SetTitle();
+					this.SetStatus();
 				}
 			} else {
 				Util.MsgError( this, AppInfo.Name, "No document loaded" );
+				this.SetStatus();
 			}
 		} catch(Exception exc) {
 			Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -1258,8 +1270,6 @@ public partial class MainWindow : Gtk.Window {
                 fillValue,
                 type,
                 Filler.FillDirection.Column );
-
-                System.Console.WriteLine( "NumCells: {0}", filler.NumCells );
             while ( filler.NumCells > 0 ) {
                 filler.DoIt();
                 Util.UpdateUI();

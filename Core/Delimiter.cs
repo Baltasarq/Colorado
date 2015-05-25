@@ -10,14 +10,14 @@ namespace Colorado.Core {
         public const char TabDelimiter = '\t';
         public static readonly ReadOnlyCollection<char> PredefinedDelimiters =
             new ReadOnlyCollection<char>(
-                new char[]{ CommaDelimiter, SemicolonDelimiter, ColonDelimiter, TabDelimiter }
+                new char[]{ TabDelimiter, ColonDelimiter, SemicolonDelimiter, CommaDelimiter  }
             );
 		public static readonly ReadOnlyCollection<string> PredefinedDelimiterNames =
 			new ReadOnlyCollection<string>(
-				new string[]{ CommaDelimiter.ToString(),
-							  SemicolonDelimiter.ToString(),
+                new string[]{ TabDelimiterName,
                               ColonDelimiter.ToString(),
-							  TabDelimiterName }
+                              SemicolonDelimiter.ToString(),
+                              CommaDelimiter.ToString() }
 			);
 
 		/// <summary>

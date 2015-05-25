@@ -54,7 +54,6 @@ namespace Colorado.Core {
                 ChkValue( numColumn, 0, NumColumns, "column number" );
 
 				this.data[ numRow ][ numColumn ] = value;
-                Console.WriteLine( "Wrote {0} in ({1}, {2}) giving {3}", value, numRow, numColumn, this.data[ numRow ][ numColumn ] );
 			}
 		}
 
@@ -142,7 +141,6 @@ namespace Colorado.Core {
 		/// <param name="numCols">Number of columns.</param>
 		internal void SetInitialSize(int numRows, int numCols)
 		{
-            Console.WriteLine( "Setting {0}x{1}", numRows, numCols );
 			this.data.Clear();
 			this.data.Capacity = numRows;
 
@@ -154,9 +152,6 @@ namespace Colorado.Core {
 			this.numColumns = numCols;
 			this.CreateDefaultHeaders();
 			this.Changed = true;
-
-            Console.WriteLine( "[1] Created {0}x{1}", this.numRows, this.numColumns );
-            Console.WriteLine( "[2] Created {0}x{1}", this.data.Count, this.numColumns );
 		}
 
 		private List<string> CreateEmptyColumn(int size)

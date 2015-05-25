@@ -151,7 +151,6 @@ namespace Colorado.Core {
                 Document.Delimiter.Name = Delimiter.PredefinedDelimiterNames[(int) delimiterIndex];
             }
 
-            Console.WriteLine( "Delimiter: {0}", Document.Delimiter.Name );
             return;
 		}
 
@@ -213,7 +212,6 @@ namespace Colorado.Core {
 
 				// Set data
                 for(int colIndex = 0; colIndex < colsLength; ++colIndex) {
-                    Console.WriteLine( "Writing {0} in {1}, {2}", cols[ colIndex ], rowIndex, colIndex );
                     Document.Data[ rowIndex, colIndex ] = cols[ colIndex ];
 				}
 			}
@@ -517,9 +515,11 @@ namespace Colorado.Core {
 					double d;
 
 					textWriter.WriteStartAttribute( "ss:Type" );
-					if ( Double.TryParse( data, out d ) )
+					if ( Double.TryParse( data, out d ) ) {
 						textWriter.WriteString( "Number" );
-					else    textWriter.WriteString( "String" );
+					} else {
+						textWriter.WriteString( "String" );
+					}
 					textWriter.WriteEndAttribute();
 
 					textWriter.WriteString( data );

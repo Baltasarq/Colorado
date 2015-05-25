@@ -133,6 +133,10 @@ namespace Colorado.Gui
 		private global::Gtk.Statusbar sbStatus;
 		
 		private global::Gtk.Label lblType;
+		
+		private global::Gtk.Label lblMeasures;
+		
+		private global::Gtk.VSeparator vseparator2;
 
 		protected virtual void Build ()
 		{
@@ -306,30 +310,7 @@ namespace Colorado.Gui
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar2\'><menu name=\'FileAction\' action=\'FileAction\'><menuite" +
-			"m name=\'newAction\' action=\'newAction\'/><menuitem name=\'OpenAction\' action=\'OpenA" +
-			"ction\'/><menuitem name=\'SaveAction\' action=\'SaveAction\'/><menuitem name=\'SaveAsA" +
-			"ction\' action=\'SaveAsAction\'/><separator/><menuitem name=\'propertiesAction\' acti" +
-			"on=\'propertiesAction\'/><menuitem name=\'closeAction\' action=\'closeAction\'/><separ" +
-			"ator/><menuitem name=\'revertToSavedAction\' action=\'revertToSavedAction\'/><menuit" +
-			"em name=\'ImportAction\' action=\'ImportAction\'/><menuitem name=\'convertAction\' act" +
-			"ion=\'convertAction\'/><menuitem name=\'ExitAction\' action=\'ExitAction\'/></menu><me" +
-			"nu name=\'EditAction\' action=\'EditAction\'><menuitem name=\'FindAction\' action=\'Fin" +
-			"dAction\'/><menuitem name=\'FindAgainAction\' action=\'FindAgainAction\'/><menuitem n" +
-			"ame=\'insertFormulaAction\' action=\'insertFormulaAction\'/><separator/><menu name=\'" +
-			"RowsAction\' action=\'RowsAction\'><menuitem name=\'addRows\' action=\'addRows\'/><menu" +
-			"item name=\'insertRows\' action=\'insertRows\'/><menuitem name=\'removeAction\' action" +
-			"=\'removeAction\'/><menuitem name=\'clearAction\' action=\'clearAction\'/><menuitem na" +
-			"me=\'gotoBottomAction\' action=\'gotoBottomAction\'/><menuitem name=\'fillRow\' action" +
-			"=\'fillRow\'/></menu><menu name=\'ColumnsAction\' action=\'ColumnsAction\'><menuitem n" +
-			"ame=\'addColumns\' action=\'addColumns\'/><menuitem name=\'insertColumns\' action=\'ins" +
-			"ertColumns\'/><menuitem name=\'removeColumnAction\' action=\'removeColumnAction\'/><m" +
-			"enuitem name=\'clearColumnAction\' action=\'clearColumnAction\'/><menuitem name=\'cop" +
-			"yColumnAction\' action=\'copyColumnAction\'/><menuitem name=\'fillColumn\' action=\'fi" +
-			"llColumn\'/></menu></menu><menu name=\'ViewAction\' action=\'ViewAction\'><menuitem n" +
-			"ame=\'viewToolbarAction\' action=\'viewToolbarAction\'/></menu><menu name=\'HelpActio" +
-			"n\' action=\'HelpAction\'><menuitem name=\'AboutAction\' action=\'AboutAction\'/></menu" +
-			"></menubar></ui>");
+			this.UIManager.AddUiFromString ("<ui><menubar name='menubar2'><menu name='FileAction' action='FileAction'><menuitem name='newAction' action='newAction'/><menuitem name='OpenAction' action='OpenAction'/><menuitem name='SaveAction' action='SaveAction'/><menuitem name='SaveAsAction' action='SaveAsAction'/><separator/><menuitem name='propertiesAction' action='propertiesAction'/><menuitem name='closeAction' action='closeAction'/><separator/><menuitem name='revertToSavedAction' action='revertToSavedAction'/><menuitem name='ImportAction' action='ImportAction'/><menuitem name='convertAction' action='convertAction'/><menuitem name='ExitAction' action='ExitAction'/></menu><menu name='EditAction' action='EditAction'><menuitem name='FindAction' action='FindAction'/><menuitem name='FindAgainAction' action='FindAgainAction'/><menuitem name='insertFormulaAction' action='insertFormulaAction'/><separator/><menu name='RowsAction' action='RowsAction'><menuitem name='addRows' action='addRows'/><menuitem name='insertRows' action='insertRows'/><menuitem name='removeAction' action='removeAction'/><menuitem name='clearAction' action='clearAction'/><menuitem name='gotoBottomAction' action='gotoBottomAction'/><menuitem name='fillRow' action='fillRow'/></menu><menu name='ColumnsAction' action='ColumnsAction'><menuitem name='addColumns' action='addColumns'/><menuitem name='insertColumns' action='insertColumns'/><menuitem name='removeColumnAction' action='removeColumnAction'/><menuitem name='clearColumnAction' action='clearColumnAction'/><menuitem name='copyColumnAction' action='copyColumnAction'/><menuitem name='fillColumn' action='fillColumn'/></menu></menu><menu name='ViewAction' action='ViewAction'><menuitem name='viewToolbarAction' action='viewToolbarAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 			this.menubar2 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar2")));
 			this.menubar2.Name = "menubar2";
 			this.vbox1.Add (this.menubar2);
@@ -338,7 +319,7 @@ namespace Colorado.Gui
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString (@"<ui><toolbar name='tbToolBar'><toolitem name='btNew' action='btNew'/><toolitem name='btOpen' action='btOpen'/><separator/><toolitem name='btSave' action='btSave'/><toolitem name='btProperties' action='btProperties'/><toolitem name='btFind' action='btFind'/><separator/><toolitem name='btAdd' action='btAdd'/><toolitem name='btInsert' action='btInsert'/><toolitem name='btRemove' action='btRemove'/><toolitem name='btClearRow' action='btClearRow'/><toolitem name='btCopyRow' action='btCopyRow'/><toolitem name='btFillRow' action='btFillRow'/><separator/><toolitem name='btAddColumns' action='btAddColumns'/><toolitem name='btInsertColumns' action='btInsertColumns'/><toolitem name='btRemoveColumn' action='btRemoveColumn'/><toolitem name='btClearColumn' action='btClearColumn'/><toolitem name='btCopyColumn' action='btCopyColumn'/><toolitem name='btFillColumn' action='btFillColumn'/></toolbar></ui>");
+			this.UIManager.AddUiFromString ("<ui><toolbar name='tbToolBar'><toolitem name='btNew' action='btNew'/><toolitem name='btOpen' action='btOpen'/><separator/><toolitem name='btSave' action='btSave'/><toolitem name='btProperties' action='btProperties'/><toolitem name='btFind' action='btFind'/><separator/><toolitem name='btAdd' action='btAdd'/><toolitem name='btInsert' action='btInsert'/><toolitem name='btRemove' action='btRemove'/><toolitem name='btClearRow' action='btClearRow'/><toolitem name='btCopyRow' action='btCopyRow'/><toolitem name='btFillRow' action='btFillRow'/><separator/><toolitem name='btAddColumns' action='btAddColumns'/><toolitem name='btInsertColumns' action='btInsertColumns'/><toolitem name='btRemoveColumn' action='btRemoveColumn'/><toolitem name='btClearColumn' action='btClearColumn'/><toolitem name='btCopyColumn' action='btCopyColumn'/><toolitem name='btFillColumn' action='btFillColumn'/></toolbar></ui>");
 			this.tbToolBar = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/tbToolBar")));
 			this.tbToolBar.Name = "tbToolBar";
 			this.tbToolBar.ShowArrow = false;
@@ -369,16 +350,36 @@ namespace Colorado.Gui
 			// Container child sbStatus.Gtk.Box+BoxChild
 			this.lblType = new global::Gtk.Label ();
 			this.lblType.Name = "lblType";
+			this.lblType.LabelProp = "\"field\", 4.5";
 			this.sbStatus.Add (this.lblType);
 			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.lblType]));
 			w6.Position = 1;
 			w6.Expand = false;
 			w6.Fill = false;
-			this.vbox1.Add (this.sbStatus);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.sbStatus]));
-			w7.Position = 3;
+			// Container child sbStatus.Gtk.Box+BoxChild
+			this.lblMeasures = new global::Gtk.Label ();
+			this.lblMeasures.Name = "lblMeasures";
+			this.lblMeasures.LabelProp = "[10x10]";
+			this.sbStatus.Add (this.lblMeasures);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.lblMeasures]));
+			w7.PackType = ((global::Gtk.PackType)(1));
+			w7.Position = 2;
 			w7.Expand = false;
 			w7.Fill = false;
+			// Container child sbStatus.Gtk.Box+BoxChild
+			this.vseparator2 = new global::Gtk.VSeparator ();
+			this.vseparator2.Name = "vseparator2";
+			this.sbStatus.Add (this.vseparator2);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.vseparator2]));
+			w8.PackType = ((global::Gtk.PackType)(1));
+			w8.Position = 3;
+			w8.Expand = false;
+			w8.Fill = false;
+			this.vbox1.Add (this.sbStatus);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.sbStatus]));
+			w9.Position = 3;
+			w9.Expand = false;
+			w9.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
