@@ -24,15 +24,16 @@ public partial class MainWindow : Gtk.Window {
 		txtToFind = "";
 		
 		this.Build();
+		this.BuildPopup();
+		this.tvTable.PopupMenu += (o, evt) => this.popup.Popup();
 
 		Gdk.Geometry minSize = new Gdk.Geometry();
 		minSize.MinHeight = 480;
 		minSize.MinWidth = 640;
-
 		this.Title = AppInfo.Name;
 		this.SetDefaultSize( minSize.MinHeight, minSize.MinWidth );
 		this.SetGeometryHints( this, minSize, Gdk.WindowHints.MinSize );
-		this.BuildPopup();
+
 		this.ActivateIde( false );
 	}
 	
@@ -1193,14 +1194,7 @@ public partial class MainWindow : Gtk.Window {
 	{
 		this.tbToolBar.Visible = !tbToolBar.Visible;
 	}
-	
-	protected virtual void OnTableClicked(object o, Gtk.ButtonReleaseEventArgs args)
-	{
-		if ( args.Event.Button == 3 ) {
-			this.popup.Popup();
-		}
-	}
-	
+
 	protected virtual void OnFillRow(object sender, System.EventArgs e)
 	{
 		int row;
