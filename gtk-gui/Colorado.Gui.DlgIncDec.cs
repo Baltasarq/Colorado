@@ -6,6 +6,8 @@ namespace Colorado.Gui
 	{
 		private global::Gtk.VBox vbox3;
 		
+		private global::Gtk.HBox hbox2;
+		
 		private global::Gtk.HBox hbox1;
 		
 		private global::Gtk.Label lblValues;
@@ -13,6 +15,26 @@ namespace Colorado.Gui
 		private global::Gtk.Alignment alignment1;
 		
 		private global::Gtk.Alignment alignment2;
+		
+		private global::Gtk.HBox hbox3;
+		
+		private global::Gtk.Frame frame1;
+		
+		private global::Gtk.Alignment GtkAlignment2;
+		
+		private global::Gtk.VBox vbox2;
+		
+		private global::Gtk.RadioButton rbBefore;
+		
+		private global::Gtk.RadioButton rbAfter;
+		
+		private global::Gtk.Label GtkLabel4;
+		
+		private global::Gtk.Frame frame2;
+		
+		private global::Gtk.Alignment GtkAlignment3;
+		
+		private global::Gtk.VBox vbox4;
 		
 		private global::Gtk.HBox hbox4;
 		
@@ -25,6 +47,8 @@ namespace Colorado.Gui
 		private global::Gtk.Label label4;
 		
 		private global::Gtk.SpinButton sbNumber;
+		
+		private global::Gtk.Label GtkLabel5;
 		
 		private global::Gtk.Button buttonCancel;
 		
@@ -46,6 +70,10 @@ namespace Colorado.Gui
 			this.vbox3.Spacing = 6;
 			this.vbox3.BorderWidth = ((uint)(5));
 			// Container child vbox3.Gtk.Box+BoxChild
+			this.hbox2 = new global::Gtk.HBox ();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
@@ -72,12 +100,77 @@ namespace Colorado.Gui
 			this.hbox1.Add (this.alignment2);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.alignment2]));
 			w4.Position = 2;
-			this.vbox3.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
+			this.hbox2.Add (this.hbox1);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.hbox1]));
 			w5.Position = 0;
-			w5.Expand = false;
-			w5.Fill = false;
+			this.vbox3.Add (this.hbox2);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox2]));
+			w6.Position = 0;
+			w6.Expand = false;
+			w6.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
+			this.hbox3 = new global::Gtk.HBox ();
+			this.hbox3.Name = "hbox3";
+			this.hbox3.Spacing = 6;
+			// Container child hbox3.Gtk.Box+BoxChild
+			this.frame1 = new global::Gtk.Frame ();
+			this.frame1.Name = "frame1";
+			this.frame1.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child frame1.Gtk.Container+ContainerChild
+			this.GtkAlignment2 = new global::Gtk.Alignment (0F, 0F, 1F, 1F);
+			this.GtkAlignment2.Name = "GtkAlignment2";
+			this.GtkAlignment2.LeftPadding = ((uint)(12));
+			// Container child GtkAlignment2.Gtk.Container+ContainerChild
+			this.vbox2 = new global::Gtk.VBox ();
+			this.vbox2.Name = "vbox2";
+			this.vbox2.Spacing = 6;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.rbBefore = new global::Gtk.RadioButton ("Before");
+			this.rbBefore.CanFocus = true;
+			this.rbBefore.Name = "rbBefore";
+			this.rbBefore.DrawIndicator = true;
+			this.rbBefore.UseUnderline = true;
+			this.rbBefore.Group = new global::GLib.SList (global::System.IntPtr.Zero);
+			this.vbox2.Add (this.rbBefore);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.rbBefore]));
+			w7.Position = 0;
+			w7.Expand = false;
+			w7.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.rbAfter = new global::Gtk.RadioButton ("After");
+			this.rbAfter.CanFocus = true;
+			this.rbAfter.Name = "rbAfter";
+			this.rbAfter.DrawIndicator = true;
+			this.rbAfter.UseUnderline = true;
+			this.rbAfter.Group = this.rbBefore.Group;
+			this.vbox2.Add (this.rbAfter);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.rbAfter]));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
+			this.GtkAlignment2.Add (this.vbox2);
+			this.frame1.Add (this.GtkAlignment2);
+			this.GtkLabel4 = new global::Gtk.Label ();
+			this.GtkLabel4.Name = "GtkLabel4";
+			this.GtkLabel4.LabelProp = "<b>Position</b>";
+			this.GtkLabel4.UseMarkup = true;
+			this.frame1.LabelWidget = this.GtkLabel4;
+			this.hbox3.Add (this.frame1);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.frame1]));
+			w11.Position = 0;
+			// Container child hbox3.Gtk.Box+BoxChild
+			this.frame2 = new global::Gtk.Frame ();
+			this.frame2.Name = "frame2";
+			this.frame2.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child frame2.Gtk.Container+ContainerChild
+			this.GtkAlignment3 = new global::Gtk.Alignment (0F, 0F, 1F, 1F);
+			this.GtkAlignment3.Name = "GtkAlignment3";
+			this.GtkAlignment3.LeftPadding = ((uint)(12));
+			// Container child GtkAlignment3.Gtk.Container+ContainerChild
+			this.vbox4 = new global::Gtk.VBox ();
+			this.vbox4.Name = "vbox4";
+			this.vbox4.Spacing = 6;
+			// Container child vbox4.Gtk.Box+BoxChild
 			this.hbox4 = new global::Gtk.HBox ();
 			this.hbox4.Name = "hbox4";
 			this.hbox4.Spacing = 6;
@@ -86,26 +179,26 @@ namespace Colorado.Gui
 			this.label3.Name = "label3";
 			this.label3.LabelProp = "From";
 			this.hbox4.Add (this.label3);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.label3]));
-			w6.Position = 0;
-			w6.Expand = false;
-			w6.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.label3]));
+			w12.Position = 0;
+			w12.Expand = false;
+			w12.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.sbFrom = new global::Gtk.SpinButton (0D, 100D, 1D);
+			this.sbFrom = new global::Gtk.SpinButton (0, 100, 1);
 			this.sbFrom.CanFocus = true;
 			this.sbFrom.Name = "sbFrom";
-			this.sbFrom.Adjustment.PageIncrement = 10D;
-			this.sbFrom.ClimbRate = 1D;
+			this.sbFrom.Adjustment.PageIncrement = 10;
+			this.sbFrom.ClimbRate = 1;
 			this.sbFrom.Numeric = true;
 			this.hbox4.Add (this.sbFrom);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.sbFrom]));
-			w7.Position = 1;
-			this.vbox3.Add (this.hbox4);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox4]));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
-			// Container child vbox3.Gtk.Box+BoxChild
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.sbFrom]));
+			w13.Position = 1;
+			this.vbox4.Add (this.hbox4);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.hbox4]));
+			w14.Position = 0;
+			w14.Expand = false;
+			w14.Fill = false;
+			// Container child vbox4.Gtk.Box+BoxChild
 			this.hbox5 = new global::Gtk.HBox ();
 			this.hbox5.Name = "hbox5";
 			this.hbox5.Spacing = 6;
@@ -114,37 +207,52 @@ namespace Colorado.Gui
 			this.label4.Name = "label4";
 			this.label4.LabelProp = "Number";
 			this.hbox5.Add (this.label4);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label4]));
-			w9.Position = 0;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label4]));
+			w15.Position = 0;
+			w15.Expand = false;
+			w15.Fill = false;
 			// Container child hbox5.Gtk.Box+BoxChild
-			this.sbNumber = new global::Gtk.SpinButton (0D, 100D, 1D);
+			this.sbNumber = new global::Gtk.SpinButton (0, 100, 1);
 			this.sbNumber.CanFocus = true;
 			this.sbNumber.Name = "sbNumber";
-			this.sbNumber.Adjustment.PageIncrement = 10D;
-			this.sbNumber.ClimbRate = 1D;
+			this.sbNumber.Adjustment.PageIncrement = 10;
+			this.sbNumber.ClimbRate = 1;
 			this.sbNumber.Numeric = true;
 			this.hbox5.Add (this.sbNumber);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.sbNumber]));
-			w10.Position = 1;
-			this.vbox3.Add (this.hbox5);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox5]));
-			w11.Position = 2;
-			w11.Expand = false;
-			w11.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.sbNumber]));
+			w16.Position = 1;
+			this.vbox4.Add (this.hbox5);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.hbox5]));
+			w17.Position = 1;
+			w17.Expand = false;
+			w17.Fill = false;
+			this.GtkAlignment3.Add (this.vbox4);
+			this.frame2.Add (this.GtkAlignment3);
+			this.GtkLabel5 = new global::Gtk.Label ();
+			this.GtkLabel5.Name = "GtkLabel5";
+			this.GtkLabel5.LabelProp = "<b>Values</b>";
+			this.GtkLabel5.UseMarkup = true;
+			this.frame2.LabelWidget = this.GtkLabel5;
+			this.hbox3.Add (this.frame2);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.frame2]));
+			w20.Position = 1;
+			this.vbox3.Add (this.hbox3);
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox3]));
+			w21.Position = 1;
+			w21.Expand = false;
+			w21.Fill = false;
 			w1.Add (this.vbox3);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(w1 [this.vbox3]));
-			w12.Position = 0;
-			w12.Expand = false;
-			w12.Fill = false;
-			w12.Padding = ((uint)(5));
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(w1 [this.vbox3]));
+			w22.Position = 0;
+			w22.Expand = false;
+			w22.Fill = false;
+			w22.Padding = ((uint)(5));
 			// Internal child Colorado.Gui.DlgIncDec.ActionArea
-			global::Gtk.HButtonBox w13 = this.ActionArea;
-			w13.Name = "dialog1_ActionArea";
-			w13.Spacing = 10;
-			w13.BorderWidth = ((uint)(5));
-			w13.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
+			global::Gtk.HButtonBox w23 = this.ActionArea;
+			w23.Name = "dialog1_ActionArea";
+			w23.Spacing = 10;
+			w23.BorderWidth = ((uint)(5));
+			w23.LayoutStyle = ((global::Gtk.ButtonBoxStyle)(4));
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonCancel = new global::Gtk.Button ();
 			this.buttonCancel.CanDefault = true;
@@ -154,9 +262,9 @@ namespace Colorado.Gui
 			this.buttonCancel.UseUnderline = true;
 			this.buttonCancel.Label = "gtk-cancel";
 			this.AddActionWidget (this.buttonCancel, -6);
-			global::Gtk.ButtonBox.ButtonBoxChild w14 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w13 [this.buttonCancel]));
-			w14.Expand = false;
-			w14.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w24 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w23 [this.buttonCancel]));
+			w24.Expand = false;
+			w24.Fill = false;
 			// Container child dialog1_ActionArea.Gtk.ButtonBox+ButtonBoxChild
 			this.buttonOk = new global::Gtk.Button ();
 			this.buttonOk.CanDefault = true;
@@ -166,15 +274,16 @@ namespace Colorado.Gui
 			this.buttonOk.UseUnderline = true;
 			this.buttonOk.Label = "gtk-ok";
 			this.AddActionWidget (this.buttonOk, -5);
-			global::Gtk.ButtonBox.ButtonBoxChild w15 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w13 [this.buttonOk]));
-			w15.Position = 1;
-			w15.Expand = false;
-			w15.Fill = false;
+			global::Gtk.ButtonBox.ButtonBoxChild w25 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w23 [this.buttonOk]));
+			w25.Position = 1;
+			w25.Expand = false;
+			w25.Fill = false;
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
 			this.DefaultWidth = 393;
-			this.DefaultHeight = 156;
+			this.DefaultHeight = 167;
+			this.buttonOk.HasDefault = true;
 			this.Show ();
 		}
 	}

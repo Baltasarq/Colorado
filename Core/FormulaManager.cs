@@ -6,6 +6,7 @@ namespace Colorado.Core {
 		public FormulaManager(CsvDocument doc)
 		{
 			this.document = doc;
+			this.PrepareFormulas();
 		}
 
 		private void PrepareFormulas()

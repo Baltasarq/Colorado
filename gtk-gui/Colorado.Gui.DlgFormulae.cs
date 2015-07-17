@@ -88,7 +88,6 @@ namespace Colorado.Gui
 			this.rbLeft = new global::Gtk.RadioButton ("Left");
 			this.rbLeft.CanFocus = true;
 			this.rbLeft.Name = "rbLeft";
-			this.rbLeft.Active = true;
 			this.rbLeft.DrawIndicator = true;
 			this.rbLeft.UseUnderline = true;
 			this.rbLeft.Group = new global::GLib.SList (global::System.IntPtr.Zero);
@@ -186,7 +185,7 @@ namespace Colorado.Gui
 				this.Child.ShowAll ();
 			}
 			this.DefaultWidth = 400;
-			this.DefaultHeight = 252;
+			this.DefaultHeight = 254;
 			this.Show ();
 		}
 	}

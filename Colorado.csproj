@@ -56,14 +56,11 @@
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.MainWindow.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgSearch.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgImport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgCsvExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgProperties.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgClean.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgIncDec.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgCopy.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgFill.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgFormulae.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -80,8 +77,6 @@
     <Compile Include="Core\Formulas\ProductFormula.cs" />
     <Compile Include="Core\Formulas\SubFormula.cs" />
     <Compile Include="Core\Formulas\SumFormula.cs" />
-    <Compile Include="Gui\DlgClean.cs" />
-    <Compile Include="Gui\DlgCopy.cs" />
     <Compile Include="Gui\DlgCsvExport.cs" />
     <Compile Include="Gui\DlgExport.cs" />
     <Compile Include="Gui\DlgFill.cs" />
@@ -89,7 +84,6 @@
     <Compile Include="Gui\DlgImport.cs" />
     <Compile Include="Gui\DlgIncDec.cs" />
     <Compile Include="Gui\DlgProperties.cs" />
-    <Compile Include="Gui\DlgSearch.cs" />
     <Compile Include="Gui\Main.cs" />
     <Compile Include="Gui\MainWindow.cs" />
     <Compile Include="Core\Filler.cs" />
@@ -99,6 +93,8 @@
     <Compile Include="Core\FormulaManager.cs" />
     <Compile Include="Core\CsvDocumentPersistence.cs" />
     <Compile Include="Core\Data.cs" />
+    <Compile Include="Gui\DlgFromTo.cs" />
+    <Compile Include="gtk-gui\Colorado.Gui.DlgFromTo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

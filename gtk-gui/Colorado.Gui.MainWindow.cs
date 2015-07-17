@@ -6,27 +6,23 @@ namespace Colorado.Gui
 	{
 		private global::Gtk.UIManager UIManager;
 		
-		private global::Gtk.Action FileAction;
+		private global::Gtk.Action mFileAction;
 		
-		private global::Gtk.Action HelpAction;
+		private global::Gtk.Action mHelpAction;
 		
-		private global::Gtk.Action ToolsAction;
+		private global::Gtk.Action openAction;
 		
-		private global::Gtk.Action dfdAction;
+		private global::Gtk.Action exitAction;
 		
-		private global::Gtk.Action OpenAction;
+		private global::Gtk.Action findAction;
 		
-		private global::Gtk.Action ExitAction;
+		private global::Gtk.Action aboutAction;
 		
-		private global::Gtk.Action FindAction;
+		private global::Gtk.Action importAction;
 		
-		private global::Gtk.Action AboutAction;
+		private global::Gtk.Action saveAction;
 		
-		private global::Gtk.Action ImportAction;
-		
-		private global::Gtk.Action SaveAction;
-		
-		private global::Gtk.Action SaveAsAction;
+		private global::Gtk.Action saveAsAction;
 		
 		private global::Gtk.Action convertAction;
 		
@@ -34,103 +30,63 @@ namespace Colorado.Gui
 		
 		private global::Gtk.Action propertiesAction;
 		
-		private global::Gtk.Action EditAction;
+		private global::Gtk.Action mEditAction;
 		
-		private global::Gtk.Action RowsAction;
+		private global::Gtk.Action mRowsAction;
 		
-		private global::Gtk.Action ColumnsAction;
+		private global::Gtk.Action mColumnsAction;
 		
-		private global::Gtk.Action addRows;
+		private global::Gtk.Action removeRowsAction;
 		
-		private global::Gtk.Action removeAction;
+		private global::Gtk.Action addColumnsAction;
 		
-		private global::Gtk.Action addColumns;
+		private global::Gtk.Action removeColumnsAction;
 		
-		private global::Gtk.Action removeColumnAction;
-		
-		private global::Gtk.Action CleanRowAction;
-		
-		private global::Gtk.Action CopyRowAction;
+		private global::Gtk.Action cleanRowAction;
 		
 		private global::Gtk.Action newAction;
 		
-		private global::Gtk.Action RowAction;
-		
 		private global::Gtk.Action clearAction;
 		
-		private global::Gtk.Action gotoBottomAction;
-		
-		private global::Gtk.Action clearColumnAction;
+		private global::Gtk.Action copyRowAction;
 		
 		private global::Gtk.Action copyColumnAction;
 		
-		private global::Gtk.Action FindAgainAction;
+		private global::Gtk.Action findAgainAction;
 		
 		private global::Gtk.Action revertToSavedAction;
 		
-		private global::Gtk.Action btNew;
+		private global::Gtk.Action addRowsAction;
 		
-		private global::Gtk.Action btOpen;
-		
-		private global::Gtk.Action btSave;
-		
-		private global::Gtk.Action btProperties;
-		
-		private global::Gtk.Action btFind;
-		
-		private global::Gtk.Action btAdd;
-		
-		private global::Gtk.Action btRemove;
-		
-		private global::Gtk.Action ViewAction;
-		
-		private global::Gtk.Action ToolbarAction;
+		private global::Gtk.Action mViewAction;
 		
 		private global::Gtk.ToggleAction viewToolbarAction;
 		
-		private global::Gtk.Action btClearRow;
+		private global::Gtk.Action fillRowAction;
 		
-		private global::Gtk.Action btCopyRow;
-		
-		private global::Gtk.Action btAddColumns;
-		
-		private global::Gtk.Action btRemoveColumn;
-		
-		private global::Gtk.Action btClearColumn;
-		
-		private global::Gtk.Action btCopyColumn;
-		
-		private global::Gtk.Action kAction;
-		
-		private global::Gtk.Action btInsert;
-		
-		private global::Gtk.Action insertRows;
-		
-		private global::Gtk.Action insertColumns;
-		
-		private global::Gtk.Action btInsertColumns;
-		
-		private global::Gtk.Action fillRow;
-		
-		private global::Gtk.Action fillColumn;
-		
-		private global::Gtk.Action btFillRow;
-		
-		private global::Gtk.Action btFillColumn;
+		private global::Gtk.Action fillColumnAction;
 		
 		private global::Gtk.Action insertFormulaAction;
+		
+		private global::Gtk.Action cleanColumnAction;
 		
 		private global::Gtk.VBox vbox1;
 		
 		private global::Gtk.MenuBar menubar2;
 		
+		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.Toolbar tbToolBar;
+		
+		private global::Gtk.Entry edFind;
 		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 		
 		private global::Gtk.TreeView tvTable;
 		
 		private global::Gtk.Statusbar sbStatus;
+		
+		private global::Gtk.VSeparator vseparator1;
 		
 		private global::Gtk.Label lblType;
 		
@@ -144,39 +100,33 @@ namespace Colorado.Gui
 			// Widget Colorado.Gui.MainWindow
 			this.UIManager = new global::Gtk.UIManager ();
 			global::Gtk.ActionGroup w1 = new global::Gtk.ActionGroup ("Default");
-			this.FileAction = new global::Gtk.Action ("FileAction", "_File", null, null);
-			this.FileAction.ShortLabel = "_File";
-			w1.Add (this.FileAction, null);
-			this.HelpAction = new global::Gtk.Action ("HelpAction", "_Help", null, null);
-			this.HelpAction.ShortLabel = "_Help";
-			w1.Add (this.HelpAction, null);
-			this.ToolsAction = new global::Gtk.Action ("ToolsAction", "_Tools", null, null);
-			this.ToolsAction.ShortLabel = "_Edit";
-			w1.Add (this.ToolsAction, null);
-			this.dfdAction = new global::Gtk.Action ("dfdAction", "dfd", null, null);
-			this.dfdAction.ShortLabel = "dfd";
-			w1.Add (this.dfdAction, null);
-			this.OpenAction = new global::Gtk.Action ("OpenAction", "_Open", null, "gtk-open");
-			this.OpenAction.ShortLabel = "_Open";
-			w1.Add (this.OpenAction, null);
-			this.ExitAction = new global::Gtk.Action ("ExitAction", "_Exit", null, "gtk-quit");
-			this.ExitAction.ShortLabel = "_Exit";
-			w1.Add (this.ExitAction, null);
-			this.FindAction = new global::Gtk.Action ("FindAction", "_Find", null, "gtk-find");
-			this.FindAction.ShortLabel = "_Find";
-			w1.Add (this.FindAction, null);
-			this.AboutAction = new global::Gtk.Action ("AboutAction", "_About", null, "gtk-about");
-			this.AboutAction.ShortLabel = "_About";
-			w1.Add (this.AboutAction, null);
-			this.ImportAction = new global::Gtk.Action ("ImportAction", "_Import", null, "gtk-convert");
-			this.ImportAction.ShortLabel = "_Import";
-			w1.Add (this.ImportAction, null);
-			this.SaveAction = new global::Gtk.Action ("SaveAction", "Save", null, "gtk-save");
-			this.SaveAction.ShortLabel = "Save";
-			w1.Add (this.SaveAction, null);
-			this.SaveAsAction = new global::Gtk.Action ("SaveAsAction", "Save as...", null, "gtk-save-as");
-			this.SaveAsAction.ShortLabel = "Save as...";
-			w1.Add (this.SaveAsAction, null);
+			this.mFileAction = new global::Gtk.Action ("mFileAction", "_File", null, null);
+			this.mFileAction.ShortLabel = "_File";
+			w1.Add (this.mFileAction, null);
+			this.mHelpAction = new global::Gtk.Action ("mHelpAction", "_Help", null, null);
+			this.mHelpAction.ShortLabel = "_Help";
+			w1.Add (this.mHelpAction, null);
+			this.openAction = new global::Gtk.Action ("openAction", "_Open", null, "gtk-open");
+			this.openAction.ShortLabel = "_Open";
+			w1.Add (this.openAction, null);
+			this.exitAction = new global::Gtk.Action ("exitAction", "_Exit", null, "gtk-quit");
+			this.exitAction.ShortLabel = "_Exit";
+			w1.Add (this.exitAction, null);
+			this.findAction = new global::Gtk.Action ("findAction", "_Find", null, "gtk-find");
+			this.findAction.ShortLabel = "_Find";
+			w1.Add (this.findAction, null);
+			this.aboutAction = new global::Gtk.Action ("aboutAction", "_About", null, "gtk-about");
+			this.aboutAction.ShortLabel = "_About";
+			w1.Add (this.aboutAction, null);
+			this.importAction = new global::Gtk.Action ("importAction", "_Import", null, "gtk-convert");
+			this.importAction.ShortLabel = "_Import";
+			w1.Add (this.importAction, null);
+			this.saveAction = new global::Gtk.Action ("saveAction", "Save", null, "gtk-save");
+			this.saveAction.ShortLabel = "Save";
+			w1.Add (this.saveAction, null);
+			this.saveAsAction = new global::Gtk.Action ("saveAsAction", "Save as...", null, "gtk-save-as");
+			this.saveAsAction.ShortLabel = "Save as...";
+			w1.Add (this.saveAsAction, null);
 			this.convertAction = new global::Gtk.Action ("convertAction", "Export", null, "gtk-convert");
 			this.convertAction.ShortLabel = "Export";
 			w1.Add (this.convertAction, null);
@@ -186,119 +136,67 @@ namespace Colorado.Gui
 			this.propertiesAction = new global::Gtk.Action ("propertiesAction", "_Properties", null, "gtk-properties");
 			this.propertiesAction.ShortLabel = "_Properties";
 			w1.Add (this.propertiesAction, "F2");
-			this.EditAction = new global::Gtk.Action ("EditAction", "_Edit", null, null);
-			this.EditAction.ShortLabel = "_Edit";
-			w1.Add (this.EditAction, null);
-			this.RowsAction = new global::Gtk.Action ("RowsAction", "_Rows", null, null);
-			this.RowsAction.ShortLabel = "Rows";
-			w1.Add (this.RowsAction, null);
-			this.ColumnsAction = new global::Gtk.Action ("ColumnsAction", "_Columns", null, null);
-			this.ColumnsAction.ShortLabel = "Columns";
-			w1.Add (this.ColumnsAction, null);
-			this.addRows = new global::Gtk.Action ("addRows", "_Add rows", null, "gtk-add");
-			this.addRows.ShortLabel = "_Insert rows";
-			w1.Add (this.addRows, "<Control>plus");
-			this.removeAction = new global::Gtk.Action ("removeAction", "_Remove rows", null, "gtk-remove");
-			this.removeAction.ShortLabel = "_Remove rows";
-			w1.Add (this.removeAction, "<Control>minus");
-			this.addColumns = new global::Gtk.Action ("addColumns", "_Add columns", null, "gtk-add");
-			this.addColumns.ShortLabel = "_Insert columns";
-			w1.Add (this.addColumns, null);
-			this.removeColumnAction = new global::Gtk.Action ("removeColumnAction", "_Remove columns", null, "gtk-remove");
-			this.removeColumnAction.ShortLabel = "_Remove columns";
-			w1.Add (this.removeColumnAction, null);
-			this.CleanRowAction = new global::Gtk.Action ("CleanRowAction", "_Clean row", null, null);
-			this.CleanRowAction.ShortLabel = "_Clean row";
-			w1.Add (this.CleanRowAction, null);
-			this.CopyRowAction = new global::Gtk.Action ("CopyRowAction", "Cop_y row", null, null);
-			this.CopyRowAction.ShortLabel = "Cop_y row";
-			w1.Add (this.CopyRowAction, null);
+			this.mEditAction = new global::Gtk.Action ("mEditAction", "_Edit", null, null);
+			this.mEditAction.ShortLabel = "_Edit";
+			w1.Add (this.mEditAction, null);
+			this.mRowsAction = new global::Gtk.Action ("mRowsAction", "_Rows", null, null);
+			this.mRowsAction.ShortLabel = "Rows";
+			w1.Add (this.mRowsAction, null);
+			this.mColumnsAction = new global::Gtk.Action ("mColumnsAction", "_Columns", null, null);
+			this.mColumnsAction.ShortLabel = "Columns";
+			w1.Add (this.mColumnsAction, null);
+			this.removeRowsAction = new global::Gtk.Action ("removeRowsAction", "_Remove rows", null, "gtk-remove");
+			this.removeRowsAction.ShortLabel = "_Remove rows";
+			w1.Add (this.removeRowsAction, "<Control>minus");
+			this.addColumnsAction = new global::Gtk.Action ("addColumnsAction", "_Add columns", null, "gtk-add");
+			this.addColumnsAction.ShortLabel = "_Insert columns";
+			w1.Add (this.addColumnsAction, null);
+			this.removeColumnsAction = new global::Gtk.Action ("removeColumnsAction", "_Remove columns", null, "gtk-remove");
+			this.removeColumnsAction.ShortLabel = "_Remove columns";
+			w1.Add (this.removeColumnsAction, null);
+			this.cleanRowAction = new global::Gtk.Action ("cleanRowAction", "_Clean row", null, "gtk-clear");
+			this.cleanRowAction.ShortLabel = "_Clean row";
+			w1.Add (this.cleanRowAction, null);
 			this.newAction = new global::Gtk.Action ("newAction", "_New", null, "gtk-new");
 			this.newAction.ShortLabel = "_New";
 			w1.Add (this.newAction, null);
-			this.RowAction = new global::Gtk.Action ("RowAction", "_Row", null, null);
-			this.RowAction.ShortLabel = "_Row";
-			w1.Add (this.RowAction, null);
 			this.clearAction = new global::Gtk.Action ("clearAction", "_Clean row", null, "gtk-clear");
 			this.clearAction.ShortLabel = "_Clean row";
 			w1.Add (this.clearAction, "<Control>Delete");
-			this.gotoBottomAction = new global::Gtk.Action ("gotoBottomAction", "Cop_y row", null, "gtk-goto-bottom");
-			this.gotoBottomAction.ShortLabel = "Cop_y row";
-			w1.Add (this.gotoBottomAction, "<Alt>c");
-			this.clearColumnAction = new global::Gtk.Action ("clearColumnAction", "_Clear column", null, "gtk-clear");
-			this.clearColumnAction.ShortLabel = "_Clear column";
-			w1.Add (this.clearColumnAction, null);
+			this.copyRowAction = new global::Gtk.Action ("copyRowAction", "Cop_y row", null, "gtk-goto-bottom");
+			this.copyRowAction.ShortLabel = "Cop_y row";
+			w1.Add (this.copyRowAction, "<Alt>c");
 			this.copyColumnAction = new global::Gtk.Action ("copyColumnAction", "_Copy column", null, "gtk-goto-last");
 			this.copyColumnAction.ShortLabel = "_Copy column";
 			w1.Add (this.copyColumnAction, null);
-			this.FindAgainAction = new global::Gtk.Action ("FindAgainAction", "Find _again", null, "gtk-jump-to");
-			this.FindAgainAction.ShortLabel = "Find _again";
-			w1.Add (this.FindAgainAction, "F3");
+			this.findAgainAction = new global::Gtk.Action ("findAgainAction", "Find _again", null, "gtk-jump-to");
+			this.findAgainAction.ShortLabel = "Find _again";
+			w1.Add (this.findAgainAction, "F3");
 			this.revertToSavedAction = new global::Gtk.Action ("revertToSavedAction", "_Revert", null, "gtk-revert-to-saved");
 			this.revertToSavedAction.ShortLabel = "_Revert";
 			w1.Add (this.revertToSavedAction, null);
-			this.btNew = new global::Gtk.Action ("btNew", null, "New", "gtk-new");
-			w1.Add (this.btNew, null);
-			this.btOpen = new global::Gtk.Action ("btOpen", null, "Open", "gtk-open");
-			w1.Add (this.btOpen, null);
-			this.btSave = new global::Gtk.Action ("btSave", null, "Save", "gtk-save");
-			w1.Add (this.btSave, null);
-			this.btProperties = new global::Gtk.Action ("btProperties", null, "Properties", "gtk-properties");
-			w1.Add (this.btProperties, null);
-			this.btFind = new global::Gtk.Action ("btFind", null, "Find", "gtk-find");
-			w1.Add (this.btFind, null);
-			this.btAdd = new global::Gtk.Action ("btAdd", null, "Add rows", "gtk-add");
-			w1.Add (this.btAdd, null);
-			this.btRemove = new global::Gtk.Action ("btRemove", null, "Remove rows", "gtk-remove");
-			w1.Add (this.btRemove, null);
-			this.ViewAction = new global::Gtk.Action ("ViewAction", "_View", null, null);
-			this.ViewAction.ShortLabel = "_View";
-			w1.Add (this.ViewAction, null);
-			this.ToolbarAction = new global::Gtk.Action ("ToolbarAction", "_Toolbar", null, null);
-			this.ToolbarAction.ShortLabel = "_Toolbar";
-			w1.Add (this.ToolbarAction, null);
+			this.addRowsAction = new global::Gtk.Action ("addRowsAction", "_Add rows", "Add rows", "gtk-add");
+			this.addRowsAction.ShortLabel = "_Add rows";
+			w1.Add (this.addRowsAction, "<Primary>plus");
+			this.mViewAction = new global::Gtk.Action ("mViewAction", "_View", null, null);
+			this.mViewAction.ShortLabel = "_View";
+			w1.Add (this.mViewAction, null);
 			this.viewToolbarAction = new global::Gtk.ToggleAction ("viewToolbarAction", "_Toolbar", null, null);
 			this.viewToolbarAction.Active = true;
 			this.viewToolbarAction.ShortLabel = "_Toolbar";
 			w1.Add (this.viewToolbarAction, null);
-			this.btClearRow = new global::Gtk.Action ("btClearRow", null, "Clear row values", "gtk-clear");
-			w1.Add (this.btClearRow, null);
-			this.btCopyRow = new global::Gtk.Action ("btCopyRow", null, "Copy row", "gtk-goto-bottom");
-			w1.Add (this.btCopyRow, null);
-			this.btAddColumns = new global::Gtk.Action ("btAddColumns", null, "Add columns", "gtk-add");
-			w1.Add (this.btAddColumns, null);
-			this.btRemoveColumn = new global::Gtk.Action ("btRemoveColumn", null, "Remove columns", "gtk-remove");
-			w1.Add (this.btRemoveColumn, null);
-			this.btClearColumn = new global::Gtk.Action ("btClearColumn", null, "Clear column values", "gtk-clear");
-			w1.Add (this.btClearColumn, null);
-			this.btCopyColumn = new global::Gtk.Action ("btCopyColumn", null, "Copy column", "gtk-goto-last");
-			w1.Add (this.btCopyColumn, null);
-			this.kAction = new global::Gtk.Action ("kAction", "k", null, null);
-			this.kAction.ShortLabel = "k";
-			w1.Add (this.kAction, null);
-			this.btInsert = new global::Gtk.Action ("btInsert", null, "Insert rows", "gtk-indent");
-			w1.Add (this.btInsert, null);
-			this.insertRows = new global::Gtk.Action ("insertRows", "_Insert rows", null, "gtk-indent");
-			this.insertRows.ShortLabel = "_Insert rows";
-			w1.Add (this.insertRows, "<Alt>plus");
-			this.insertColumns = new global::Gtk.Action ("insertColumns", "_Insert columns", null, "gtk-indent");
-			this.insertColumns.ShortLabel = "_Insert columns";
-			w1.Add (this.insertColumns, null);
-			this.btInsertColumns = new global::Gtk.Action ("btInsertColumns", null, "Insert columns", "gtk-indent");
-			w1.Add (this.btInsertColumns, null);
-			this.fillRow = new global::Gtk.Action ("fillRow", "_Fill row", null, "gtk-color-picker");
-			this.fillRow.ShortLabel = "_Fill row";
-			w1.Add (this.fillRow, null);
-			this.fillColumn = new global::Gtk.Action ("fillColumn", "_Fill column", null, "gtk-color-picker");
-			this.fillColumn.ShortLabel = "_Fill column";
-			w1.Add (this.fillColumn, null);
-			this.btFillRow = new global::Gtk.Action ("btFillRow", null, null, "gtk-color-picker");
-			w1.Add (this.btFillRow, null);
-			this.btFillColumn = new global::Gtk.Action ("btFillColumn", null, null, "gtk-color-picker");
-			w1.Add (this.btFillColumn, null);
+			this.fillRowAction = new global::Gtk.Action ("fillRowAction", "_Fill row", null, "gtk-color-picker");
+			this.fillRowAction.ShortLabel = "_Fill row";
+			w1.Add (this.fillRowAction, null);
+			this.fillColumnAction = new global::Gtk.Action ("fillColumnAction", "_Fill column", null, "gtk-color-picker");
+			this.fillColumnAction.ShortLabel = "_Fill column";
+			w1.Add (this.fillColumnAction, null);
 			this.insertFormulaAction = new global::Gtk.Action ("insertFormulaAction", "_Insert formula", null, "gtk-edit");
 			this.insertFormulaAction.ShortLabel = "_Insert formula";
 			w1.Add (this.insertFormulaAction, null);
+			this.cleanColumnAction = new global::Gtk.Action ("cleanColumnAction", "_Clean column", null, "gtk-clear");
+			this.cleanColumnAction.ShortLabel = "_Clean column";
+			w1.Add (this.cleanColumnAction, null);
 			this.UIManager.InsertActionGroup (w1, 0);
 			this.AddAccelGroup (this.UIManager.AccelGroup);
 			this.Name = "Colorado.Gui.MainWindow";
@@ -310,7 +208,7 @@ namespace Colorado.Gui
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><menubar name='menubar2'><menu name='FileAction' action='FileAction'><menuitem name='newAction' action='newAction'/><menuitem name='OpenAction' action='OpenAction'/><menuitem name='SaveAction' action='SaveAction'/><menuitem name='SaveAsAction' action='SaveAsAction'/><separator/><menuitem name='propertiesAction' action='propertiesAction'/><menuitem name='closeAction' action='closeAction'/><separator/><menuitem name='revertToSavedAction' action='revertToSavedAction'/><menuitem name='ImportAction' action='ImportAction'/><menuitem name='convertAction' action='convertAction'/><menuitem name='ExitAction' action='ExitAction'/></menu><menu name='EditAction' action='EditAction'><menuitem name='FindAction' action='FindAction'/><menuitem name='FindAgainAction' action='FindAgainAction'/><menuitem name='insertFormulaAction' action='insertFormulaAction'/><separator/><menu name='RowsAction' action='RowsAction'><menuitem name='addRows' action='addRows'/><menuitem name='insertRows' action='insertRows'/><menuitem name='removeAction' action='removeAction'/><menuitem name='clearAction' action='clearAction'/><menuitem name='gotoBottomAction' action='gotoBottomAction'/><menuitem name='fillRow' action='fillRow'/></menu><menu name='ColumnsAction' action='ColumnsAction'><menuitem name='addColumns' action='addColumns'/><menuitem name='insertColumns' action='insertColumns'/><menuitem name='removeColumnAction' action='removeColumnAction'/><menuitem name='clearColumnAction' action='clearColumnAction'/><menuitem name='copyColumnAction' action='copyColumnAction'/><menuitem name='fillColumn' action='fillColumn'/></menu></menu><menu name='ViewAction' action='ViewAction'><menuitem name='viewToolbarAction' action='viewToolbarAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
+			this.UIManager.AddUiFromString ("<ui><menubar name='menubar2'><menu name='mFileAction' action='mFileAction'><menuitem name='newAction' action='newAction'/><menuitem name='openAction' action='openAction'/><menuitem name='saveAction' action='saveAction'/><menuitem name='saveAsAction' action='saveAsAction'/><separator/><menuitem name='propertiesAction' action='propertiesAction'/><menuitem name='closeAction' action='closeAction'/><separator/><menuitem name='revertToSavedAction' action='revertToSavedAction'/><menuitem name='importAction' action='importAction'/><menuitem name='convertAction' action='convertAction'/><menuitem name='exitAction' action='exitAction'/></menu><menu name='mEditAction' action='mEditAction'><menuitem name='findAction' action='findAction'/><menuitem name='findAgainAction' action='findAgainAction'/><menuitem name='insertFormulaAction' action='insertFormulaAction'/><separator/><menu name='mRowsAction' action='mRowsAction'><menuitem name='addRowsAction' action='addRowsAction'/><menuitem name='removeRowsAction' action='removeRowsAction'/><menuitem name='cleanRowAction' action='cleanRowAction'/><menuitem name='copyRowAction' action='copyRowAction'/><menuitem name='fillRowAction' action='fillRowAction'/></menu><menu name='mColumnsAction' action='mColumnsAction'><menuitem name='addColumnsAction' action='addColumnsAction'/><menuitem name='removeColumnsAction' action='removeColumnsAction'/><menuitem/><menuitem name='copyColumnAction' action='copyColumnAction'/><menuitem name='cleanColumnAction' action='cleanColumnAction'/><menuitem name='fillColumnAction' action='fillColumnAction'/></menu></menu><menu name='mViewAction' action='mViewAction'><menuitem name='viewToolbarAction' action='viewToolbarAction'/></menu><menu name='mHelpAction' action='mHelpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 			this.menubar2 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar2")));
 			this.menubar2.Name = "menubar2";
 			this.vbox1.Add (this.menubar2);
@@ -319,17 +217,34 @@ namespace Colorado.Gui
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><toolbar name='tbToolBar'><toolitem name='btNew' action='btNew'/><toolitem name='btOpen' action='btOpen'/><separator/><toolitem name='btSave' action='btSave'/><toolitem name='btProperties' action='btProperties'/><toolitem name='btFind' action='btFind'/><separator/><toolitem name='btAdd' action='btAdd'/><toolitem name='btInsert' action='btInsert'/><toolitem name='btRemove' action='btRemove'/><toolitem name='btClearRow' action='btClearRow'/><toolitem name='btCopyRow' action='btCopyRow'/><toolitem name='btFillRow' action='btFillRow'/><separator/><toolitem name='btAddColumns' action='btAddColumns'/><toolitem name='btInsertColumns' action='btInsertColumns'/><toolitem name='btRemoveColumn' action='btRemoveColumn'/><toolitem name='btClearColumn' action='btClearColumn'/><toolitem name='btCopyColumn' action='btCopyColumn'/><toolitem name='btFillColumn' action='btFillColumn'/></toolbar></ui>");
+			this.hbox1 = new global::Gtk.HBox ();
+			this.hbox1.Name = "hbox1";
+			this.hbox1.Spacing = 6;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.UIManager.AddUiFromString ("<ui><toolbar name='tbToolBar'><toolitem name='newAction' action='newAction'/><toolitem name='openAction' action='openAction'/><separator/><toolitem name='saveAction' action='saveAction'/><toolitem name='propertiesAction' action='propertiesAction'/><toolitem name='findAction' action='findAction'/><separator/><toolitem name='addRowsAction' action='addRowsAction'/><toolitem name='removeRowsAction' action='removeRowsAction'/><toolitem name='cleanRowAction' action='cleanRowAction'/><toolitem name='copyRowAction' action='copyRowAction'/><toolitem name='fillRowAction' action='fillRowAction'/><separator/><toolitem name='addColumnsAction' action='addColumnsAction'/><toolitem name='removeColumnsAction' action='removeColumnsAction'/><toolitem/><toolitem name='cleanColumnAction' action='cleanColumnAction'/><toolitem name='copyColumnAction' action='copyColumnAction'/><toolitem name='fillColumnAction' action='fillColumnAction'/></toolbar></ui>");
 			this.tbToolBar = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/tbToolBar")));
 			this.tbToolBar.Name = "tbToolBar";
 			this.tbToolBar.ShowArrow = false;
 			this.tbToolBar.ToolbarStyle = ((global::Gtk.ToolbarStyle)(0));
 			this.tbToolBar.IconSize = ((global::Gtk.IconSize)(3));
-			this.vbox1.Add (this.tbToolBar);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.tbToolBar]));
-			w3.Position = 1;
-			w3.Expand = false;
-			w3.Fill = false;
+			this.hbox1.Add (this.tbToolBar);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.tbToolBar]));
+			w3.Position = 0;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.edFind = new global::Gtk.Entry ();
+			this.edFind.CanFocus = true;
+			this.edFind.Name = "edFind";
+			this.edFind.Text = "Find...";
+			this.edFind.IsEditable = true;
+			this.edFind.InvisibleChar = '●';
+			this.hbox1.Add (this.edFind);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.edFind]));
+			w4.Position = 1;
+			this.vbox1.Add (this.hbox1);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
+			w5.Position = 1;
+			w5.Expand = false;
+			w5.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -341,97 +256,89 @@ namespace Colorado.Gui
 			this.tvTable.EnableSearch = false;
 			this.GtkScrolledWindow.Add (this.tvTable);
 			this.vbox1.Add (this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.GtkScrolledWindow]));
-			w5.Position = 2;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.GtkScrolledWindow]));
+			w7.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.sbStatus = new global::Gtk.Statusbar ();
 			this.sbStatus.Name = "sbStatus";
 			this.sbStatus.Spacing = 6;
 			// Container child sbStatus.Gtk.Box+BoxChild
+			this.vseparator1 = new global::Gtk.VSeparator ();
+			this.vseparator1.Name = "vseparator1";
+			this.sbStatus.Add (this.vseparator1);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.vseparator1]));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child sbStatus.Gtk.Box+BoxChild
 			this.lblType = new global::Gtk.Label ();
 			this.lblType.Name = "lblType";
 			this.lblType.LabelProp = "\"field\", 4.5";
 			this.sbStatus.Add (this.lblType);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.lblType]));
-			w6.Position = 1;
-			w6.Expand = false;
-			w6.Fill = false;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.lblType]));
+			w9.Position = 2;
+			w9.Expand = false;
+			w9.Fill = false;
 			// Container child sbStatus.Gtk.Box+BoxChild
 			this.lblMeasures = new global::Gtk.Label ();
 			this.lblMeasures.Name = "lblMeasures";
 			this.lblMeasures.LabelProp = "[10x10]";
 			this.sbStatus.Add (this.lblMeasures);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.lblMeasures]));
-			w7.PackType = ((global::Gtk.PackType)(1));
-			w7.Position = 2;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.lblMeasures]));
+			w10.PackType = ((global::Gtk.PackType)(1));
+			w10.Position = 3;
+			w10.Expand = false;
+			w10.Fill = false;
 			// Container child sbStatus.Gtk.Box+BoxChild
 			this.vseparator2 = new global::Gtk.VSeparator ();
 			this.vseparator2.Name = "vseparator2";
 			this.sbStatus.Add (this.vseparator2);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.vseparator2]));
-			w8.PackType = ((global::Gtk.PackType)(1));
-			w8.Position = 3;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.sbStatus [this.vseparator2]));
+			w11.PackType = ((global::Gtk.PackType)(1));
+			w11.Position = 4;
+			w11.Expand = false;
+			w11.Fill = false;
 			this.vbox1.Add (this.sbStatus);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.sbStatus]));
-			w9.Position = 3;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.sbStatus]));
+			w12.Position = 3;
+			w12.Expand = false;
+			w12.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}
-			this.DefaultWidth = 746;
+			this.DefaultWidth = 881;
 			this.DefaultHeight = 367;
 			this.Show ();
 			this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
-			this.OpenAction.Activated += new global::System.EventHandler (this.OnOpen);
-			this.ExitAction.Activated += new global::System.EventHandler (this.OnExit);
-			this.FindAction.Activated += new global::System.EventHandler (this.OnFind);
-			this.AboutAction.Activated += new global::System.EventHandler (this.OnAbout);
-			this.ImportAction.Activated += new global::System.EventHandler (this.OnImport);
-			this.SaveAction.Activated += new global::System.EventHandler (this.OnSave);
-			this.SaveAsAction.Activated += new global::System.EventHandler (this.OnSaveAs);
+			this.openAction.Activated += new global::System.EventHandler (this.OnOpen);
+			this.exitAction.Activated += new global::System.EventHandler (this.OnExit);
+			this.findAction.Activated += new global::System.EventHandler (this.OnFind);
+			this.aboutAction.Activated += new global::System.EventHandler (this.OnAbout);
+			this.importAction.Activated += new global::System.EventHandler (this.OnImport);
+			this.saveAction.Activated += new global::System.EventHandler (this.OnSave);
+			this.saveAsAction.Activated += new global::System.EventHandler (this.OnSaveAs);
 			this.convertAction.Activated += new global::System.EventHandler (this.OnExport);
 			this.closeAction.Activated += new global::System.EventHandler (this.OnClose);
 			this.propertiesAction.Activated += new global::System.EventHandler (this.OnProperties);
-			this.addRows.Activated += new global::System.EventHandler (this.OnAddRows);
-			this.removeAction.Activated += new global::System.EventHandler (this.OnRemoveRows);
-			this.addColumns.Activated += new global::System.EventHandler (this.OnAddColumns);
-			this.removeColumnAction.Activated += new global::System.EventHandler (this.OnRemoveColumns);
+			this.removeRowsAction.Activated += new global::System.EventHandler (this.OnRemoveRows);
+			this.addColumnsAction.Activated += new global::System.EventHandler (this.OnAddColumns);
+			this.removeColumnsAction.Activated += new global::System.EventHandler (this.OnRemoveColumns);
+			this.cleanRowAction.Activated += new global::System.EventHandler (this.OnCleanRow);
 			this.newAction.Activated += new global::System.EventHandler (this.OnNew);
-			this.clearAction.Activated += new global::System.EventHandler (this.OnClearRow);
-			this.gotoBottomAction.Activated += new global::System.EventHandler (this.OnCopyRow);
-			this.clearColumnAction.Activated += new global::System.EventHandler (this.OnClearColumn);
+			this.clearAction.Activated += new global::System.EventHandler (this.OnCleanRow);
+			this.copyRowAction.Activated += new global::System.EventHandler (this.OnCopyRow);
 			this.copyColumnAction.Activated += new global::System.EventHandler (this.OnCopyColumn);
-			this.FindAgainAction.Activated += new global::System.EventHandler (this.OnFindAgain);
+			this.findAgainAction.Activated += new global::System.EventHandler (this.OnFindAgain);
 			this.revertToSavedAction.Activated += new global::System.EventHandler (this.OnRevert);
-			this.btNew.Activated += new global::System.EventHandler (this.OnNew);
-			this.btOpen.Activated += new global::System.EventHandler (this.OnOpen);
-			this.btSave.Activated += new global::System.EventHandler (this.OnSave);
-			this.btProperties.Activated += new global::System.EventHandler (this.OnProperties);
-			this.btFind.Activated += new global::System.EventHandler (this.OnFind);
-			this.btAdd.Activated += new global::System.EventHandler (this.OnAddRows);
-			this.btRemove.Activated += new global::System.EventHandler (this.OnRemoveRows);
+			this.addRowsAction.Activated += new global::System.EventHandler (this.OnAddRows);
 			this.viewToolbarAction.Activated += new global::System.EventHandler (this.OnViewToolbarActivated);
-			this.btClearRow.Activated += new global::System.EventHandler (this.OnClearRow);
-			this.btCopyRow.Activated += new global::System.EventHandler (this.OnCopyRow);
-			this.btAddColumns.Activated += new global::System.EventHandler (this.OnAddColumns);
-			this.btRemoveColumn.Activated += new global::System.EventHandler (this.OnRemoveColumns);
-			this.btClearColumn.Activated += new global::System.EventHandler (this.OnClearColumn);
-			this.btCopyColumn.Activated += new global::System.EventHandler (this.OnCopyColumn);
-			this.btInsert.Activated += new global::System.EventHandler (this.OnInsertRows);
-			this.insertRows.Activated += new global::System.EventHandler (this.OnInsertRows);
-			this.insertColumns.Activated += new global::System.EventHandler (this.OnInsertColumns);
-			this.btInsertColumns.Activated += new global::System.EventHandler (this.OnInsertColumns);
-			this.fillRow.Activated += new global::System.EventHandler (this.OnFillRow);
-			this.fillColumn.Activated += new global::System.EventHandler (this.OnFillColumn);
-			this.btFillRow.Activated += new global::System.EventHandler (this.OnFillRow);
-			this.btFillColumn.Activated += new global::System.EventHandler (this.OnFillColumn);
+			this.fillRowAction.Activated += new global::System.EventHandler (this.OnFillRow);
+			this.fillColumnAction.Activated += new global::System.EventHandler (this.OnFillColumn);
 			this.insertFormulaAction.Activated += new global::System.EventHandler (this.OnInsertFormula);
+			this.cleanColumnAction.Activated += new global::System.EventHandler (this.OnCleanColumn);
+			this.edFind.EditingDone += new global::System.EventHandler (this.OnEdFindEntered);
+			this.edFind.Focused += new global::Gtk.FocusedHandler (this.OnEdFindFocused);
 		}
 	}
 }

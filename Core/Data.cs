@@ -6,7 +6,7 @@ namespace Colorado.Core {
 	/// Represents the whole column info, i.e., type and header.
 	/// </summary>
 	public class ColumnInfo {
-		public const string ColEtq = "col";
+		public const string ColEtq = "Col";
 		public enum ColumnType { Text, Number };
 
 		public ColumnInfo() {
@@ -145,25 +145,13 @@ namespace Colorado.Core {
 			this.data.Capacity = numRows;
 
 			for (int i = 0; i < numRows; ++i) {
-				this.data.Add( ( CreateEmptyColumn( numCols ) ) );
+				this.data.Add( ( new List<string>( new string[ numCols ] ) ) );
 			}
 
 			this.numRows = numRows;
 			this.numColumns = numCols;
 			this.CreateDefaultHeaders();
 			this.Changed = true;
-		}
-
-		private List<string> CreateEmptyColumn(int size)
-		{
-			var toret = new List<string>( size );
-
-			// Fill each column
-			for (int j = 0; j < size; ++j) {
-				toret.Add( "" );
-			}
-
-			return toret;
 		}
 
 		/// <summary>
@@ -182,11 +170,12 @@ namespace Colorado.Core {
 					this.data.Capacity = numRows;
 
 					for (int i = 0; i < ( numRows - this.numRows ); ++i) {
-						this.data.Add( CreateEmptyColumn( this.numColumns ) );
+						this.data.Add( new List<string>( new string[ this.numColumns ] ) );
 					}
+				} else {
+					this.data.RemoveRange( numRows, this.NumRows - numRows );
 				}
 
-				this.data.RemoveRange( numRows, NumRows  - numRows );
 				this.numRows = numRows;
 			}
 		}
@@ -210,7 +199,7 @@ namespace Colorado.Core {
 
 					if ( delta > 0 ) {
 						for (int j = 0; j < delta; ++j) {
-							column.AddRange( CreateEmptyColumn( delta ) );
+							column.AddRange( new List<string>( new string[ delta ] ) );
 						}
 					} else {
 						column.RemoveRange( numCols, NumColumns - numCols );
@@ -387,12 +376,17 @@ namespace Colorado.Core {
 
 			// Chk
 			ChkValue( pos, 0, NumRows, "row number for insertion" );
-			ChkValue( numRows, 0, NumRows, "number of rows to insert" );
+			ChkValue( numRows, 0, int.MaxValue, "number of rows to insert" );
 			Changed = true;
 
+			// Create list to insert
+			var newRows = new List<List<string>>( numRows );
 			for (int i = 0; i < numRows; ++i) {
-				this.data.Insert( pos, CreateEmptyColumn( NumColumns ) );
+				newRows.Add( new List<string>( new string[ this.NumColumns ] ) );
 			}
+
+			// Now insert
+			this.data.InsertRange( pos, newRows );
 
 			// Fix
 			this.numRows += numRows;
@@ -431,8 +425,8 @@ namespace Colorado.Core {
 
 			// Prepare empty headers
 			for(int j = pos; j < pos + numCols; ++j) {
-				this.columnInfo.Insert( j,
-					new ColumnInfo(){ Header = "NewCol" + Convert.ToString( j + 1 ) } );
+				this.columnInfo.Insert( j, new ColumnInfo() {
+                    Header = Core.ColumnInfo.ColEtq + Convert.ToString( j + 1 ) } );
 			}
 
 			// Fix
@@ -470,7 +464,11 @@ namespace Colorado.Core {
 			int oldCount = this.columnInfo.Count;
 
 			if ( newColNum != oldCount ) {
-				this.columnInfo.AddRange( new ColumnInfo[ newColNum ] );
+				if ( newColNum > oldCount ) {
+					this.columnInfo.AddRange( new ColumnInfo[ newColNum - oldCount ] );
+				} else {
+					this.columnInfo.RemoveRange( oldCount - newColNum, oldCount - newColNum );
+				}
 
 				// Assign values to new headers: col1, col2...
 				for (int i = oldCount; i < newColNum; ++i) {
@@ -498,7 +496,7 @@ namespace Colorado.Core {
 		/// <param name="i">The index.</param>
 		internal void CreateDefaultHeaders(int i)
 		{
-			for(int j = i; j < NumColumns; ++j) {
+			for(int j = i; j < this.NumColumns; ++j) {
 				this.columnInfo[ j ].Header = "Col" + Convert.ToString( j + 1 );
 			}
 
@@ -513,10 +511,15 @@ namespace Colorado.Core {
 		/// </param>
 		internal void CreateNamedHeaders(string[] headers)
 		{
-			CreateNewColumnsInfo( headers.Length );
+			int i = 0;
+			int lim = Math.Min( headers.Length, this.NumColumns );
 
-			for(int i = 0; i < this.columnInfo.Count; ++i) {
+			for(; i < lim; ++i) {
 				this.columnInfo[ i ].Header = headers[ i ];
+			}
+
+			for (; i < this.NumColumns; ++i) {
+				this.columnInfo[ i ].Header = "";
 			}
 
 			this.firstRowForHeaders = true;

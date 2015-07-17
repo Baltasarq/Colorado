@@ -23,7 +23,7 @@ public partial class MainWindow : Gtk.Window {
 		document = null;
 		txtToFind = "";
 		
-		Build();
+		this.Build();
 
 		Gdk.Geometry minSize = new Gdk.Geometry();
 		minSize.MinHeight = 480;
@@ -32,7 +32,7 @@ public partial class MainWindow : Gtk.Window {
 		this.Title = AppInfo.Name;
 		this.SetDefaultSize( minSize.MinHeight, minSize.MinWidth );
 		this.SetGeometryHints( this, minSize, Gdk.WindowHints.MinSize );
-		this.CreatePopup();
+		this.BuildPopup();
 		this.ActivateIde( false );
 	}
 	
@@ -46,14 +46,12 @@ public partial class MainWindow : Gtk.Window {
 		get { return this.document; }
 	}
 	
-	protected void PrepareDocument(CsvDocument doc)
-	{
+	protected void PrepareDocument(CsvDocument doc) {
 		this.document = doc;
 		this.Document.ClientUpdater += this.UpdateFromData;
 	}	
 	
-	private void ActivateIde()
-	{
+	private void ActivateIde() {
 		this.ActivateIde( true );
 	}
 	
@@ -63,32 +61,40 @@ public partial class MainWindow : Gtk.Window {
 		this.SetTitle();
 		
 		this.tvTable.Visible			   = active;
+		this.edFind.Sensitive              = active;
+
 		this.sbStatus.Visible 			   = true;
+
+        this.openAction.Sensitive          = true;
+        this.newAction.Sensitive           = true;
+        this.importAction.Sensitive        = true;
+        this.exitAction.Sensitive          = true;
+        this.viewToolbarAction.Sensitive   = true;
+        this.aboutAction.Sensitive         = true;
+
+        this.saveAction.Sensitive          = active;
+        this.saveAsAction.Sensitive        = active;
+        this.revertToSavedAction.Sensitive = active;
+        this.convertAction.Sensitive       = active;
+        this.closeAction.Sensitive         = active;
+        this.propertiesAction.Sensitive    = active;
+
+        this.addRowsAction.Sensitive       = active;
+        this.addColumnsAction.Sensitive    = active;
+        this.removeRowsAction.Sensitive    = active;
+        this.removeColumnsAction.Sensitive = active;
+        this.cleanRowAction.Sensitive      = active;
+        this.cleanColumnAction.Sensitive   = active;
+		this.insertFormulaAction.Sensitive = active;
+		this.copyColumnAction.Sensitive    = active;
+		this.copyRowAction.Sensitive       = active;
+		this.fillRowAction.Sensitive       = active;
+		this.fillColumnAction.Sensitive    = active;
 		
-		this.EditAction.Sensitive          = active;
-		this.SaveAction.Sensitive          = active;
-		this.SaveAsAction.Sensitive        = active;
-		this.revertToSavedAction.Sensitive = active;
-		this.convertAction.Sensitive       = active;
-		this.closeAction.Sensitive         = active;
-		this.propertiesAction.Sensitive    = active;
-		
-		this.btAdd.Sensitive			   = active;
-		this.btInsert.Sensitive		 	   = active;
-		this.btSave.Sensitive			   = active;
-		this.btFind.Sensitive			   = active;
-		this.btProperties.Sensitive		   = active;
-		this.btRemove.Sensitive			   = active;
-		this.btClearColumn.Sensitive	   = active;
-		this.btClearRow.Sensitive		   = active;
-		this.btCopyRow.Sensitive           = active;
-		this.btInsertColumns.Sensitive	   = active;
-		this.btRemoveColumn.Sensitive      = active;
-		this.btAddColumns.Sensitive        = active;
-		this.btCopyColumn.Sensitive        = active;
-		this.btFillRow.Sensitive           = active;
-		this.btFillColumn.Sensitive        = active;
-		
+        this.findAction.Sensitive          = active;
+        this.findAgainAction.Sensitive     = active;
+        
+		this.ShowProjectInfo();
 		Util.UpdateUI();
 	}
 	
@@ -187,12 +193,12 @@ public partial class MainWindow : Gtk.Window {
 		String[] authors = { AppInfo.Author };
 		
 		about.ProgramName = AppInfo.Name;
-		about.Version = AppInfo.Version;
-		about.Authors = authors;
-		about.Comments = AppInfo.Comments;
-		about.License = AppInfo.License;
-		about.Copyright = "(c) " + authors[ 0 ];
-		about.Website = AppInfo.Website;
+		about.Version     = AppInfo.Version;
+		about.Authors     = authors;
+		about.Comments    = AppInfo.Comments;
+		about.License     = AppInfo.License;
+		about.Copyright   = "(c) " + authors[ 0 ];
+		about.Website     = AppInfo.Website;
 		
 		about.Logo = this.Icon;
 		
@@ -211,12 +217,7 @@ public partial class MainWindow : Gtk.Window {
 		}
 
 		// Get text to search
-		string txt = DlgSearch.ask( this, this.Title, "Text will be searched for in the whole document." );
-		txt = txt.Trim().ToLower();
-		txtToFind = txt;
-		
-		// Do it
-		this.FindText( 0 );
+		this.edFind.GrabFocus();
 	}
 	
 	/// <summary>
@@ -348,22 +349,27 @@ public partial class MainWindow : Gtk.Window {
 	
 	protected void ShowProjectInfo()
 	{
-		string delimiter = this.Document.Delimiter.Name;
-		string text = "field";
-        string number = "4";
+		if ( this.document != null ) {
+			string delimiter = this.Document.Delimiter.Name;
+			string text = "field";
+			string number = "4";
 		
-		if ( this.document.SurroundText ) {
-			text = "\"field\"";
+			if ( this.document.SurroundText ) {
+				text = "\"field\"";
+			}
+
+			number += Document.GetDecimalMark() + "5";
+		
+			lblType.Text = '(' + text + delimiter + number + delimiter + "...)";
+			lblMeasures.Text = "["
+			+ Document.Data.NumRows
+			+ " x "
+			+ Document.Data.NumColumns
+			+ "]";
+		} else {
+			lblType.Text = lblMeasures.Text = "...";
 		}
 
-        number += Document.GetDecimalMark() + "5";
-		
-        lblType.Text = '(' + text + delimiter + number + delimiter + "...)";
-        lblMeasures.Text = "["
-                + Document.Data.NumRows
-                + " x "
-                + Document.Data.NumColumns
-                + "]";
 		return;
 	}
 
@@ -594,6 +600,23 @@ public partial class MainWindow : Gtk.Window {
 	{
 		this.CloseDocument();
 	}
+
+	protected void OnEdFindEntered(object sender, EventArgs e)
+	{
+		this.txtToFind = this.edFind.Text;
+
+		// Reset the state of the entry
+		this.edFind.Text = "Find...";
+		this.tvTable.GrabFocus();
+
+		// Do it
+		this.FindText( 0 );
+	}
+
+	protected void OnEdFindFocused(object o, FocusedArgs args)
+	{
+		this.edFind.Text = "";
+	}
 	
 	protected void UpdateDocumentView(int oldRows, int oldColumns)
 	{
@@ -670,6 +693,8 @@ public partial class MainWindow : Gtk.Window {
 	
 	public void FindText(int rowBegin, string txtToFind)
 	{
+		this.tvTable.GrabFocus();
+
 		for(int i = rowBegin; i < this.document.Data.NumRows; ++i) {
 			for(int j = 0; j < this.document.Data.NumColumns; ++j) {
 				var cell = this.document.Data[ i, j ].Trim().ToLower();
@@ -724,7 +749,7 @@ public partial class MainWindow : Gtk.Window {
 		return;
 	}
 		
-	protected virtual void OnClearRow(object sender, System.EventArgs e)
+	protected virtual void OnCleanRow(object sender, System.EventArgs e)
 	{
 		int rowBegin;
 		int rowEnd;
@@ -740,12 +765,14 @@ public partial class MainWindow : Gtk.Window {
 		GetCurrentCell( out rowBegin, out col );
 		++rowBegin;
 		
-		var dlg = new DlgClean( this, DlgClean.Items.Row, rowBegin, document.Data.NumRows );
+        var dlg = new DlgFromTo( this,
+                rowBegin, document.Data.NumRows,
+                DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Rows );
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			// Adapt from UI to document (headers)
-			rowBegin = dlg.Begin - NumFixedRows;
-			rowEnd = dlg.End - NumFixedRows;
+			rowBegin = dlg.From - NumFixedRows;
+			rowEnd = dlg.To - NumFixedRows;
 			
 			try {
 				// do it
@@ -759,7 +786,7 @@ public partial class MainWindow : Gtk.Window {
 		dlg.Destroy();
 	}
 	
-	protected virtual void OnClearColumn(object sender, System.EventArgs e)
+	protected virtual void OnCleanColumn(object sender, System.EventArgs e)
 	{
 		int colBegin;
 		int colEnd;
@@ -775,51 +802,20 @@ public partial class MainWindow : Gtk.Window {
 		GetCurrentCell( out row, out colBegin );
 		++colBegin;
 		
-		var dlg = new DlgClean( this, DlgClean.Items.Column, colBegin, document.Data.NumColumns );
+		var dlg = new DlgFromTo( this,
+                colBegin, document.Data.NumColumns,
+                DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Columns );
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			// Adapt from UI to document
-			colBegin = dlg.Begin - 1;
-			colEnd = dlg.End - 1;
+			colBegin = dlg.From - 1;
+			colEnd = dlg.To - 1;
 			
 			try {
 				// do it
 				this.document.Data.CleanColumns( row, colBegin, colEnd );
 				ShowDocument();
 			} catch (System.Exception exc) {
-				Util.MsgError( this, AppInfo.Name, exc.Message );
-			}
-		}
-		
-		dlg.Destroy();
-	}
-	
-	protected virtual void OnInsertRows(object sender, System.EventArgs e)
-	{
-		int row;
-		int col;
-		
-		// Chk
-		if ( this.document == null ) {
-			Util.MsgError( this, AppInfo.Name, "Document does not exist" );
-			return;
-		}
-		
-		// Get current position
-		this.GetCurrentCell( out row, out col );
-		
-		var dlg = new DlgIncDec( this,
-		                         DlgIncDec.DialogType.Insert,
-		                         DlgIncDec.Target.Rows,
-		                         row + 1, this.document.Data.NumRows
-		);
-		
-		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
-			try {
-				// do it
-				this.document.Data.InsertRows( dlg.From - NumFixedRows, dlg.Number );
-				this.ShowDocument();
-			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
 			}
 		}
@@ -842,49 +838,31 @@ public partial class MainWindow : Gtk.Window {
 		this.GetCurrentCell( out row, out col );
 		
 		var dlg = new DlgIncDec( this,
-		                         DlgIncDec.DialogType.Add,
+		                         DlgIncDec.DialogType.Insert,
 		                         DlgIncDec.Target.Rows,
-		                         this.document.Data.NumRows,
+		                         row,
 								 int.MaxValue
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
-				// do it
-				this.document.Data.NumRows += dlg.Number;
-				this.ShowDocument();
-			} catch(Exception exc) {
-				Util.MsgError( this, AppInfo.Name, exc.Message );
-			}
-		}
-		
-		dlg.Destroy();
-	}
-	
-	protected virtual void OnInsertColumns(object sender, System.EventArgs e)
-	{
-		int row;
-		int col;
-		
-		// Chk
-		if ( this.document == null ) {
-			Util.MsgError( this, AppInfo.Name, "Document does not exist" );
-			return;
-		}
-		
-		// Get current position
-		this.GetCurrentCell( out row, out col );
-		
-		var dlg = new DlgIncDec( this,
-		                         DlgIncDec.DialogType.Insert,
-		                         DlgIncDec.Target.Columns,
-		                         col + 1, this.document.Data.NumColumns
-		);
-		
-		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
-			try {
-				// do it
-				this.document.Data.InsertColumns( dlg.From - NumFixedColumns, dlg.Number );
+				if ( dlg.From == this.Document.Data.NumRows
+				  && dlg.Where == DlgIncDec.WherePosition.After )
+				{
+					// Add mode
+					this.document.Data.NumRows += dlg.Number;
+				} else {
+					int modifier = 0;
+
+					if ( dlg.From > 0
+					  && dlg.Where == DlgIncDec.WherePosition.Before )
+					{
+						modifier = -1;
+					}
+
+					this.document.Data.InsertRows( dlg.From - NumFixedRows - modifier, dlg.Number );
+				}
+
 				this.ShowDocument();
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -909,15 +887,30 @@ public partial class MainWindow : Gtk.Window {
 		this.GetCurrentCell( out row, out col );
 		
 		var dlg = new DlgIncDec( this,
-		                         DlgIncDec.DialogType.Add,
+		                         DlgIncDec.DialogType.Insert,
 		                         DlgIncDec.Target.Columns,
-		                         this.document.Data.NumColumns, int.MaxValue
+		                         col + 1, this.document.Data.NumColumns
 		);
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
 				// do it
-				this.document.Data.NumColumns += dlg.Number;
+                if ( dlg.From == this.Document.Data.NumColumns
+                  && dlg.Where == DlgIncDec.WherePosition.After )
+                {
+                    this.document.Data.NumColumns += dlg.Number;
+                } else {
+                    int modifier = 0;
+
+                    if ( dlg.From > 0
+                        && dlg.Where == DlgIncDec.WherePosition.Before )
+                    {
+                        modifier = -1;
+                    }
+
+                    this.document.Data.InsertColumns( dlg.From - NumFixedColumns - modifier, dlg.Number );
+                }
+
 				this.ShowDocument();
 			} catch(Exception exc) {
 				Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -926,7 +919,7 @@ public partial class MainWindow : Gtk.Window {
 		
 		dlg.Destroy();
 	}
-	
+		
 	protected virtual void OnRevert(object sender, System.EventArgs e)
 		{
 			var oldDocument = this.document;
@@ -1044,7 +1037,9 @@ public partial class MainWindow : Gtk.Window {
 			// Get current position
 			this.GetCurrentCell( out row, out col );
 			
-			var dlg = new DlgCopy( this, row +1, document.Data.NumRows, DlgCopy.DialogType.Rows );
+			var dlg = new DlgFromTo( this,
+                    row +1, document.Data.NumRows,
+                    DlgFromTo.ActionType.Copy, DlgFromTo.ItemType.Rows );
 			
 			if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 				try {
@@ -1081,7 +1076,11 @@ public partial class MainWindow : Gtk.Window {
 		// Get current position
 		this.GetCurrentCell( out row, out col );
 		
-		var dlg = new DlgCopy( this, col + 1, this.document.Data.NumColumns, DlgCopy.DialogType.Columns );
+		var dlg = new DlgFromTo( this,
+                col + 1,
+                this.document.Data.NumColumns,
+                DlgFromTo.ActionType.Copy,
+                DlgFromTo.ItemType.Columns );
 		
 		if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
 			try {
@@ -1098,7 +1097,7 @@ public partial class MainWindow : Gtk.Window {
 		dlg.Destroy();
 	}
 	
-	protected virtual void CreatePopup()
+	private void BuildPopup()
 	{
 		// Menus
 		this.popup = new Menu();
@@ -1109,13 +1108,7 @@ public partial class MainWindow : Gtk.Window {
 		menuItemAddRow.Image = new Gtk.Image( Stock.Add, IconSize.Menu );
 		menuItemAddRow.Activated += delegate { this.OnAddRows( null, null ); };
 		this.popup.Append( menuItemAddRow );
-		
-		// Insert row
-		var menuItemInsertRow = new ImageMenuItem( "_Insert rows" );
-		menuItemInsertRow.Image = new Gtk.Image( Stock.Indent, IconSize.Menu );
-		menuItemInsertRow.Activated += delegate { this.OnInsertRows( null, null ); };
-		this.popup.Append( menuItemInsertRow );
-		
+				
 		// Remove row
 		var menuItemRemoveRow = new ImageMenuItem( "_Remove rows" );
 		menuItemRemoveRow.Image = new Gtk.Image( Stock.Remove, IconSize.Menu );
@@ -1125,7 +1118,7 @@ public partial class MainWindow : Gtk.Window {
 		// Clean row
 		var menuItemCleanRow = new ImageMenuItem( "C_lean rows" );
 		menuItemCleanRow.Image = new Gtk.Image( Stock.Clear, IconSize.Menu );
-		menuItemCleanRow.Activated += delegate { this.OnClearRow( null, null ); };
+		menuItemCleanRow.Activated += delegate { this.OnCleanRow( null, null ); };
 		this.popup.Append( menuItemCleanRow );
 		
 		// Copy row
@@ -1149,12 +1142,6 @@ public partial class MainWindow : Gtk.Window {
 		menuItemAddColumn.Activated += delegate { this.OnAddColumns( null, null ); };
 		this.popup.Append( menuItemAddColumn );
 		
-		// Insert column
-		var menuItemInsertColumn = new ImageMenuItem( "_Insert columns" );
-		menuItemInsertColumn.Image = new Gtk.Image( Stock.Indent, IconSize.Menu );
-		menuItemInsertColumn.Activated += delegate { this.OnInsertColumns( null, null ); };
-		this.popup.Append( menuItemInsertColumn );
-		
 		// Remove column
 		var menuItemRemoveColumn = new ImageMenuItem( "_Remove columns" );
 		menuItemRemoveColumn.Image = new Gtk.Image( Stock.Remove, IconSize.Menu );
@@ -1164,7 +1151,7 @@ public partial class MainWindow : Gtk.Window {
 		// Clean column
 		var menuItemCleanColumn = new ImageMenuItem( "C_lean columns" );
 		menuItemCleanColumn.Image = new Gtk.Image( Stock.Clear, IconSize.Menu );
-		menuItemCleanColumn.Activated += delegate { this.OnClearColumn( null, null ); };
+		menuItemCleanColumn.Activated += delegate { this.OnCleanColumn( null, null ); };
 		this.popup.Append( menuItemCleanColumn );
 		
 		// Copy column

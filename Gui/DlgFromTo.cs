@@ -3,13 +3,17 @@ using System;
 using System.Collections.ObjectModel;
 
 namespace Colorado.Gui {
-	public partial class DlgCopy : Gtk.Dialog {
-		public enum DialogType { Rows, Columns };
-		public static readonly ReadOnlyCollection<string> StrDialogType = new ReadOnlyCollection<string>(
+	public partial class DlgFromTo : Gtk.Dialog {
+		public enum ItemType { Rows, Columns };
+        public enum ActionType { Clean, Copy };
+		public static readonly ReadOnlyCollection<string> StrItemType = new ReadOnlyCollection<string>(
 			new string[]{ "Row", "Column" }
 		);
+        public static readonly ReadOnlyCollection<string> StrActionType = new ReadOnlyCollection<string>(
+            new string[]{ "Clean", "Copy" }
+        );
 		
-		public DlgCopy(Gtk.Window parent, int org, int max, DialogType type)
+		public DlgFromTo(Gtk.Window parent, int org, int max, ActionType action, ItemType item)
 		{
 			int to = org + 1;
 			this.Build();
@@ -20,7 +24,7 @@ namespace Colorado.Gui {
 			}
 			
 			// Prepare dialog
-			this.Title = "Copy " + StrDialogType[ (int) type ];
+            this.Title = StrActionType[ (int) action ] + ' ' + StrItemType[ (int) item ];
 			this.Icon = parent.Icon;
 			this.Parent = parent;
 			this.TransientFor = parent;

@@ -110,9 +110,6 @@ namespace Colorado.Core {
 				// Get the headers
 				if ( firstRowForHeaders ) {
 					Document.Data.CreateNamedHeaders( SplitLine( headers ) );
-				} else {
-					// Assign labels to columns
-					Document.Data.CreateDefaultHeaders();
 				}
 
 				Document.Changed = false;
