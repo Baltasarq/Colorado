@@ -2,7 +2,6 @@
 
 using System;
 using Gtk;
-using System.Collections;
 using Colorado.Core;
 using System.Collections.Generic;
 
@@ -18,14 +17,13 @@ public partial class MainWindow : Gtk.Window {
 	public MainWindow()
 		: base( Gtk.WindowType.Toplevel )
     {
-		lastFileName = "";
-		popup = null;
-		document = null;
-		txtToFind = "";
+		this.lastFileName = "";
+        this.popup = null;
+        this.document = null;
+        this.txtToFind = "";
 		
 		this.Build();
 		this.BuildPopup();
-		this.tvTable.PopupMenu += (o, evt) => this.popup.Popup();
 
 		Gdk.Geometry minSize = new Gdk.Geometry();
 		minSize.MinHeight = 480;
@@ -218,6 +216,7 @@ public partial class MainWindow : Gtk.Window {
 		}
 
 		// Get text to search
+        this.edFind.Text = "";
 		this.edFind.GrabFocus();
 	}
 	
@@ -837,6 +836,9 @@ public partial class MainWindow : Gtk.Window {
 		
 		// Get current position
 		this.GetCurrentCell( out row, out col );
+
+        row += NumFixedRows;
+        col += NumFixedColumns;
 		
 		var dlg = new DlgIncDec( this,
 		                         DlgIncDec.DialogType.Insert,
@@ -1262,6 +1264,13 @@ public partial class MainWindow : Gtk.Window {
 		dlg.Destroy();
 	}
 
+    protected void OnTableClicked(object o, ButtonReleaseEventArgs args)
+    {
+            if ( args.Event.Button == 3 ) {
+                this.popup.Popup();
+            }
+    }
+
 	[GLib.ConnectBefore]
 	protected void OnTableKeyPressed(object o, Gtk.KeyPressEventArgs args)
 	{
@@ -1393,6 +1402,7 @@ public partial class MainWindow : Gtk.Window {
 	private CsvDocument document;
 	private string txtToFind;
 	public string lastFileName;
+
 	private Menu popup;
 }
 	

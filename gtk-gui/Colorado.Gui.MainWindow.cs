@@ -208,7 +208,29 @@ namespace Colorado.Gui
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><menubar name='menubar2'><menu name='mFileAction' action='mFileAction'><menuitem name='newAction' action='newAction'/><menuitem name='openAction' action='openAction'/><menuitem name='saveAction' action='saveAction'/><menuitem name='saveAsAction' action='saveAsAction'/><separator/><menuitem name='propertiesAction' action='propertiesAction'/><menuitem name='closeAction' action='closeAction'/><separator/><menuitem name='revertToSavedAction' action='revertToSavedAction'/><menuitem name='importAction' action='importAction'/><menuitem name='convertAction' action='convertAction'/><menuitem name='exitAction' action='exitAction'/></menu><menu name='mEditAction' action='mEditAction'><menuitem name='findAction' action='findAction'/><menuitem name='findAgainAction' action='findAgainAction'/><menuitem name='insertFormulaAction' action='insertFormulaAction'/><separator/><menu name='mRowsAction' action='mRowsAction'><menuitem name='addRowsAction' action='addRowsAction'/><menuitem name='removeRowsAction' action='removeRowsAction'/><menuitem name='cleanRowAction' action='cleanRowAction'/><menuitem name='copyRowAction' action='copyRowAction'/><menuitem name='fillRowAction' action='fillRowAction'/></menu><menu name='mColumnsAction' action='mColumnsAction'><menuitem name='addColumnsAction' action='addColumnsAction'/><menuitem name='removeColumnsAction' action='removeColumnsAction'/><menuitem/><menuitem name='copyColumnAction' action='copyColumnAction'/><menuitem name='cleanColumnAction' action='cleanColumnAction'/><menuitem name='fillColumnAction' action='fillColumnAction'/></menu></menu><menu name='mViewAction' action='mViewAction'><menuitem name='viewToolbarAction' action='viewToolbarAction'/></menu><menu name='mHelpAction' action='mHelpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
+			this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar2\'><menu name=\'mFileAction\' action=\'mFileAction\'><menui" +
+			"tem name=\'newAction\' action=\'newAction\'/><menuitem name=\'openAction\' action=\'ope" +
+			"nAction\'/><menuitem name=\'saveAction\' action=\'saveAction\'/><menuitem name=\'saveA" +
+			"sAction\' action=\'saveAsAction\'/><separator/><menuitem name=\'propertiesAction\' ac" +
+			"tion=\'propertiesAction\'/><menuitem name=\'closeAction\' action=\'closeAction\'/><sep" +
+			"arator/><menuitem name=\'revertToSavedAction\' action=\'revertToSavedAction\'/><menu" +
+			"item name=\'importAction\' action=\'importAction\'/><menuitem name=\'convertAction\' a" +
+			"ction=\'convertAction\'/><menuitem name=\'exitAction\' action=\'exitAction\'/></menu><" +
+			"menu name=\'mEditAction\' action=\'mEditAction\'><menuitem name=\'findAction\' action=" +
+			"\'findAction\'/><menuitem name=\'findAgainAction\' action=\'findAgainAction\'/><menuit" +
+			"em name=\'insertFormulaAction\' action=\'insertFormulaAction\'/><separator/><menu na" +
+			"me=\'mRowsAction\' action=\'mRowsAction\'><menuitem name=\'addRowsAction\' action=\'add" +
+			"RowsAction\'/><menuitem name=\'removeRowsAction\' action=\'removeRowsAction\'/><menui" +
+			"tem name=\'cleanRowAction\' action=\'cleanRowAction\'/><menuitem name=\'copyRowAction" +
+			"\' action=\'copyRowAction\'/><menuitem name=\'fillRowAction\' action=\'fillRowAction\'/" +
+			"></menu><menu name=\'mColumnsAction\' action=\'mColumnsAction\'><menuitem name=\'addC" +
+			"olumnsAction\' action=\'addColumnsAction\'/><menuitem name=\'removeColumnsAction\' ac" +
+			"tion=\'removeColumnsAction\'/><menuitem/><menuitem name=\'copyColumnAction\' action=" +
+			"\'copyColumnAction\'/><menuitem name=\'cleanColumnAction\' action=\'cleanColumnAction" +
+			"\'/><menuitem name=\'fillColumnAction\' action=\'fillColumnAction\'/></menu></menu><m" +
+			"enu name=\'mViewAction\' action=\'mViewAction\'><menuitem name=\'viewToolbarAction\' a" +
+			"ction=\'viewToolbarAction\'/></menu><menu name=\'mHelpAction\' action=\'mHelpAction\'>" +
+			"<menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 			this.menubar2 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar2")));
 			this.menubar2.Name = "menubar2";
 			this.vbox1.Add (this.menubar2);
@@ -221,7 +243,7 @@ namespace Colorado.Gui
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><toolbar name='tbToolBar'><toolitem name='newAction' action='newAction'/><toolitem name='openAction' action='openAction'/><separator/><toolitem name='saveAction' action='saveAction'/><toolitem name='propertiesAction' action='propertiesAction'/><toolitem name='findAction' action='findAction'/><separator/><toolitem name='addRowsAction' action='addRowsAction'/><toolitem name='removeRowsAction' action='removeRowsAction'/><toolitem name='cleanRowAction' action='cleanRowAction'/><toolitem name='copyRowAction' action='copyRowAction'/><toolitem name='fillRowAction' action='fillRowAction'/><separator/><toolitem name='addColumnsAction' action='addColumnsAction'/><toolitem name='removeColumnsAction' action='removeColumnsAction'/><toolitem/><toolitem name='cleanColumnAction' action='cleanColumnAction'/><toolitem name='copyColumnAction' action='copyColumnAction'/><toolitem name='fillColumnAction' action='fillColumnAction'/></toolbar></ui>");
+			this.UIManager.AddUiFromString (@"<ui><toolbar name='tbToolBar'><toolitem name='newAction' action='newAction'/><toolitem name='openAction' action='openAction'/><separator/><toolitem name='saveAction' action='saveAction'/><toolitem name='propertiesAction' action='propertiesAction'/><toolitem name='findAction' action='findAction'/><separator/><toolitem name='addRowsAction' action='addRowsAction'/><toolitem name='removeRowsAction' action='removeRowsAction'/><toolitem name='cleanRowAction' action='cleanRowAction'/><toolitem name='copyRowAction' action='copyRowAction'/><toolitem name='fillRowAction' action='fillRowAction'/><separator/><toolitem name='addColumnsAction' action='addColumnsAction'/><toolitem name='removeColumnsAction' action='removeColumnsAction'/><toolitem/><toolitem name='cleanColumnAction' action='cleanColumnAction'/><toolitem name='copyColumnAction' action='copyColumnAction'/><toolitem name='fillColumnAction' action='fillColumnAction'/></toolbar></ui>");
 			this.tbToolBar = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/tbToolBar")));
 			this.tbToolBar.Name = "tbToolBar";
 			this.tbToolBar.ShowArrow = false;
@@ -339,6 +361,7 @@ namespace Colorado.Gui
 			this.cleanColumnAction.Activated += new global::System.EventHandler (this.OnCleanColumn);
 			this.edFind.EditingDone += new global::System.EventHandler (this.OnEdFindEntered);
 			this.edFind.Focused += new global::Gtk.FocusedHandler (this.OnEdFindFocused);
+			this.tvTable.ButtonReleaseEvent += new global::Gtk.ButtonReleaseEventHandler (this.OnTableClicked);
 		}
 	}
 }

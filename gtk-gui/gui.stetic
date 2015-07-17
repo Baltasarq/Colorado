@@ -363,6 +363,7 @@
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
                 <property name="EnableSearch">False</property>
+                <signal name="ButtonReleaseEvent" handler="OnTableClicked" />
               </widget>
             </child>
           </widget>
