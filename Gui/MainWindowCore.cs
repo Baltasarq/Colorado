@@ -877,7 +877,7 @@ namespace Colorado.Gui {
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Insert,
                 DlgIncDec.Target.Columns,
-                col + 1, this.document.Data.NumColumns
+				col + 1, int.MaxValue
             );
 
             if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
@@ -959,7 +959,7 @@ namespace Colorado.Gui {
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Erase,
                 DlgIncDec.Target.Rows,
-                row +1,
+                row + 1,
                 this.document.Data.NumRows
             );
 

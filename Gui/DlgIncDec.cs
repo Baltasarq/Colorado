@@ -31,15 +31,19 @@ namespace Colorado.Gui {
 			
 			// Set widgets
 			sbFrom.SetRange( 1, max );
-			sbNumber.SetRange( 1, int.MaxValue );
+			sbNumber.SetRange( 1, max );
 			sbFrom.Value = begin;
 			sbNumber.Value = 1;
+
+			// Info
 			info += StrTarget[ (int) target ] + "</b>: ";
 			info += Convert.ToString( max );
+
+			if ( type == DialogType.Insert ) {
+				info = "<b>Max. </b>" + info;
+			}
+
 			this.lblInfo.Markup = info;
-			
-			// When we are adding...
-			this.lblInfo.Markup = "<b>Max. </b>" + info;
 		}
 
 		private void Build() {
@@ -73,7 +77,7 @@ namespace Colorado.Gui {
 
 			// To
 			this.sbNumber = new Gtk.SpinButton(1, 10, 1 );
-			this.lblTo = new Gtk.Label( "To:" );
+			this.lblTo = new Gtk.Label( "Number:" );
 			hBoxTo.PackStart( this.lblTo, false, false, 5 );
 			hBoxTo.PackStart( this.sbNumber, true, true, 5 );
 

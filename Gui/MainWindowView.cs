@@ -106,7 +106,7 @@ namespace Colorado.Gui {
             this.addColumnsAction.Activated += (sender, e) => this.OnAddColumns();
 
             this.removeColumnsAction = new Gtk.Action( "remove_columns", "_Remove columns", "remove columns", Stock.Remove );
-            this.removeColumnsAction.Activated += (sender, e) => this.OnAddColumns();
+            this.removeColumnsAction.Activated += (sender, e) => this.OnRemoveColumns();
 
             this.clearColumnsAction = new Gtk.Action( "clear_Columns", "_Clear columns", "clear columns", Stock.Clear );
             this.clearColumnsAction.Activated += (sender, e) => this.OnClearColumns();
