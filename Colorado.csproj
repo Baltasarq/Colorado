@@ -91,7 +91,6 @@
     <Compile Include="Core\CsvDocumentPersistence.cs" />
     <Compile Include="Core\Data.cs" />
     <Compile Include="Gui\DlgFromTo.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgFromTo.cs" />
     <Compile Include="Gui\MainWindowCore.cs" />
     <Compile Include="Gui\MainWindowView.cs" />
   </ItemGroup>
