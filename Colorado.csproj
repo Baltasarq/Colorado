@@ -59,7 +59,6 @@
     <Compile Include="gtk-gui\Colorado.Gui.DlgCsvExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgProperties.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgIncDec.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgFill.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgFormulae.cs" />
     <Compile Include="AssemblyInfo.cs" />

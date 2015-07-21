@@ -11,12 +11,13 @@ namespace Colorado.Gui {
 			
 			try {
 				Application.Init();
-				
+
 				if ( args.Length > 0 )
 						win = new MainWindow( args[ 0 ] );
 				else	win = new MainWindow();
 					
 				win.ShowAll();
+
 				Application.Run();
 			}
 			catch(Exception e) {

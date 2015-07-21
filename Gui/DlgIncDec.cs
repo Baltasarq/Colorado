@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.ObjectModel;
 
@@ -19,7 +18,8 @@ namespace Colorado.Gui {
 		public DlgIncDec(Gtk.Window parent, DialogType type, Target target, int begin, int max)
 		{
 			string info = "<b>Number of ";
-			this.Build ();
+			this.Build();
+			this.ShowAll();
 			
 			// Prepare dialog
 			this.Title = StrDialogType[ (int) type ] + " ";
@@ -36,10 +36,65 @@ namespace Colorado.Gui {
 			sbNumber.Value = 1;
 			info += StrTarget[ (int) target ] + "</b>: ";
 			info += Convert.ToString( max );
-			lblValues.Markup = info;
+			this.lblInfo.Markup = info;
 			
 			// When we are adding...
-			lblValues.Markup = "<b>Max. </b>" + info;
+			this.lblInfo.Markup = "<b>Max. </b>" + info;
+		}
+
+		private void Build() {
+			var hBoxFrames = new Gtk.HBox( false, 2 );
+			var hBoxFrom = new Gtk.HBox( false, 2 );
+			var hBoxTo = new Gtk.HBox( false, 2 );
+			var hBoxInfo = new Gtk.HBox( false, 2 );
+			var vBoxPosition = new Gtk.VBox( false, 2 );
+			var vBoxValues = new Gtk.VBox( false, 2 );
+
+			// Frames
+			this.frmWhere = new Gtk.Frame( "Position" );
+			this.frmValues = new Gtk.Frame( "Values" );
+
+			hBoxFrames.PackStart( this.frmWhere, false, false, 5 );
+			hBoxFrames.PackStart( this.frmValues, true, true, 5 );
+
+			// Position
+			this.rbBefore = new Gtk.RadioButton( "_Before" );
+			this.rbAfter = new Gtk.RadioButton( this.rbBefore, "_After" );
+			this.rbBefore.Active = true;
+			vBoxPosition.PackStart( this.rbBefore, true, true, 5 );
+			vBoxPosition.PackStart( this.rbAfter, true, true, 5 );
+			this.frmWhere.Add( vBoxPosition );
+
+			// From
+			this.sbFrom = new Gtk.SpinButton( 1, 10, 1 );
+			this.lblFrom = new Gtk.Label( "From:" );
+			hBoxFrom.PackStart( this.lblFrom, false, false, 5 );
+			hBoxFrom.PackStart( this.sbFrom, true, true, 5 );
+
+			// To
+			this.sbNumber = new Gtk.SpinButton(1, 10, 1 );
+			this.lblTo = new Gtk.Label( "To:" );
+			hBoxTo.PackStart( this.lblTo, false, false, 5 );
+			hBoxTo.PackStart( this.sbNumber, true, true, 5 );
+
+			// Values
+			vBoxValues.PackStart( hBoxFrom, true, true, 5 );
+			vBoxValues.PackStart( hBoxTo, true, true, 5 );
+			this.frmValues.Add( vBoxValues );
+
+			// Info
+			this.lblInfo = new Gtk.Label( "<b>Max.: </b>" );
+			this.lblInfo.UseMarkup = true;
+			this.lblInfo.Justify = Gtk.Justification.Left;
+			hBoxInfo.PackStart( this.lblInfo, false, false, 5 );
+
+			this.AddButton( Gtk.Stock.Cancel, Gtk.ResponseType.Cancel );
+			this.AddButton( Gtk.Stock.Ok, Gtk.ResponseType.Ok );
+			this.DefaultResponse = Gtk.ResponseType.Ok;
+
+			// Finish layout
+			this.VBox.PackStart( hBoxInfo, false, false, 5 );
+			this.VBox.PackStart( hBoxFrames, true, true, 5 );
 		}
 
 		/// <summary>
@@ -73,5 +128,15 @@ namespace Colorado.Gui {
 		public int Number {
 			get { return sbNumber.ValueAsInt; }
 		}
+
+		private Gtk.Frame frmWhere;
+		private Gtk.Frame frmValues;
+		private Gtk.RadioButton rbBefore;
+		private Gtk.RadioButton rbAfter;
+		private Gtk.SpinButton sbFrom;
+		private Gtk.SpinButton sbNumber;
+		private Gtk.Label lblFrom;
+		private Gtk.Label lblTo;
+		private Gtk.Label lblInfo;
 	}
 }
