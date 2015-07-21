@@ -16,7 +16,7 @@ namespace Colorado.Gui {
 						win = new MainWindow( args[ 0 ] );
 				else	win = new MainWindow();
 					
-				win.Show();
+				win.ShowAll();
 				Application.Run();
 			}
 			catch(Exception e) {

@@ -128,6 +128,7 @@ namespace Colorado.Gui
 			this.rbBefore = new global::Gtk.RadioButton ("Before");
 			this.rbBefore.CanFocus = true;
 			this.rbBefore.Name = "rbBefore";
+			this.rbBefore.Active = true;
 			this.rbBefore.DrawIndicator = true;
 			this.rbBefore.UseUnderline = true;
 			this.rbBefore.Group = new global::GLib.SList (global::System.IntPtr.Zero);

@@ -5,7 +5,7 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../bin/Release/Colorado.exe" internal="true" />
+    <widget-library name="../bin/Debug/Colorado.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="Colorado.Gui.MainWindow" design-size="881 367">
     <action-group name="Default">
@@ -337,7 +337,6 @@
                 <property name="Text" translatable="yes">Find...</property>
                 <property name="IsEditable">True</property>
                 <property name="InvisibleChar">●</property>
-                <signal name="EditingDone" handler="OnEdFindEntered" />
                 <signal name="Focused" handler="OnEdFindFocused" />
               </widget>
               <packing>
