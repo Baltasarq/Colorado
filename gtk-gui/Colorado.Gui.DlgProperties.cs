@@ -135,11 +135,11 @@ namespace Colorado.Gui
 			w7.Expand = false;
 			w7.Fill = false;
 			// Container child hbox7.Gtk.Box+BoxChild
-			this.sbRows = new global::Gtk.SpinButton (0, 1000000, 1);
+			this.sbRows = new global::Gtk.SpinButton (0D, 1000000D, 1D);
 			this.sbRows.CanFocus = true;
 			this.sbRows.Name = "sbRows";
-			this.sbRows.Adjustment.PageIncrement = 10;
-			this.sbRows.ClimbRate = 1;
+			this.sbRows.Adjustment.PageIncrement = 10D;
+			this.sbRows.ClimbRate = 1D;
 			this.sbRows.Numeric = true;
 			this.hbox7.Add (this.sbRows);
 			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox7 [this.sbRows]));
@@ -163,11 +163,11 @@ namespace Colorado.Gui
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
-			this.sbColumns = new global::Gtk.SpinButton (0, 1000000, 1);
+			this.sbColumns = new global::Gtk.SpinButton (0D, 1000000D, 1D);
 			this.sbColumns.CanFocus = true;
 			this.sbColumns.Name = "sbColumns";
-			this.sbColumns.Adjustment.PageIncrement = 10;
-			this.sbColumns.ClimbRate = 1;
+			this.sbColumns.Adjustment.PageIncrement = 10D;
+			this.sbColumns.ClimbRate = 1D;
 			this.sbColumns.Numeric = true;
 			this.hbox8.Add (this.sbColumns);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox8 [this.sbColumns]));

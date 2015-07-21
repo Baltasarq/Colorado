@@ -5,12 +5,14 @@ namespace Colorado.Gui {
         private void Build() {
             var vPanel = new VBox( false, 2 );
             var hPanel = new HBox( false, 2 );
+			var viewPort = new Gtk.ScrolledWindow();
 
             // Create components
             this.edFind = new Entry( "Find..." );
             this.edFind.Activated += (sender, e) => this.OnEdFindActivated();
             this.edFind.Focused += (sender, e) => this.OnEdFindFocused();
             this.tvTable = new TreeView();
+			viewPort.Add( this.tvTable );
 
             // Build them all
             this.BuildActions();
@@ -25,7 +27,7 @@ namespace Colorado.Gui {
 
             vPanel.PackStart( this.menuBar, false, false, 0 );
             vPanel.PackStart( hPanel, false, false, 0 );
-            vPanel.PackStart( this.tvTable, true, true, 0 );
+			vPanel.PackStart( viewPort, true, true, 0 );
             vPanel.PackStart( this.sbStatus, false, false, 0 );
 
             // Add to this
