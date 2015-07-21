@@ -1,7 +1,5 @@
 ﻿using Gtk;
 
-using Colorado.Core;
-
 namespace Colorado.Gui {
     public partial class MainWindow {
         private void Build() {
@@ -37,7 +35,6 @@ namespace Colorado.Gui {
             Gdk.Geometry minSize = new Gdk.Geometry();
             minSize.MinHeight = 480;
             minSize.MinWidth = 640;
-            this.Title = AppInfo.Name;
             this.SetDefaultSize( minSize.MinHeight, minSize.MinWidth );
             this.SetGeometryHints( this, minSize, Gdk.WindowHints.MinSize );
             this.sbStatus.Push( 0, "Ready" );

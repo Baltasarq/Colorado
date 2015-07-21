@@ -17,6 +17,7 @@ namespace Colorado.Gui {
         public MainWindow()
             : base( Gtk.WindowType.Toplevel )
         {
+            this.Title = AppInfo.Name;
             this.Build();
 
             this.lastFileName = "";
