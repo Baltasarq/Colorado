@@ -223,7 +223,6 @@ namespace Colorado.Gui
 			this.DefaultWidth = 400;
 			this.DefaultHeight = 217;
 			this.Show ();
-			this.btOpen.Clicked += new global::System.EventHandler (this.onOpen);
 		}
 	}
 }

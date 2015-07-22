@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgImport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgCsvExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgProperties.cs" />
