@@ -68,7 +68,6 @@ namespace Colorado.Gui
 			this.rbNone = new global::Gtk.RadioButton ("_Fixed");
 			this.rbNone.CanFocus = true;
 			this.rbNone.Name = "rbNone";
-			this.rbNone.Active = true;
 			this.rbNone.DrawIndicator = true;
 			this.rbNone.UseUnderline = true;
 			this.rbNone.Group = new global::GLib.SList (global::System.IntPtr.Zero);
