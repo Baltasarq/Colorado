@@ -220,6 +220,7 @@ namespace Colorado.Gui {
 
         private void BuildToolbar() {
             this.tbTools = new Toolbar();
+            this.tbTools.ToolbarStyle = Gtk.ToolbarStyle.Icons;
 
             this.tbTools.Insert( (Gtk.ToolItem) this.newAction.CreateToolItem(), 0 );
             this.tbTools.Insert( (Gtk.ToolItem) this.openAction.CreateToolItem(), 1 );
