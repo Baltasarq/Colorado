@@ -10,13 +10,13 @@ namespace Colorado.Gui {
 		
 		public DlgImport(Gtk.Window parent) {
 			this.Build();
-			this.ShowAll();
 			
 			this.Title = parent.Title + " import";
 			this.Icon = parent.Icon;
 			this.Parent = parent;
 			this.TransientFor = parent;
 			this.SetPosition( Gtk.WindowPosition.CenterOnParent );
+            this.ShowAll();
 
 			// Last file name opened
 			lastFileName = ( (MainWindow) parent ).lastFileName;

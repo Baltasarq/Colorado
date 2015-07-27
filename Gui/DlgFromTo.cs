@@ -16,8 +16,6 @@ namespace Colorado.Gui {
 		public DlgFromTo(Gtk.Window parent, int org, int max, ActionType action, ItemType item)
 		{
 			int to = org + 1;
-			this.Build();
-			this.ShowAll();
 			
 			// Prepare limits
 			if ( to > max ) {
@@ -25,11 +23,13 @@ namespace Colorado.Gui {
 			}
 			
 			// Prepare dialog
+            this.Build();
             this.Title = StrActionType[ (int) action ] + ' ' + StrItemType[ (int) item ];
 			this.Icon = parent.Icon;
 			this.Parent = parent;
 			this.TransientFor = parent;
 			this.SetPosition( Gtk.WindowPosition.CenterOnParent );
+            this.ShowAll();
 			
 			// Prepare widgets
 			sbFrom.SetRange( 1, max );
@@ -74,6 +74,7 @@ namespace Colorado.Gui {
 			this.AddButton( Gtk.Stock.Cancel, Gtk.ResponseType.Cancel );
 			this.AddButton( Gtk.Stock.Ok, Gtk.ResponseType.Ok );
 			this.DefaultResponse = Gtk.ResponseType.Ok;
+            this.Resizable = false;
 		}
 
 		private Gtk.Frame frmData;

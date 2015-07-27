@@ -6,12 +6,13 @@ namespace Colorado.Gui {
 		public DlgFill(Gtk.Window parent)
 		{
 			this.Build();
-			this.ShowAll();
 			
 			this.Parent = parent;
 			this.TransientFor = parent;
+            this.SetPosition( Gtk.WindowPosition.CenterOnParent );
 			this.Title = parent.Title;
 			this.Icon = parent.Icon;
+            this.ShowAll();
 		}
 		
 		public string FillValue {
@@ -62,6 +63,7 @@ namespace Colorado.Gui {
 			this.AddButton( Gtk.Stock.Cancel, Gtk.ResponseType.Cancel );
 			this.AddButton( Gtk.Stock.Ok, Gtk.ResponseType.Ok );
 			this.DefaultResponse = Gtk.ResponseType.Ok;
+            this.Resizable = false;
 		}
 
 		private Gtk.Frame frmMutation;

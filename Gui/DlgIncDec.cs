@@ -19,7 +19,6 @@ namespace Colorado.Gui {
 		{
 			string info = "<b>Number of ";
 			this.Build();
-			this.ShowAll();
 			
 			// Prepare dialog
 			this.Title = StrDialogType[ (int) type ] + " ";
@@ -28,6 +27,7 @@ namespace Colorado.Gui {
 			this.Parent = parent;
 			this.TransientFor = parent;
 			this.SetPosition( Gtk.WindowPosition.CenterOnParent );
+            this.ShowAll();
 			
 			// Set widgets
 			sbFrom.SetRange( 1, max );
@@ -99,6 +99,7 @@ namespace Colorado.Gui {
 			// Finish layout
 			this.VBox.PackStart( hBoxInfo, false, false, 5 );
 			this.VBox.PackStart( hBoxFrames, true, true, 5 );
+            this.Resizable = false;
 		}
 
 		/// <summary>

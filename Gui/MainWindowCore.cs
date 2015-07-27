@@ -551,18 +551,8 @@ namespace Colorado.Gui {
                             options.IncludeRowNumbers = dlg.IncludeRowNumbers;
                             options.IncludeTableBorder = dlg.IncludeTableBorder;
                             options.ColumnsIncluded = dlg.ColumnsIncluded;
-
-                            // If CSV export, get more data
-                            if ( dlg.Selection == ExportOptions.SelectionType.Csv )
-                            {
-                                var dlgCsv = new DlgCsvExport( this, document );
-                                if ( ( (Gtk.ResponseType) dlgCsv.Run() ) == Gtk.ResponseType.Ok ) {
-                                    options.Delimiter.Name = dlgCsv.Delimiter;
-                                    options.QuotedText = dlgCsv.SurroundWithDoubleQuotes;
-                                }
-
-                                dlgCsv.Destroy();
-                            }
+                            options.Delimiter.Name = dlg.Delimiter;
+                            options.QuotedText = dlg.SurroundWithDoubleQuotes;
 
                             new CsvDocumentPersistence( Document ).Save( options );
                             Util.MsgInfo( this, AppInfo.Name, options.Format.ToString() + " file generated" );

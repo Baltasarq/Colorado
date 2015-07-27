@@ -179,6 +179,10 @@ namespace Colorado.Gui {
             opAddRows.AddAccelerator( "activate", accelGroup, new AccelKey(
                 Gdk.Key.plus, Gdk.ModifierType.ControlMask, AccelFlags.Visible) );
 
+            var opFindAgain = this.findAgainAction.CreateMenuItem();
+            opFindAgain.AddAccelerator( "activate", accelGroup, new AccelKey(
+                Gdk.Key.F3, Gdk.ModifierType.None, AccelFlags.Visible) );
+
             mFile.Append( opNew );
             mFile.Append( opOpen );
             mFile.Append( opSave );
@@ -193,7 +197,7 @@ namespace Colorado.Gui {
             mFile.Append( opQuit );
 
             mEdit.Append( this.findAction.CreateMenuItem() );
-            mEdit.Append( this.findAgainAction.CreateMenuItem() );
+            mEdit.Append( opFindAgain );
             mEdit.Append( this.insertFormulaAction.CreateMenuItem() );
             mEdit.Append( new SeparatorMenuItem() );
             mEdit.Append( miRows );

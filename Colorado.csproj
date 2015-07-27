@@ -45,9 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgExport.cs" />
     <Compile Include="gtk-gui\Colorado.Gui.DlgProperties.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgFormulae.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Core\AppInfo.cs" />
     <Compile Include="Core\CsvDocument.cs" />
@@ -62,7 +60,6 @@
     <Compile Include="Core\Formulas\ProductFormula.cs" />
     <Compile Include="Core\Formulas\SubFormula.cs" />
     <Compile Include="Core\Formulas\SumFormula.cs" />
-    <Compile Include="Gui\DlgCsvExport.cs" />
     <Compile Include="Gui\DlgExport.cs" />
     <Compile Include="Gui\DlgFill.cs" />
     <Compile Include="Gui\DlgFormulae.cs" />
