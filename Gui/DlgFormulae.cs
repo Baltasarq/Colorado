@@ -31,7 +31,8 @@ namespace Colorado.Gui {
             var vBox = new Gtk.VBox( false, 2 );
 
             // Prepare apply frame
-            this.frmApply = new Gtk.Frame( "Apply to cells to the..." );
+            this.frmApply = new Gtk.Frame( "<b>Apply to cells...</b>" );
+            ((Gtk.Label) this.frmApply.LabelWidget ).UseMarkup = true;
             this.rbUp = new Gtk.RadioButton( "Up" );
             this.rbDown = new Gtk.RadioButton( this.rbUp, "Down" );
             this.rbRight = new Gtk.RadioButton( this.rbUp, "Right" );
@@ -43,7 +44,8 @@ namespace Colorado.Gui {
             this.frmApply.Add( vBox );
 
             // Prepare formula frame
-            this.frmFormula = new Gtk.Frame( "Formula" );
+            this.frmFormula = new Gtk.Frame( "<b>Formula</b>" );
+            ((Gtk.Label) this.frmFormula.LabelWidget ).UseMarkup = true;
             this.cbFormula = new Gtk.ComboBox( new string[] { "Average", "Sum" } );
             this.frmFormula.Add( this.cbFormula );
 

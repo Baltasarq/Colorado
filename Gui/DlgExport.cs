@@ -165,7 +165,8 @@ namespace Colorado.Gui {
             }
 
             // Layout
-            this.frmFields = new Gtk.Frame( "Fields" );
+            this.frmFields = new Gtk.Frame( "<b>Fields</b>" );
+            ((Gtk.Label) this.frmFields.LabelWidget ).UseMarkup = true;
             this.swScroll = new Gtk.ScrolledWindow();
             this.swScroll.AddWithViewport( vbox );
             this.frmFields.Add( this.swScroll );
@@ -198,7 +199,8 @@ namespace Colorado.Gui {
             // Layout
             vBoxFile.PackStart( hBoxFileName, false, false, 5 );
             vBoxFile.PackStart( hBoxOutput, false, false, 5 );
-            this.frmFile = new Gtk.Frame( "File" );
+            this.frmFile = new Gtk.Frame( "<b>File</b>" );
+            ((Gtk.Label) this.frmFile.LabelWidget ).UseMarkup = true;
             this.frmFile.Add( vBoxFile );
         }
 
@@ -206,7 +208,8 @@ namespace Colorado.Gui {
             var vBoxDocOptions = new Gtk.VBox( false, 2 );
 
             // Doc options
-            this.frmDocOptions = new Gtk.Frame( "Document options" );
+            this.frmDocOptions = new Gtk.Frame( "<b>Document options</b>" );
+            ((Gtk.Label) this.frmDocOptions.LabelWidget ).UseMarkup = true;
             this.cbRowNumbers = new Gtk.CheckButton( "Include row numbers" );
             this.cbTableBorders = new Gtk.CheckButton( "Include table borders" );
             vBoxDocOptions.PackStart( this.cbRowNumbers, false, false, 5 );
@@ -237,7 +240,8 @@ namespace Colorado.Gui {
             // Layout
             vBoxOptions.PackStart( hBoxDelimiter );
             vBoxOptions.PackStart( this.chkQuotes );
-            this.frmCsvOptions = new Gtk.Frame( "Csv options" );
+            this.frmCsvOptions = new Gtk.Frame( "<b>Csv options</b>" );
+            ((Gtk.Label) this.frmCsvOptions.LabelWidget ).UseMarkup = true;
             this.frmCsvOptions.Add( vBoxOptions );
         }
 

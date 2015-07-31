@@ -64,7 +64,8 @@ namespace Colorado.Gui {
 			hBoxFrom.PackStart( this.sbFrom, true, true, 5 );
 
 			// Layout
-			this.frmData = new Gtk.Frame( "Data" );
+			this.frmData = new Gtk.Frame( "<b>Data</b>" );
+            ((Gtk.Label) this.frmData.LabelWidget ).UseMarkup = true;
 			vBox.PackStart( hBoxFrom, true, true, 5 );
 			vBox.PackStart( hBoxTo, true, true, 5 );
 			this.frmData.Add( vBox );

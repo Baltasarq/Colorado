@@ -40,7 +40,8 @@ namespace Colorado.Gui {
 			var hBoxValue = new Gtk.HBox( false, 2 );
 
 			// Frame mutation
-			this.frmMutation = new Gtk.Frame( "Value mutation" );
+			this.frmMutation = new Gtk.Frame( "<b>Value mutation</b>" );
+            ((Gtk.Label) this.frmMutation.LabelWidget ).UseMarkup = true;
 			this.rbFixed = new Gtk.RadioButton( "_Fixed" );
 			this.rbIncrement = new Gtk.RadioButton( "_Increment" );
 			this.rbDecrement = new Gtk.RadioButton( "_Decrement" );

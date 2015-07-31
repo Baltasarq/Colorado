@@ -1,7 +1,6 @@
 ﻿// Colorado, a csv spreadsheet
 
 using System;
-using Gtk;
 using Colorado.Core;
 using System.Collections.Generic;
 
@@ -21,7 +20,6 @@ namespace Colorado.Gui {
             this.Build();
 
             this.lastFileName = "";
-            this.popup = null;
             this.document = null;
             this.txtToFind = "";
             this.ActivateIde( false );
@@ -162,9 +160,9 @@ namespace Colorado.Gui {
                 Util.MsgError( this, AppInfo.Name, "Error building view: '" + e.Message + '\'' );
             }
 
-            tvTable.EnableGridLines = TreeViewGridLines.Both;
+            tvTable.EnableGridLines = Gtk.TreeViewGridLines.Both;
             tvTable.SetCursor(
-                new TreePath( new int[]{ numRow } ),
+                new Gtk.TreePath( new int[]{ numRow } ),
                 tvTable.Columns[ 1 ],
                 false
             );
@@ -188,7 +186,7 @@ namespace Colorado.Gui {
 
             about.Parent = this;
             about.TransientFor = this;
-            about.SetPosition( WindowPosition.CenterOnParent );
+            about.SetPosition( Gtk.WindowPosition.CenterOnParent );
             about.Run();
             about.Destroy();
         }
@@ -363,7 +361,7 @@ namespace Colorado.Gui {
             this.CloseDocument();
 
             this.Visible = false;
-            Application.Quit();
+            Gtk.Application.Quit();
         }
 
         protected virtual void OnImport()
@@ -386,8 +384,8 @@ namespace Colorado.Gui {
         /// <param name="edit">Start editing the cell if set to <c>true</c>.</param>
         public void SetCurrentCell(int rowIndex, int colIndex, bool edit = false)
         {
-            var rowPath = new TreePath( new int[]{ rowIndex } );
-            TreeViewColumn colPath = this.tvTable.Columns[ colIndex ];
+            var rowPath = new Gtk.TreePath( new int[]{ rowIndex } );
+            Gtk.TreeViewColumn colPath = this.tvTable.Columns[ colIndex ];
 
             this.tvTable.ScrollToCell(
                 rowPath,
@@ -402,9 +400,9 @@ namespace Colorado.Gui {
 
         public void GetCurrentCell(out int row, out int col)
         {
-            TreePath rowPath;
-            TreeIter rowPointer;
-            TreeViewColumn colPath;
+            Gtk.TreePath rowPath;
+            Gtk.TreeIter rowPointer;
+            Gtk.TreeViewColumn colPath;
 
             // Convert path in row and rowPointer
             tvTable.GetCursor( out rowPath, out colPath );
@@ -442,9 +440,9 @@ namespace Colorado.Gui {
 
             try {
                 // Get current position
-                TreePath rowPath;
-                TreeIter rowPointer;
-                TreeViewColumn colPath;
+                Gtk.TreePath rowPath;
+                Gtk.TreeIter rowPointer;
+                Gtk.TreeViewColumn colPath;
 
                 // Convert path in row and rowPointer
                 rowPath = new Gtk.TreePath( args.Path );
@@ -676,7 +674,7 @@ namespace Colorado.Gui {
 
                     if ( cell.Contains( txtToFind ) ) {
                         int[] path = new int[] { i };
-                        this.tvTable.SetCursor( new TreePath( path ), tvTable.Columns[ j + 1 ], false );
+                        this.tvTable.SetCursor( new Gtk.TreePath( path ), tvTable.Columns[ j + 1 ], false );
                         goto End;
                     }
                 }
@@ -703,13 +701,13 @@ namespace Colorado.Gui {
 
         public void RefreshRows(int col, int begin, int end)
         {
-            TreePath rowPath;
-            TreeIter rowPointer;
+            Gtk.TreePath rowPath;
+            Gtk.TreeIter rowPointer;
 
             // Run over rows
             for(int i = begin; i <= end; ++i) {
                 // Get an iterator for this row
-                rowPath = new TreePath( Convert.ToString( i ) );
+                rowPath = new Gtk.TreePath( Convert.ToString( i ) );
                 this.tvTable.Model.GetIter( out rowPointer, rowPath );
 
                 // Refresh row
@@ -744,7 +742,7 @@ namespace Colorado.Gui {
                 rowBegin, document.Data.NumRows,
                 DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Rows );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 // Adapt from UI to document (headers)
                 rowBegin = dlg.From - NumFixedRows;
                 rowEnd = dlg.To - NumFixedRows;
@@ -781,7 +779,7 @@ namespace Colorado.Gui {
                 colBegin, document.Data.NumColumns,
                 DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Columns );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 // Adapt from UI to document
                 colBegin = dlg.From - 1;
                 colEnd = dlg.To - 1;
@@ -822,7 +820,7 @@ namespace Colorado.Gui {
                 int.MaxValue
             );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     if ( dlg.From == this.Document.Data.NumRows
                         && dlg.Where == DlgIncDec.WherePosition.After )
@@ -870,7 +868,7 @@ namespace Colorado.Gui {
 				col + 1, int.MaxValue
             );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
                     if ( dlg.From == this.Document.Data.NumColumns
@@ -953,7 +951,7 @@ namespace Colorado.Gui {
                 this.document.Data.NumRows
             );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
                     this.SetStatus( "Removing columns" );
@@ -989,7 +987,7 @@ namespace Colorado.Gui {
                 this.document.Data.NumColumns
             );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
                     this.SetStatus( "Removing columns" );
@@ -1019,7 +1017,7 @@ namespace Colorado.Gui {
                     row +1, document.Data.NumRows,
                     DlgFromTo.ActionType.Copy, DlgFromTo.ItemType.Rows );
 
-                if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+                if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                     try {
                         // do it
                         this.SetStatus( "Copying row" );
@@ -1060,7 +1058,7 @@ namespace Colorado.Gui {
                 DlgFromTo.ActionType.Copy,
                 DlgFromTo.ItemType.Columns );
 
-            if ( ( (ResponseType) dlg.Run() ) == ResponseType.Ok ) {
+            if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
                     this.SetStatus( "Copying column" );
@@ -1142,15 +1140,16 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected void OnTableClicked(ButtonReleaseEventArgs args)
+        private void OnTableClicked(Gtk.ButtonReleaseEventArgs args)
         {
             if ( args.Event.Button == 3 ) {
                 this.popup.Popup();
             }
+
+            return;
         }
 
-        [GLib.ConnectBefore]
-        protected void OnTableKeyPressed(Gtk.KeyPressEventArgs args)
+        private void OnTableKeyPressed(Gtk.KeyPressEventArgs args)
         {
             int rowIndex;
             int colIndex;
@@ -1247,7 +1246,7 @@ namespace Colorado.Gui {
 
             // Find place
             Gtk.TreeIter itRow;
-            table.GetIter( out itRow, new TreePath( new int[] { row } ) );
+            table.GetIter( out itRow, new Gtk.TreePath( new int[] { row } ) );
 
             // Set
             table.SetValue( itRow, col, value );

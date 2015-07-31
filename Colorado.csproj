@@ -44,8 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="gtk-gui\Colorado.Gui.DlgProperties.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Core\AppInfo.cs" />
     <Compile Include="Core\CsvDocument.cs" />
@@ -79,9 +77,6 @@
     <Compile Include="Gui\MainWindowView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="gtk-gui\gui.stetic">
-      <LogicalName>gui.stetic</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="Res\colorado.ico" />
     <EmbeddedResource Include="Res\colorado.png" />
   </ItemGroup>

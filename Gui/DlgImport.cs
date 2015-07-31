@@ -67,7 +67,8 @@ namespace Colorado.Gui {
 			var vBoxOptions = new Gtk.VBox( false, 2 );
 
 			// File name
-			this.frmFileName = new Gtk.Frame( "Name" );
+			this.frmFileName = new Gtk.Frame( "<b>Name</b>" );
+            ((Gtk.Label) this.frmFileName.LabelWidget ).UseMarkup = true;
 			this.lblFileName = new Gtk.Label( "File name:" );
 			this.edFileName = new Gtk.Entry();
 			this.btOpen = new Gtk.Button( Gtk.Stock.Open );
@@ -80,10 +81,11 @@ namespace Colorado.Gui {
 			this.frmFileName.Add( vBoxFileName );
 
 			// Options
-			this.frmOptions = new Gtk.Frame( "Options" );
+			this.frmOptions = new Gtk.Frame( "<b>Options</b>" );
+            ((Gtk.Label) this.frmOptions.LabelWidget ).UseMarkup = true;
 			this.lblDelimiter = new Gtk.Label( "Delimiter" );
 			this.cmbDelimiter = new Gtk.ComboBoxEntry( new string[]{ ";", "," } );
-			this.cbFirstRowForHeaders = new Gtk.CheckButton( "_First row is for headers" );
+			this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row is for headers" );
 			hBoxDelimiter.PackStart( this.lblDelimiter, false, false, 5 );
 			hBoxDelimiter.PackStart( this.cmbDelimiter, true, true, 5 );
 			vBoxOptions.PackStart( hBoxDelimiter, true, true, 5 );

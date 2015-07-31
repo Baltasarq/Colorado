@@ -55,8 +55,10 @@ namespace Colorado.Gui {
 			var vBoxValues = new Gtk.VBox( false, 2 );
 
 			// Frames
-			this.frmWhere = new Gtk.Frame( "Position" );
-			this.frmValues = new Gtk.Frame( "Values" );
+			this.frmWhere = new Gtk.Frame( "<b>Position</b>" );
+            ((Gtk.Label) this.frmWhere.LabelWidget ).UseMarkup = true;
+			this.frmValues = new Gtk.Frame( "<b>Values</b>" );
+            ((Gtk.Label) this.frmValues.LabelWidget ).UseMarkup = true;
 
 			hBoxFrames.PackStart( this.frmWhere, false, false, 5 );
 			hBoxFrames.PackStart( this.frmValues, true, true, 5 );
