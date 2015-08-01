@@ -23,12 +23,12 @@ namespace Colorado.Gui {
 			get {
                 var toret = Core.Filler.FillType.Fixed;
 				
-				if ( rbIncrement.Active ) {
+				if ( this.rbIncrement.Active ) {
                     toret = Core.Filler.FillType.Increment;
 				}
 				else
-				if ( rbDecrement.Active ) {
-                        toret = Core.Filler.FillType.Decrement;
+				if ( this.rbDecrement.Active ) {
+                    toret = Core.Filler.FillType.Decrement;
 				}
 				
 				return toret;
@@ -43,8 +43,8 @@ namespace Colorado.Gui {
 			this.frmMutation = new Gtk.Frame( "<b>Value mutation</b>" );
             ((Gtk.Label) this.frmMutation.LabelWidget ).UseMarkup = true;
 			this.rbFixed = new Gtk.RadioButton( "_Fixed" );
-			this.rbIncrement = new Gtk.RadioButton( "_Increment" );
-			this.rbDecrement = new Gtk.RadioButton( "_Decrement" );
+            this.rbIncrement = new Gtk.RadioButton( this.rbFixed, "_Increment" );
+            this.rbDecrement = new Gtk.RadioButton( this.rbFixed, "_Decrement" );
 			vBoxMutation.PackStart( this.rbFixed, true, true, 2 );
 			vBoxMutation.PackStart( this.rbIncrement, true, true, 2 );
 			vBoxMutation.PackStart( this.rbDecrement, true, true, 2 );

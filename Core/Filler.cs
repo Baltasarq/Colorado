@@ -9,25 +9,28 @@ namespace Colorado.Core {
 
         public static Filler CreateFiller(CsvDocument doc, Position pos, int n, string initValue, FillType ft, FillDirection fd)
         {
-            Filler toret = null;
+            // Set init value
             initValue = initValue.Trim();
 
             if ( initValue.Length == 0 ) {
                 initValue = "1";
             }
 
+            // Fixed filler by default
+            Filler toret = new FixedFiller( doc, pos, n, initValue, FillType.Fixed, fd );
+
             if ( ft != FillType.Fixed ) {
                 // Is there a digit at the end?
                 if ( char.IsDigit( initValue[ initValue.Length - 1 ] ) ) {
                     toret = new NumberFiller( doc, pos, n, initValue, ft, fd, NumberFiller.NumberPosition.Postfix );
-                } else {
-                    // Is there a digit at the beginning?
-                    if ( char.IsDigit( initValue[ 0 ] ) ) {
-                        toret = new NumberFiller( doc, pos, n, initValue, ft, fd, NumberFiller.NumberPosition.Prefix );
-                    }
                 }
-            } else {
-                toret = new FixedFiller( doc, pos, n, initValue, ft, fd );
+                else
+                // Is there a digit at the beginning?
+                if ( char.IsDigit( initValue[ 0 ] ) ) {
+                    toret = new NumberFiller( doc, pos, n, initValue, ft, fd, NumberFiller.NumberPosition.Prefix );
+                }
+
+                // No digit at all: default fixed filler
             }
 
             return toret;

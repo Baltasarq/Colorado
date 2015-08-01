@@ -1086,14 +1086,12 @@ namespace Colorado.Gui {
             dlg.Modal = true;
 
             if ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok ) {
-                string fillValue = dlg.FillValue;
-                Filler.FillType type = dlg.KindOfFill;
                 var filler = Filler.CreateFiller(
                     this.Document,
                     new Position( this.Document, row, column ),
                     -1,
-                    fillValue,
-                    type,
+                    dlg.FillValue,
+                    dlg.KindOfFill,
                     Filler.FillDirection.Row );
 
                 while ( filler.NumCells > 0 ) {
@@ -1117,18 +1115,16 @@ namespace Colorado.Gui {
 
             // Ask for filling
             var dlg = new DlgFill( this );
-            dlg.Modal = true;
 
             if ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok ) {
-                string fillValue = dlg.FillValue;
-                Filler.FillType type = dlg.KindOfFill;
                 var filler = Filler.CreateFiller(
                     this.Document,
                     new Position( this.Document, row, column ),
                     -1,
-                    fillValue,
-                    type,
+                    dlg.FillValue,
+                    dlg.KindOfFill,
                     Filler.FillDirection.Column );
+                
                 while ( filler.NumCells > 0 ) {
                     filler.DoIt();
                     Util.UpdateUI();
