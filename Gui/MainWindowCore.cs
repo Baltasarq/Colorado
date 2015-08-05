@@ -356,7 +356,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnQuit()
+        private void OnQuit()
         {
             this.CloseDocument();
 
@@ -364,7 +364,7 @@ namespace Colorado.Gui {
             Gtk.Application.Quit();
         }
 
-        protected virtual void OnImport()
+        private void OnImport()
         {
             var dlg = new DlgImport( this );
 
@@ -574,7 +574,7 @@ namespace Colorado.Gui {
             this.CloseDocument();
         }
 
-        protected void OnEdFindActivated()
+        private void OnEdFindActivated()
         {
             this.txtToFind = this.edFind.Text;
 
@@ -584,11 +584,6 @@ namespace Colorado.Gui {
 
             // Do it
             this.FindText( 0 );
-        }
-
-        protected void OnEdFindFocused()
-        {
-            this.edFind.Text = "";
         }
 
         protected void UpdateDocumentView(int oldRows, int oldColumns)

@@ -47,7 +47,13 @@ namespace Colorado.Core {
                 ChkValue( numRow, 0, NumRows, "row number" );
                 ChkValue( numColumn, 0, NumColumns, "column number" );
 
-				return this.data[ numRow ][ numColumn ];
+                string toret = this.data[ numRow ][ numColumn ];
+
+                if ( toret == null ) {
+                    toret = this.data[ numRow ][ numColumn ] = "";
+                }
+
+				return toret;
 			}
 			set {
 				ChkValue( numRow, 0, NumRows, "row number" );
@@ -467,7 +473,7 @@ namespace Colorado.Core {
 				if ( newColNum > oldCount ) {
 					this.columnInfo.AddRange( new ColumnInfo[ newColNum - oldCount ] );
 				} else {
-					this.columnInfo.RemoveRange( oldCount - newColNum, oldCount - newColNum );
+					this.columnInfo.RemoveRange( newColNum, oldCount - newColNum );
 				}
 
 				// Assign values to new headers: col1, col2...

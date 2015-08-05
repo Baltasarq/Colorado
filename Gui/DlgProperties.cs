@@ -191,8 +191,8 @@ namespace Colorado.Gui {
             // Layout
             vBox.PackStart( hBoxRows, true, true, 5 );
             vBox.PackStart( hBoxColumns, true, true, 5 );
-            vBox.PackStart( hBoxDelimiter, true, true, 5 );
-            vBox.PackStart( hBoxDecimalMark, true, true, 5 );
+            vBox.PackStart( hBoxDelimiter, true, false, 5 );
+            vBox.PackStart( hBoxDecimalMark, true, false, 5 );
             vBox.PackStart( this.cbFirstRowForHeaders, true, true, 5 );
             vBox.PackStart( this.cbSurroundWithDoubleQuotes, true, true, 5 );
             this.frmProperties = new Gtk.Frame( "<b>Properties</b>" );

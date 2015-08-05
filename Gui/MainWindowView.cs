@@ -9,7 +9,8 @@ namespace Colorado.Gui {
             // Create components
             this.edFind = new Gtk.Entry( "Find..." );
             this.edFind.Activated += (sender, e) => this.OnEdFindActivated();
-            this.edFind.Focused += (sender, e) => this.OnEdFindFocused();
+            this.edFind.FocusInEvent += (sender, e) => this.edFind.Text = "";
+            this.edFind.FocusOutEvent += (sender, e) => this.edFind.Text = "Find...";
             this.tvTable = new Gtk.TreeView();
             this.tvTable.EnableSearch = false;
             this.tvTable.ButtonReleaseEvent +=
@@ -183,6 +184,10 @@ namespace Colorado.Gui {
             opAddRows.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.plus, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible) );
 
+            var opFind = this.findAction.CreateMenuItem();
+            opFind.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
+                Gdk.Key.F, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible) );
+            
             var opFindAgain = this.findAgainAction.CreateMenuItem();
             opFindAgain.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.F3, Gdk.ModifierType.None, Gtk.AccelFlags.Visible) );
@@ -200,7 +205,7 @@ namespace Colorado.Gui {
             mFile.Append( this.revertAction.CreateMenuItem() );
             mFile.Append( opQuit );
 
-            mEdit.Append( this.findAction.CreateMenuItem() );
+            mEdit.Append( opFind );
             mEdit.Append( opFindAgain );
             mEdit.Append( this.insertFormulaAction.CreateMenuItem() );
             mEdit.Append( new Gtk.SeparatorMenuItem() );
