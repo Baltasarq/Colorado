@@ -59,7 +59,7 @@ namespace Colorado.Core {
 				ChkValue( numRow, 0, NumRows, "row number" );
                 ChkValue( numColumn, 0, NumColumns, "column number" );
 
-				this.data[ numRow ][ numColumn ] = value;
+                this.data[ numRow ][ numColumn ] = value ?? "";
 			}
 		}
 
@@ -408,11 +408,13 @@ namespace Colorado.Core {
 			ChkValue( numRows, 0, NumRows, "number of rows to remove" );
 			Changed = true;
 
-			this.data.RemoveRange( pos, numRows );
+            // Value to really delete
+            int removeCount =  Math.Min( numRows, this.NumRows - pos - 1 );
 
-			// Fix
-			this.numRows -= numRows;
-			Owner.FormulaManager.FixFormulasRowsRemoved( pos, numRows );
+			// Do it and fix
+            this.data.RemoveRange( pos, removeCount );
+            this.numRows -= removeCount;
+            Owner.FormulaManager.FixFormulasRowsRemoved( pos, removeCount );
 			Owner.FormulaManager.AllowFormulaUpdating = true;
 		}
 
@@ -449,15 +451,18 @@ namespace Colorado.Core {
 			ChkValue( numCols, 0, NumColumns, "number of columns to remove" );
 			Changed = true;
 
+            // Real count to delete
+            int removeCount = Math.Min( numCols, this.NumColumns - pos - 1 );
+
 			// For each row...
 			for (int i = 0; i < NumRows; ++i) {
-				this.data[ i ].RemoveRange( pos, numCols );
+                this.data[ i ].RemoveRange( pos, removeCount );
 			}
 
 			// Fix
-			this.numColumns -= numCols;
-			this.columnInfo.RemoveRange( pos, numCols );
-			Owner.FormulaManager.FixFormulasColumnsRemoved( pos, numCols );
+            this.numColumns -= removeCount;
+            this.columnInfo.RemoveRange( pos, removeCount );
+            Owner.FormulaManager.FixFormulasColumnsRemoved( pos, removeCount );
 			Owner.FormulaManager.AllowFormulaUpdating = true;
 		}
 

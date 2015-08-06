@@ -19,7 +19,7 @@ namespace Colorado.Gui {
 		{
 			string info = "<b>Number of ";
 			this.Build();
-			
+
 			// Prepare dialog
 			this.Title = StrDialogType[ (int) type ] + " ";
 			this.Title += StrTarget[ (int) target ];
@@ -28,10 +28,11 @@ namespace Colorado.Gui {
 			this.TransientFor = parent;
 			this.SetPosition( Gtk.WindowPosition.CenterOnParent );
             this.ShowAll();
-			
+
 			// Set widgets
+            this.frmWhere.Visible = ( type == DialogType.Insert );
 			sbFrom.SetRange( 1, max );
-			sbNumber.SetRange( 1, max );
+			sbNumber.SetRange( 1, max - 1 );
 			sbFrom.Value = begin;
 			sbNumber.Value = 1;
 

@@ -142,7 +142,7 @@ namespace Colorado.Gui {
                     column.PackStart( cell, true );
                     cell.Editable = true;
                     column.AddAttribute( cell, "text", colNum + 1 );
-                    cell.Edited += OnTableCellEdited;
+                    cell.Edited += (o, args) => OnTableCellEdited( args );
 
                     tvTable.AppendColumn( column );
                 }
@@ -191,7 +191,7 @@ namespace Colorado.Gui {
             about.Destroy();
         }
 
-        protected virtual void OnFind()
+        private void OnFind()
         {
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -276,7 +276,7 @@ namespace Colorado.Gui {
             this.ActivateIde( false );
         }
 
-        protected virtual void OnOpen()
+        private void OnOpen()
         {
             this.CloseDocument();
 
@@ -405,16 +405,16 @@ namespace Colorado.Gui {
             Gtk.TreeViewColumn colPath;
 
             // Convert path in row and rowPointer
-            tvTable.GetCursor( out rowPath, out colPath );
+            this.tvTable.GetCursor( out rowPath, out colPath );
 
             if ( rowPath != null
-                && colPath != null )
+              && colPath != null )
             {
-                tvTable.Model.GetIter( out rowPointer, rowPath );
+                this.tvTable.Model.GetIter( out rowPointer, rowPath );
                 row = rowPath.Indices[ 0 ];
 
                 // Find out the column order
-                for(col = 0; col < tvTable.Columns.Length; ++col) {
+                for(col = 0; col < this.tvTable.Columns.Length; ++col) {
                     if ( tvTable.Columns[ col ] == colPath ) {
                         break;
                     }
@@ -433,10 +433,10 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnTableCellEdited(object o, Gtk.EditedArgs args)
+        private void OnTableCellEdited(Gtk.EditedArgs args)
         {
-            int row;
-            int col;
+            int rowIndex;
+            int colIndex;
 
             try {
                 // Get current position
@@ -447,23 +447,23 @@ namespace Colorado.Gui {
                 // Convert path in row and rowPointer
                 rowPath = new Gtk.TreePath( args.Path );
                 tvTable.Model.GetIter( out rowPointer, rowPath );
-                row = rowPath.Indices[ 0 ];
+                rowIndex = rowPath.Indices[ 0 ];
 
                 // Find out the column order
                 tvTable.GetCursor( out rowPath, out colPath );
-                for(col = 0; col < tvTable.Columns.Length; ++col) {
-                    if ( tvTable.Columns[ col ] == colPath ) {
+                for(colIndex = 0; colIndex < tvTable.Columns.Length; ++colIndex) {
+                    if ( tvTable.Columns[ colIndex ] == colPath ) {
                         break;
                     }
                 }
 
                 // Store data
                 try {
-                    this.document.Data[ row, col - NumFixedColumns ] = args.NewText;
-                    this.tvTable.Model.SetValue( rowPointer, col, args.NewText );
+                    this.document.Data[ rowIndex, colIndex - NumFixedColumns ] = args.NewText;
+                    this.tvTable.Model.SetValue( rowPointer, colIndex, args.NewText );
 
                     if ( args.NewText == "" ) {
-                        this.Document.FormulaManager.RemoveFormula( row, col - NumFixedColumns );
+                        this.Document.FormulaManager.RemoveFormula( rowIndex, colIndex - NumFixedColumns );
                     }
 
                     this.Document.Changed = true;
@@ -480,7 +480,7 @@ namespace Colorado.Gui {
             }
         }
 
-        protected virtual void OnSave()
+        private void OnSave()
         {
             try {
                 if ( this.document != null ) {
@@ -504,7 +504,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnSaveAs()
+        private void OnSaveAs()
         {
             try {
                 if ( this.document != null ) {
@@ -531,7 +531,7 @@ namespace Colorado.Gui {
             }       
         }
 
-        protected virtual void OnExport()
+        private void OnExport()
         {
             ExportOptions options = null;
 
@@ -569,7 +569,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnClose()
+        private void OnClose()
         {
             this.CloseDocument();
         }
@@ -609,7 +609,7 @@ namespace Colorado.Gui {
             this.SetStatus();
         }
 
-        protected virtual void OnProperties()
+        private void OnProperties()
         {
             if ( this.document != null ) {
                 var dlg = new DlgProperties( this, this.document );
@@ -635,7 +635,7 @@ namespace Colorado.Gui {
             } else Util.MsgError( this, AppInfo.Name, "No document loaded" );
         }
 
-        protected virtual void OnNew()
+        private void OnNew()
         {
             this.CloseDocument();
 
@@ -679,7 +679,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnFindAgain()
+        private void OnFindAgain()
         {
             int row;
             int col;
@@ -717,7 +717,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnClearRows()
+        private void OnClearRows()
         {
             int rowBegin;
             int rowEnd;
@@ -754,7 +754,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnClearColumns()
+        private void OnClearColumns()
         {
             int colBegin;
             int colEnd;
@@ -791,7 +791,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnAddRows()
+        private void OnAddRows()
         {
             int row;
             int col;
@@ -843,7 +843,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnAddColumns()
+        private void OnAddColumns()
         {
             int row;
             int col;
@@ -891,7 +891,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnRevert()
+        private void OnRevert()
         {
             var oldDocument = this.document;
 
@@ -925,7 +925,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnRemoveRows()
+        private void OnRemoveRows()
         {
             int row;
             int col;
@@ -961,7 +961,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnRemoveColumns()
+        private void OnRemoveColumns()
         {
             int row;
             int col;
@@ -997,7 +997,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnCopyRow()
+        private void OnCopyRow()
         {
             int row;
             int col;
@@ -1033,7 +1033,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected virtual void OnCopyColumn()
+        private void OnCopyColumn()
         {
             int row;
             int col;
@@ -1068,7 +1068,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnFillRow()
+        private void OnFillRow()
         {
             int row;
             int column;
@@ -1100,7 +1100,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        protected virtual void OnFillColumn()
+        private void OnFillColumn()
         {
             int row;
             int column;
@@ -1140,6 +1140,7 @@ namespace Colorado.Gui {
             return;
         }
 
+        [GLib.ConnectBefore]
         private void OnTableKeyPressed(Gtk.KeyPressEventArgs args)
         {
             int rowIndex;
@@ -1156,9 +1157,9 @@ namespace Colorado.Gui {
 
             if ( args.Event.Key != Gdk.Key.ISO_Enter ) {
                 if ( args.Event.Key == Gdk.Key.Tab
-                    || args.Event.Key == Gdk.Key.ISO_Left_Tab )
+                  || args.Event.Key == Gdk.Key.ISO_Left_Tab )
                 {
-                    if( args.Event.State == Gdk.ModifierType.ShiftMask ) {
+                   if( args.Event.State == Gdk.ModifierType.ShiftMask ) {
                         // Back
                         colIndex -= 1;
                         if ( colIndex < 1 ) {
@@ -1224,13 +1225,13 @@ namespace Colorado.Gui {
 
             // Chk
             if( row < 0
-                || row >= this.Document.Data.NumRows )
+             || row >= this.Document.Data.NumRows )
             {
                 throw new ArgumentException( "invalid row to set: " + row.ToString(), "row" );
             }
 
             if( col < 0
-                || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
+             || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
             {
                 throw new ArgumentException( "invalid column to set: " + col.ToString(), "col" );
             }
@@ -1243,7 +1244,44 @@ namespace Colorado.Gui {
             table.SetValue( itRow, col, value );
         }
 
-        protected virtual void OnInsertFormula()
+        /// <summary>
+        /// Get the contents of the tvTable
+        /// </summary>
+        /// <param name="row">
+        /// A <see cref="System.Int32"/> with the row number of the cell to set
+        /// </param>
+        /// <param name="col"> with the column number of the cell to set
+        /// A <see cref="System.Int32"/>
+        /// </param>
+        /// <return>
+        /// A <see cref="System.String"/> with the value of the cell
+        /// </return>
+        protected string Get(int row, int col)
+        {
+            var table = (Gtk.ListStore) this.tvTable.Model;
+
+            // Chk
+            if( row < 0
+             || row >= this.Document.Data.NumRows )
+            {
+                throw new ArgumentException( "invalid row to set: " + row.ToString(), "row" );
+            }
+
+            if( col < 0
+             || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
+            {
+                throw new ArgumentException( "invalid column to set: " + col.ToString(), "col" );
+            }
+
+            // Find place
+            Gtk.TreeIter itRow;
+            table.GetIter( out itRow, new Gtk.TreePath( new int[] { row } ) );
+
+            // Get
+            return (String) table.GetValue( itRow, col );
+        }
+
+        private void OnInsertFormula()
         {
             int row;
             int col;

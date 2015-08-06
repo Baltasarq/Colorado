@@ -4,7 +4,7 @@ namespace Colorado.Gui {
         private void Build() {
             var vPanel = new Gtk.VBox( false, 2 );
             var hPanel = new Gtk.HBox( false, 2 );
-			var viewPort = new Gtk.ScrolledWindow();
+            var swScroll = new Gtk.ScrolledWindow();
 
             // Create components
             this.edFind = new Gtk.Entry( "Find..." );
@@ -17,7 +17,7 @@ namespace Colorado.Gui {
                 (object o, Gtk.ButtonReleaseEventArgs args) => this.OnTableClicked( args );
             this.tvTable.KeyPressEvent +=
                 (object o, Gtk.KeyPressEventArgs args) => this.OnTableKeyPressed( args );
-			viewPort.Add( this.tvTable );
+            swScroll.AddWithViewport( this.tvTable );
 
             // Build them all
             this.BuildActions();
@@ -32,7 +32,7 @@ namespace Colorado.Gui {
 
             vPanel.PackStart( this.menuBar, false, false, 0 );
             vPanel.PackStart( hPanel, false, false, 0 );
-			vPanel.PackStart( viewPort, true, true, 0 );
+			vPanel.PackStart( swScroll, true, true, 0 );
             vPanel.PackStart( this.sbStatus, false, false, 0 );
 
             // Add to this
