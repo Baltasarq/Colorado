@@ -42,12 +42,16 @@ namespace Colorado.Core {
 
 		public string FileName {
 			get { return fileName; }
-			set { CsvDocumentPersistence.PrepareFileName( ref value ); fileName = value; }
+			set {
+                CsvDocumentPersistence.PrepareFileName( ref value );
+                fileName = value;
+                this.HasName = true;
+            }
 		}
 		
 		public bool HasName {
 			get { return hasName; }
-			set { hasName = value; }
+			private set { hasName = value; }
 		}
 		
 		public bool SurroundText {

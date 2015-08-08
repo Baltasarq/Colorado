@@ -517,7 +517,7 @@ namespace Colorado.Gui {
                     {
                         this.SetStatus( "Saving..." );
                         this.document.FileName = this.lastFileName;
-                        this.lastFileName = this.document.FileName;
+                        this.lastFileName = this.document.FileName;  // CSVDoc fixed filename
                         new CsvDocumentPersistence( Document ).SaveCsvData(
                             new ExportOptions( this.lastFileName, this.document ) );
                         this.SetTitle();
