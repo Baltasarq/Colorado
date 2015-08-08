@@ -1,0 +1,2 @@
+﻿Formulae do not update when removing columns or rows
+The name of the archive does not appear to be set after first save (Windows only?)

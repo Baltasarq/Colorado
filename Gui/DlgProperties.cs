@@ -8,6 +8,11 @@ namespace Colorado.Gui {
 	public partial class DlgProperties : Gtk.Dialog {
 		private CsvDocument document;
 		
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Colorado.Gui.DlgProperties"/> class.
+        /// </summary>
+        /// <param name="parent">Parent.</param>
+        /// <param name="doc">Document.</param>
 		public DlgProperties(Gtk.Window parent, CsvDocument doc) {
             var minSize = new Gdk.Geometry() {
                 MinWidth = 400,
@@ -63,6 +68,9 @@ namespace Colorado.Gui {
 			document.Changed = true;
 		}
 		
+        /// <summary>
+        /// Applies the preferences.
+        /// </summary>
 		public void ApplyPreferences()
 		{
 			// Get delimiter
@@ -141,16 +149,19 @@ namespace Colorado.Gui {
             this.frmHeaders.Add( swScroll );
 
             // Set the treeview
-            Gtk.ListStore listStore = new Gtk.ListStore( typeof( string ) );
-            listHeaders.Model = listStore;
             var column = new Gtk.TreeViewColumn();
             var cell = new Gtk.CellRendererText();
-            column.Title = "Headers";
+            Gtk.ListStore listStore = new Gtk.ListStore( typeof( string ) );
+
+            column.Title = "";
             column.PackStart( cell, true );
             cell.Editable = true;
             column.AddAttribute( cell, "text", 0 );
             cell.Edited += OnHeaderEdited;
-            listHeaders.AppendColumn( column );
+
+            this.listHeaders.AppendColumn( column );
+            this.listHeaders.Model = listStore;
+            this.listHeaders.EnableGridLines = Gtk.TreeViewGridLines.Horizontal;
         }
 
         private void BuildPropertiesFrame() {

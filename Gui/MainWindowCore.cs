@@ -160,13 +160,14 @@ namespace Colorado.Gui {
                 Util.MsgError( this, AppInfo.Name, "Error building view: '" + e.Message + '\'' );
             }
 
-            tvTable.EnableGridLines = Gtk.TreeViewGridLines.Both;
-            tvTable.SetCursor(
+            this.tvTable.EnableGridLines = Gtk.TreeViewGridLines.Both;
+            this.tvTable.HeadersClickable = true;
+            this.tvTable.SetCursor(
                 new Gtk.TreePath( new int[]{ numRow } ),
                 tvTable.Columns[ 1 ],
                 false
             );
-            tvTable.Show();
+            this.tvTable.Show();
         }
 
         protected void OnAbout()
@@ -826,7 +827,7 @@ namespace Colorado.Gui {
                         int modifier = 0;
 
                         if ( dlg.From > 0
-                            && dlg.Where == DlgIncDec.WherePosition.Before )
+                          && dlg.Where == DlgIncDec.WherePosition.After )
                         {
                             modifier = -1;
                         }
@@ -874,7 +875,7 @@ namespace Colorado.Gui {
                         int modifier = 0;
 
                         if ( dlg.From > 0
-                            && dlg.Where == DlgIncDec.WherePosition.Before )
+                          && dlg.Where == DlgIncDec.WherePosition.After )
                         {
                             modifier = -1;
                         }

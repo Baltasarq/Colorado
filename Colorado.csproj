@@ -94,4 +94,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="ToDo.txt" />
+  </ItemGroup>
 </Project>
