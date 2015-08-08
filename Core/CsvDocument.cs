@@ -7,7 +7,7 @@ namespace Colorado.Core {
 	public class CsvDocument {
         public enum DecimalSeparator { Point, Comma };
 		public const char Quote = '"';
-		public const string NewFileName = "newdoc.csv";
+		public const string NewFileName = "_new_doc.csv";
 
         public static readonly ReadOnlyCollection<char> DecimalSeparatorChar =
             new ReadOnlyCollection<char>( new char[] { '.', ',' } );
@@ -17,7 +17,6 @@ namespace Colorado.Core {
 			this.data = new Data( this, 0, 0 );
 			this.fileName = NewFileName;
 			this.delimiter = new Delimiter( Delimiter.TabDelimiter );
-			this.HasName = false;
 			this.surroundText = true;
             this.DecimalMark = AppInfo.DecimalMark;
 			this.ClientUpdater = null;
@@ -41,17 +40,17 @@ namespace Colorado.Core {
 		}
 
 		public string FileName {
-			get { return fileName; }
+			get { return this.fileName; }
 			set {
                 CsvDocumentPersistence.PrepareFileName( ref value );
-                fileName = value;
-                this.HasName = true;
+                this.fileName = value;
             }
 		}
 		
 		public bool HasName {
-			get { return hasName; }
-			private set { hasName = value; }
+            get {
+                return ( ( this.FileName.Length > 0 ) && ( this.FileName != NewFileName ) );
+            }
 		}
 		
 		public bool SurroundText {
@@ -112,7 +111,6 @@ namespace Colorado.Core {
         private bool surroundText;
 		private Data data;
         private string fileName;
-        private bool hasName;
 		private FormulaManager formulaManager;
 		public ClientUpdate ClientUpdater;
 	}
