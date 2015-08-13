@@ -470,7 +470,7 @@ namespace Colorado.Core {
 		/// Creates the new columns info vector, saving the info from the previous one.
 		/// </summary>
 		/// <param name="newColNum">New number of columns.</param>
-		protected void CreateNewColumnsInfo(int newColNum)
+		private void CreateNewColumnsInfo(int newColNum)
 		{
 			int oldCount = this.columnInfo.Count;
 
@@ -539,28 +539,36 @@ namespace Colorado.Core {
 		/// <summary>
 		/// Moves the first row to headers.
 		/// </summary>
-		protected void MoveFirstRowToHeaders()
+		private void MoveFirstRowToHeaders()
 		{
-			// Copy the data into headers
-			for(int i = 0; i < ColumnInfo.Length; ++i) {
-				ColumnInfo[ i ].Header = this.data[ 0 ][ i ];
-			}
+            if ( this.NumRows > 0 ) {
+    			// Copy the data into headers
+    			for(int i = 0; i < ColumnInfo.Length; ++i) {
+    				ColumnInfo[ i ].Header = this.data[ 0 ][ i ];
+    			}
 
-			// Shift rows up
-			RemoveRows( 0, 1 );
+    			// Shift rows up
+    			RemoveRows( 0, 1 );
+            }
+
+            return;
 		}
 
-		protected void MoveHeadersToFirstRow()
+		private void MoveHeadersToFirstRow()
 		{
-			// Shift rows down
-			InsertRows( 0, 1 );
+            if ( this.NumRows > 0 ) {
+        			// Shift rows down
+        			InsertRows( 0, 1 );
 
-			// Copy headers to first row
-			for(int j = 0; j < NumColumns; ++j) {
-				this.data[ 0 ][ j ] = this.ColumnInfo[ j ].Header;
-			}
+        			// Copy headers to first row
+        			for(int j = 0; j < NumColumns; ++j) {
+        				this.data[ 0 ][ j ] = this.ColumnInfo[ j ].Header;
+        			}
 
-			CreateDefaultHeaders( 0 );
+        			CreateDefaultHeaders( 0 );
+            }
+
+            return;
 		}
 
 		private CsvDocument owner;

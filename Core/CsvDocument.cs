@@ -7,7 +7,7 @@ namespace Colorado.Core {
 	public class CsvDocument {
         public enum DecimalSeparator { Point, Comma };
 		public const char Quote = '"';
-		public const string NewFileName = "_new_doc.csv";
+		public const string NewFileName = "new-doc.csv";
 
         public static readonly ReadOnlyCollection<char> DecimalSeparatorChar =
             new ReadOnlyCollection<char>( new char[] { '.', ',' } );
@@ -21,6 +21,7 @@ namespace Colorado.Core {
             this.DecimalMark = AppInfo.DecimalMark;
 			this.ClientUpdater = null;
 			this.formulaManager = new FormulaManager( this );
+            this.HasName = false;
 		}
 		
         public CsvDocument(int numRows, int numCols)
@@ -44,13 +45,12 @@ namespace Colorado.Core {
 			set {
                 CsvDocumentPersistence.PrepareFileName( ref value );
                 this.fileName = value;
+                this.HasName = true;
             }
 		}
 		
 		public bool HasName {
-            get {
-                return ( ( this.FileName.Length > 0 ) && ( this.FileName != NewFileName ) );
-            }
+            get; private set;
 		}
 		
 		public bool SurroundText {
@@ -105,6 +105,67 @@ namespace Colorado.Core {
 
 			return;
 		}
+
+        /// <summary>
+        /// Determines if the parameter is a decimal mark.
+        /// </summary>
+        /// <returns><c>true</c> if the parameter is a decimal mark; otherwise, <c>false</c>.</returns>
+        /// <param name="ch">A char possibly containing . or ,</param>
+        public static bool IsDecimalMark(char ch) {
+            return ( ch == ',' || ch == '.' );
+        }
+
+        /// <summary>
+        /// Determines if parameter is a number.
+        /// </summary>
+        /// <returns><c>true</c> if parameter is a number; otherwise, <c>false</c>.</returns>
+        /// <param name="s">A string possibly containing a number.</param>
+        public static bool IsNumber(string s) {
+            bool toret = true;
+            int pos = 0;
+            int numMarks = 1;
+            int numEs = 1;
+
+            // Maybe there is a sign before the number
+            if ( s[ pos ] == '+'
+              || s[ pos ] == '-' )
+            {
+                ++pos;
+            }
+
+            // Maybe the decimal mark is at the beginning
+            if ( IsDecimalMark( s[ pos ] ) ) {
+                ++pos;
+                --numMarks;
+            }
+
+            // Check the remaining positions
+            while( pos < s.Length ) {
+                if ( IsDecimalMark( s[ pos ] ) ) {
+                    --numMarks;
+                }
+                else
+                if ( char.ToUpper( s[ pos ] ) == 'E' ) {
+                    --numEs;
+                }
+                else
+                if ( !char.IsDigit( s[ pos ] ) ) {
+                    toret = false;
+                    break;
+                }
+
+                ++pos;
+            }
+
+            // More than one separator oe 'e'?
+            if ( numMarks < 0
+              || numEs < 0 )
+            {
+                toret = false;
+            }
+
+            return toret;
+        }
 
 		private DecimalSeparator decimalMark;
         private Delimiter delimiter;

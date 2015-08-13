@@ -593,7 +593,7 @@ namespace Colorado.Gui {
 
             if ( this.document.Changed ) {
                 if ( this.document.Data.NumRows != oldRows
-                    || this.document.Data.NumColumns != oldColumns )
+                  || this.document.Data.NumColumns != oldColumns )
                 {
                     this.ShowDocument();
                 } else {
@@ -629,11 +629,18 @@ namespace Colorado.Gui {
                     }
                 } while( answer != Gtk.ResponseType.Close );
 
+                // Apply changes
                 dlg.ApplyPreferences();
+                if ( dlg.DecimalMark != document.DecimalMark ) {
+                    this.ShowDocument();
+                    document.DecimalMark = dlg.DecimalMark;
+                } else {
+                    this.UpdateDocumentView( oldRows, oldColumns );
+                }
                 dlg.Destroy();
-                this.UpdateDocumentView( oldRows, oldColumns );
-
             } else Util.MsgError( this, AppInfo.Name, "No document loaded" );
+
+            return;
         }
 
         private void OnNew()

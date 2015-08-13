@@ -8,6 +8,7 @@ namespace Colorado.Core {
 	public class CsvDocumentPersistence {
 		public const string FileExtension = "csv";
 		public const string TempExtension = "tmp";
+        public const string Spaces = " \n\r";
 		public const string FileFilter = "*." + FileExtension;
 
 		public CsvDocumentPersistence() {
@@ -61,60 +62,122 @@ namespace Colorado.Core {
 			return toret;
 		}
 
+        /// <summary>
+        /// Strips spaces from a text line, trimming it.
+        /// Note this is needed because the TAB delimiter is part of the spaces
+        /// in the standard library.
+        /// </summary>
+        /// <returns>The line passed, without spaces to the right or left</returns>
+        /// <param name="line">The string to trim</param>
+        private string TrimSpaces(string line) {
+            int lIndex = 0;
+            int rIndex = line.Length - 1;
+            string toret = "";
+
+            // Provided the line is not completely empty...
+            if ( rIndex >= 0 ) {
+                // Trim left
+                while( lIndex < rIndex
+                    && Spaces.IndexOf( line[ lIndex ] ) != -1 )
+                {
+                    ++lIndex;
+                }
+                    
+                // Trim right
+                while( rIndex >= lIndex
+                    && Spaces.IndexOf( line[ rIndex ] ) != -1  ) 
+                {
+                    --rIndex;
+                }
+                    
+                toret = line.Substring( lIndex, rIndex - lIndex + 1 );
+            }
+
+            return toret;
+        }
+
+        private void Read(string fileName, bool firstRowForHeaders, List<string> dynLines, ref string headers)
+        {
+            string line;
+
+            using (var file = new StreamReader( fileName ))
+            {
+                while ( ( line = file.ReadLine() ) != null )
+                {
+                    line = TrimSpaces( line );
+
+                    if ( line.Length == 0 )
+                    {
+                        continue;
+                    }
+
+                    if ( headers.Length == 0
+                      && firstRowForHeaders )
+                    {
+                        headers = line;
+                    } else {
+                        dynLines.Add( line );
+                    }
+                }
+            }
+
+            return;
+        }
+
 		public void Load(string fileName, char delimiter = '\0', bool firstRowForHeaders = true)
 		{
 			var dynLines = new List<string>();
-			string line;
 			string headers = "";
 
 			this.document = new CsvDocument( 0, 0 );
 			this.Document.FileName = fileName;
-			this.Document.SurroundText = true;
+			this.Document.SurroundText = false;
+			this.Read( fileName, firstRowForHeaders, dynLines, ref headers );
 
-			// Read the file
-			using ( var file = new System.IO.StreamReader( fileName ) ) {
-				while( ( line = file.ReadLine() ) != null )
-				{
-                    line = line.Trim();
+            if ( dynLines.Count > 0
+              || headers.Length > 0 )
+            {
+                // Determine the delimiter
+                if ( delimiter == '\0' ) {
+                    this.DetermineDelimiter( headers );
+                } else {
+                    this.Document.Delimiter.Name = delimiter.ToString();
+                }
 
-					if ( line.Length == 0 ) {
-						continue;
-					}
+    			// Check for the existence of a single line, and proceed
+                if ( dynLines.Count > 0 ) {
+    				// Determine the number of rows and columns
+                    this.Document.Data.SetInitialSize( dynLines.Count, SplitLine( dynLines[ 0 ] ).Length );
 
-					if ( headers.Length == 0
-				      && firstRowForHeaders )
-					{
-						headers = line;
-					} else {
-						dynLines.Add( line );
-					}
-				}
-			}
+    				// Get the headers
+    				if ( firstRowForHeaders ) {
+                        this.Document.Data.CreateNamedHeaders( SplitLine( headers ) );
+                    } else {
+                        dynLines.Insert( 0, headers );
+                    }
 
-			// Check for the existence of a single line, and proceed
-            if ( dynLines.Count > 0 ) {
-				// Determine the delimiter
-				if ( delimiter == '\0' ) {
-                    this.DetermineDelimiter( dynLines[ 0 ] );
-				} else {
-					Document.Delimiter.Name = delimiter.ToString();
-				}
+                    // Fill all data in
+                    this.LoadCsvData( dynLines );
+                } else {
+                    // Prepare
+                    string[] heads = this.SplitLine( headers );
 
-				// Determine the number of rows and columns
-				Document.Data.SetInitialSize( dynLines.Count, SplitLine( dynLines[ 0 ] ).Length );
+                    // Get the headers
+                    if ( firstRowForHeaders ) {
+                        this.Document.Data.SetInitialSize( 0, heads.Length );
+                        this.Document.Data.CreateNamedHeaders( heads );
+                    } else {
+                        this.Document.Data.SetInitialSize( 1, heads.Length );
+                        dynLines.Add( headers );
+                        this.LoadCsvData( dynLines );
+                    }
+                }
+            } else {
+                throw new ApplicationException( "No data in CSV document" );
+            }
 
-				// Fill all structure info
-				Document.SurroundText = false;
-                LoadCsvData( dynLines );
-
-				// Get the headers
-				if ( firstRowForHeaders ) {
-					Document.Data.CreateNamedHeaders( SplitLine( headers ) );
-				}
-
-				Document.Changed = false;
-				dynLines.Clear();
-			} else throw new ApplicationException( "No data in CSV document" );
+            this.Document.Changed = false;
+            dynLines.Clear();
 		}
 
 		protected void DetermineDelimiter(string line)
@@ -151,46 +214,54 @@ namespace Colorado.Core {
             return;
 		}
 
-		protected string[] SplitLine(string line)
+		private string[] SplitLine(string line)
 		{
 			var row = new List<string>();
 			var pos = 0;
 			int i = 0;
 			bool inQuoted = false;
 
-			// Look for cells
-			for(; i < line.Length; ++i) {
-				// Ignore extra CR&LF, due to file port between platforms
-				if ( !inQuoted
-                && ( line[ i ] == '\n'
-			      || line[ i ] == '\r' ) )
-				{
-					continue;
-				}
+            if ( line.Length == 0 ) {
+                row = new List<string>( this.Document.Data.NumColumns );
 
-				// Delimiter found, add cell
-				if ( !inQuoted
-			      && line[ i ] == Document.Delimiter.Raw )
-				{
-					row.Add( PrepareValue( line.Substring( pos, i - pos ) ) );
-					pos = i + 1;
-				}
-				else
-				// Quote found
-				if ( line[ i ] == CsvDocument.Quote ) {
-					Document.SurroundText = true;
-					inQuoted = !inQuoted;
-				}
-			}
+                for(int n = 0; n < row.Count; ++n) {
+                    row[ n ] = "";
+                }
+            } else {
+    			// Look for cells
+    			for(; i < line.Length; ++i) {
+    				// Ignore extra CR&LF, due to file port between platforms
+    				if ( !inQuoted
+                    && ( line[ i ] == '\n'
+    			      || line[ i ] == '\r' ) )
+    				{
+    					continue;
+    				}
 
-			// Add last column
-			if ( pos < line.Length ) {
-				row.Add( PrepareValue( line.Substring( pos, line.Length - pos ) ) );
-			}
-			else
-			if ( line[ line.Length -1 ] == Document.Delimiter.Raw ) {
-				row.Add( "" );
-			}
+    				// Delimiter found, add cell
+    				if ( !inQuoted
+    			      && line[ i ] == Document.Delimiter.Raw )
+    				{
+    					row.Add( PrepareValue( line.Substring( pos, i - pos ) ) );
+    					pos = i + 1;
+    				}
+    				else
+    				// Quote found
+    				if ( line[ i ] == CsvDocument.Quote ) {
+    					Document.SurroundText = true;
+    					inQuoted = !inQuoted;
+    				}
+    			}
+
+    			// Add last column
+    			if ( pos < line.Length ) {
+    				row.Add( PrepareValue( line.Substring( pos, line.Length - pos ) ) );
+    			}
+    			else
+    			if ( line[ line.Length -1 ] == Document.Delimiter.Raw ) {
+    				row.Add( "" );
+    			}
+            }
 
 			return row.ToArray();
 		}
@@ -223,7 +294,7 @@ namespace Colorado.Core {
 
 		/// <summary>
 		/// Quotes the cell for saving, if needed.
-		/// A cell needs quoting if it contains a delimiter, or contains a space.
+		/// A cell needs quoting if it contains a delimiter or a space.
 		/// </summary>
 		/// <returns>The cell for saving, with the modifications.</returns>
 		/// <param name="cell">The cell information to save, as a string</param>
@@ -240,8 +311,8 @@ namespace Colorado.Core {
 				// ...and spaces...
 				delimitersAndSpace.Add( ' ' );
 
-				// ...and the current delimiter of the document
-                delimitersAndSpace.Add( Document.Delimiter.Raw );		// Could be repeated
+                // ...and the current delimiter of the document (could be repeated)
+                delimitersAndSpace.Add( Document.Delimiter.Raw );
 
 				foreach(char ch in cell) {
 					if ( delimitersAndSpace.Contains( ch ) ) {
@@ -276,12 +347,14 @@ namespace Colorado.Core {
 
 			try {
 				// Decide whether to use quotes or not
-				if ( options.QuotedText )
-					prepareCellForSaving = new ModifyCell( QuoteValueForSaving );
-				else 	prepareCellForSaving = new ModifyCell( DontQuoteCellForSaving );
+                if ( options.QuotedText ) {
+                    prepareCellForSaving = new ModifyCell( QuoteValueForSaving );
+                } else {
+                    prepareCellForSaving = new ModifyCell( DontQuoteCellForSaving );
+                }
 
 				// Open file for saving
-				file = new System.IO.StreamWriter( fileName );
+				file = new StreamWriter( fileName );
 
 				// Write headers
 				if ( options.IncludeRowNumbers ) {
@@ -324,7 +397,7 @@ namespace Colorado.Core {
 			finally {
 				if ( file != null ) {
 					file.Close();
-					System.IO.File.Delete( fileName );
+					File.Delete( fileName );
 				}
 			}
 
@@ -342,7 +415,7 @@ namespace Colorado.Core {
 			}
 
 			// Open file for saving
-			var file = new System.IO.StreamWriter( fileName );
+			var file = new StreamWriter( fileName );
 
 			// Write html header
 			file.WriteLine( "<html><header>" );
@@ -406,7 +479,7 @@ namespace Colorado.Core {
 			const string TableBorder = "\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs\\clbrdrr\\brdrs";
 
 			// Open file for saving
-			var file = new System.IO.StreamWriter( fileName );
+			var file = new StreamWriter( fileName );
 
 			// write rtf header
 			file.WriteLine( "{\\rtf2\\ansi\\deff0\n{\\fonttbl {\\f0 Times;}{\\f1 Courier;}}" );

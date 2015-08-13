@@ -41,7 +41,7 @@ namespace Colorado.Gui {
             this.ShowAll();
 		}
 		
-		protected void UpdateColumnsData()
+		private void UpdateColumnsData()
 		{
 			var listStore = ( (Gtk.ListStore) listHeaders.Model );
 
@@ -52,7 +52,7 @@ namespace Colorado.Gui {
 			}
 		}
 		
-		protected void OnHeaderEdited(object sender, Gtk.EditedArgs args)
+		private void OnHeaderEdited(object sender, Gtk.EditedArgs args)
 		{
 			int row;
 			var rowPath = new Gtk.TreePath( args.Path );
@@ -79,44 +79,63 @@ namespace Colorado.Gui {
 			if ( delimiter.Length > 0
 			  && delimiter[ 0 ] != document.Delimiter.Raw )
 			{
-				document.Delimiter.Name = delimiter;
+                this.document.Delimiter.Name = delimiter;
 			}
 
-			// Get decimal mark
-			document.DecimalMark = (CsvDocument.DecimalSeparator) cmbDecimalMark.Active;
-			
 			// Get surround text
-            document.SurroundText = this.cbSurroundWithDoubleQuotes.Active;
+            this.document.SurroundText = this.cbSurroundWithDoubleQuotes.Active;
 			
 			// Check rows and headers size
-			if ( document.Data.NumColumns > ( (int) sbColumns.Value ) ) {
+            if ( this.document.Data.NumColumns > ( (int) sbColumns.Value ) ) {
 				if ( !Util.Ask( this, AppInfo.Name, "The new column value is lower. This will imply data loss. Are you sure ?" ) ) {
-					sbColumns.Value = document.Data.NumColumns;
-					sbRows.Value = document.Data.NumRows;
+                    sbColumns.Value = this.document.Data.NumColumns;
+                    sbRows.Value = this.document.Data.NumRows;
 					return;
 				}
 			}
 			
-			if ( document.Data.NumRows > ( (int) sbRows.Value ) ) {
+            if ( this.document.Data.NumRows > ( (int) sbRows.Value ) ) {
 				if ( !Util.Ask( this, AppInfo.Name, "The new row value is lower. This will imply data loss. Are you sure ?" ) ) {
-					sbColumns.Value = document.Data.NumColumns;
-					sbRows.Value = document.Data.NumRows;
+                    sbColumns.Value = this.document.Data.NumColumns;
+                    sbRows.Value = this.document.Data.NumRows;
 					return;
 				}
 			}
 			
 			// Now yes, modify the size
-			document.Data.NumColumns = (int) sbColumns.Value;
-			document.Data.NumRows = (int) sbRows.Value;
+            this.document.Data.NumColumns = (int) sbColumns.Value;
+            this.document.Data.NumRows = (int) sbRows.Value;
+
+            // Modify the decimal mark
+            if ( this.DecimalMark != document.DecimalMark ) {
+                char chOldDecimalMark = CsvDocument.DecimalSeparatorChar[ (int) this.document.DecimalMark ];
+                char chNewDecimalMark = CsvDocument.DecimalSeparatorChar[ (int) this.DecimalMark ];
+
+                for(int i = 0; i < this.document.Data.NumRows; ++i) {
+                    for(int j = 0; j < this.document.Data.NumColumns; ++j) {
+                        string cell = this.document.Data[ i, j ];
+
+                        if ( CsvDocument.IsNumber( cell ) ) {
+                            this.document.Data[ i, j ] = cell.Replace( chOldDecimalMark, chNewDecimalMark );
+                        }
+                    }
+                }
+            }
 			
 			// Modify headers, if needed
-			if ( document.Data.FirstRowForHeaders != cbFirstRowForHeaders.Active ) {
-				document.Data.FirstRowForHeaders = cbFirstRowForHeaders.Active;
-				sbRows.Value = Convert.ToDouble( document.Data.NumRows );
+            if ( this.document.Data.FirstRowForHeaders != cbFirstRowForHeaders.Active ) {
+                this.document.Data.FirstRowForHeaders = cbFirstRowForHeaders.Active;
+                sbRows.Value = Convert.ToDouble( this.document.Data.NumRows );
 			}
 
             this.UpdateColumnsData();
 		}
+
+        public CsvDocument.DecimalSeparator DecimalMark {
+            get {
+                return (CsvDocument.DecimalSeparator) this.cmbDecimalMark.Active;
+            }
+        }
 
         private void Build() {
             var hBox = new Gtk.HBox( false, 2 );
@@ -178,7 +197,7 @@ namespace Colorado.Gui {
             hBoxRows.PackStart( this.sbRows, true, true, 5 );
 
             // Columns
-            this.sbColumns = new Gtk.SpinButton( 0, 100, 1 );
+            this.sbColumns = new Gtk.SpinButton( 1, 100, 1 );
             this.lblColumns = new Gtk.Label( "Columns" );
             hBoxColumns.PackStart( this.lblColumns, false, false, 5 );
             hBoxColumns.PackStart( this.sbColumns, true, true, 5 );
@@ -190,7 +209,7 @@ namespace Colorado.Gui {
             hBoxDelimiter.PackStart( this.cmbDelimiter, true, true, 5 );
 
             // Decimal mark
-            this.cmbDecimalMark = new Gtk.ComboBoxEntry( new string[] {} );
+            this.cmbDecimalMark = new Gtk.ComboBox( new string[] {} );
             this.lblDecimalMark= new Gtk.Label( "Decimal mark" );
             hBoxDecimalMark.PackStart( this.lblDecimalMark, false, false, 5 );
             hBoxDecimalMark.PackStart( this.cmbDecimalMark, true, true, 5 );
@@ -230,7 +249,7 @@ namespace Colorado.Gui {
         private Gtk.SpinButton sbRows;
         private Gtk.SpinButton sbColumns;
         private Gtk.ComboBoxEntry cmbDelimiter;
-        private Gtk.ComboBoxEntry cmbDecimalMark;
+        private Gtk.ComboBox cmbDecimalMark;
         private Gtk.CheckButton cbSurroundWithDoubleQuotes;
         private Gtk.CheckButton cbFirstRowForHeaders;
         private Gtk.Label lblRows;
