@@ -13,24 +13,6 @@ namespace Colorado.Gui {
         public const int NumFixedColumns = 1;
         public const int NumFixedRows = 1;
 
-        public MainWindow()
-            : base( Gtk.WindowType.Toplevel )
-        {
-            this.Title = AppInfo.Name;
-            this.Build();
-
-            this.lastFileName = "";
-            this.document = null;
-            this.txtToFind = "";
-            this.ActivateIde( false );
-        }
-
-        public MainWindow(string fileName)
-            : this()
-        {
-            OpenDocument( fileName );
-        }
-
         public CsvDocument Document {
             get { return this.document; }
         }

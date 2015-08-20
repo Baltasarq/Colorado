@@ -2,7 +2,6 @@ using System;
 namespace Colorado.Gui {
 	
 	public partial class DlgFill : Gtk.Dialog {
-	
 		public DlgFill(Gtk.Window parent)
 		{
 			this.Build();
@@ -14,27 +13,7 @@ namespace Colorado.Gui {
 			this.Icon = parent.Icon;
             this.ShowAll();
 		}
-		
-		public string FillValue {
-			get { return this.edValue.Text; }
-		}
-		
-        public Core.Filler.FillType KindOfFill {
-			get {
-                var toret = Core.Filler.FillType.Fixed;
 				
-				if ( this.rbIncrement.Active ) {
-                    toret = Core.Filler.FillType.Increment;
-				}
-				else
-				if ( this.rbDecrement.Active ) {
-                    toret = Core.Filler.FillType.Decrement;
-				}
-				
-				return toret;
-			}
-		}
-
 		private void Build() {
 			var vBoxMutation = new Gtk.VBox( false, 2 );
 			var hBoxValue = new Gtk.HBox( false, 2 );

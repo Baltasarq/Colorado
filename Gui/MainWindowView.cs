@@ -1,6 +1,24 @@
 ﻿
 namespace Colorado.Gui {
     public partial class MainWindow {
+        public MainWindow()
+            : base( Gtk.WindowType.Toplevel )
+        {
+            this.Title = Colorado.Core.AppInfo.Name;
+            this.Build();
+
+            this.lastFileName = "";
+            this.document = null;
+            this.txtToFind = "";
+            this.ActivateIde( false );
+        }
+
+        public MainWindow(string fileName)
+            : this()
+        {
+            OpenDocument( fileName );
+        }
+
         private void Build() {
             var vPanel = new Gtk.VBox( false, 2 );
             var hPanel = new Gtk.HBox( false, 2 );

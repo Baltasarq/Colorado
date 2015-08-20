@@ -1,13 +1,7 @@
-using System;
-
-using GtkUtil;
-
 using Core = Colorado.Core;
 
 namespace Colorado.Gui {
 	public partial class DlgImport : Gtk.Dialog {
-		public static string lastFileName;
-		
 		public DlgImport(Gtk.Window parent) {
 			this.Build();
 			
@@ -27,37 +21,6 @@ namespace Colorado.Gui {
 			}
 			this.cmbDelimiter.Entry.Text = Core.Delimiter.TabDelimiterName;
 			this.edFileName.Text = lastFileName;
-		}
-	
-		public string FileName {
-			get { return this.edFileName.Text; }
-		}
-		
-		public char Delimiter {
-			get {
-				string delimiter = cmbDelimiter.Entry.Text.Trim();
-				
-				if ( delimiter.Length > 0 )
-						return this.cmbDelimiter.Entry.Text[ 0 ];
-				else 	return Core.Delimiter.TabDelimiter;
-			}
-		}
-		
-		public bool FirstRowForHeaders {
-			get { return this.cbFirstRowForHeaders.Active; }
-		}
-
-		protected virtual void OnOpen()
-		{
-			if ( Util.DlgOpen(
-						Core.AppInfo.Name, "Open",
-						(Gtk.Window) this.Parent,
-						ref lastFileName,
-						Core.CsvDocumentPersistence.FileFilter ) )
-			{
-				this.edFileName.Text = lastFileName;
-			}
-			else lastFileName = this.edFileName.Text;
 		}
 
 		private void Build() {
