@@ -41,12 +41,8 @@ namespace Colorado.Gui {
             this.BuildHeadersFrame();
             this.BuildPropertiesFrame();
 
-            // Apply button
-            this.btApply = new Gtk.Button( Gtk.Stock.Apply );
-            this.btApply.Clicked += (obj, args) => this.ApplyPreferences();
-            this.ActionArea.PackStart( this.btApply, false, false, 5 );
-
             // Buttons
+            this.AddButton( Gtk.Stock.Apply, Gtk.ResponseType.Apply );
             this.AddButton( Gtk.Stock.Close, Gtk.ResponseType.Close );
             this.DefaultResponse = Gtk.ResponseType.Close;
 
@@ -134,15 +130,14 @@ namespace Colorado.Gui {
             cmbDelimiter.Entry.Text = document.Delimiter.Name;
 
             // Add decimal separators to its combo
-            foreach (char separator in CsvDocument.DecimalSeparatorChar) {
+            foreach (char separator in DecimalMark.DecimalSeparatorChar) {
                 cmbDecimalMark.AppendText( separator.ToString() );
             }
-            cmbDecimalMark.Active = (int) document.DecimalMark;
+            cmbDecimalMark.Active = (int) this.document.DecimalSeparator;
         }
 
         private Gtk.Frame frmHeaders;
         private Gtk.Frame frmProperties;
-        private Gtk.Button btApply;
         private Gtk.TreeView listHeaders;
         private Gtk.SpinButton sbRows;
         private Gtk.SpinButton sbColumns;

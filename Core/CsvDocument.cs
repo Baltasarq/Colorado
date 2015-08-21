@@ -1,24 +1,17 @@
-
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Colorado.Core {	
 	public class CsvDocument {
-        public enum DecimalSeparator { Point, Comma };
 		public const char Quote = '"';
 		public const string NewFileName = "new-doc.csv";
-
-        public static readonly ReadOnlyCollection<char> DecimalSeparatorChar =
-            new ReadOnlyCollection<char>( new char[] { '.', ',' } );
 
 		private CsvDocument()
 		{
 			this.data = new Data( this, 0, 0 );
 			this.fileName = NewFileName;
 			this.delimiter = new Delimiter( Delimiter.TabDelimiter );
+            this.decimalMark = new DecimalMark();
 			this.surroundText = true;
-            this.DecimalMark = AppInfo.DecimalMark;
 			this.ClientUpdater = null;
 			this.formulaManager = new FormulaManager( this );
             this.HasName = false;
@@ -28,11 +21,6 @@ namespace Colorado.Core {
 			: this()
         {
 			Data.SetInitialSize( numRows, numCols );
-        }
-
-        public char GetDecimalMark()
-        {
-            return DecimalSeparatorChar[ (int) DecimalMark ];
         }
 
 		public bool Changed {
@@ -62,22 +50,33 @@ namespace Colorado.Core {
 			get { return delimiter; }
 		}
 
-		public DecimalSeparator DecimalMark {
-			get {
-				return this.decimalMark;
-			}
-			set {
-				int val = (int) value;
+        public DecimalMark.DecimalSeparator DecimalSeparator {
+            get {
+                return this.decimalMark.Value;
+            }
+            set {
+                if ( value != this.decimalMark.Value )
+                {
+                    char chOldDecimalMark = DecimalMark.DecimalSeparatorChar[ (int) this.decimalMark.Value ];
+                    char chNewDecimalMark = DecimalMark.DecimalSeparatorChar[ (int) value ];
 
-				if ( val < 0
-				  || val >= Enum.GetValues( typeof(DecimalSeparator) ).Length )
-				{
-					val = 0;
-				}
+                    for (int i = 0; i < this.Data.NumRows; ++i) {
+                        for (int j = 0; j < this.Data.NumColumns; ++j) {
+                            string cell = this.Data[ i, j ];
 
-				this.decimalMark = (DecimalSeparator) val;
-			}
-		}
+                            if ( DecimalMark.IsNumber( cell ) ) {
+                                this.Data[ i, j ] = cell.Replace( chOldDecimalMark, chNewDecimalMark );
+                            }
+                        }
+                    }
+
+                    this.decimalMark.Value = value;
+                    this.Changed = true;
+                }
+
+                return;
+            }
+        }
 
 		public FormulaManager FormulaManager {
 			get {
@@ -106,69 +105,8 @@ namespace Colorado.Core {
 			return;
 		}
 
-        /// <summary>
-        /// Determines if the parameter is a decimal mark.
-        /// </summary>
-        /// <returns><c>true</c> if the parameter is a decimal mark; otherwise, <c>false</c>.</returns>
-        /// <param name="ch">A char possibly containing . or ,</param>
-        public static bool IsDecimalMark(char ch) {
-            return ( ch == ',' || ch == '.' );
-        }
-
-        /// <summary>
-        /// Determines if parameter is a number.
-        /// </summary>
-        /// <returns><c>true</c> if parameter is a number; otherwise, <c>false</c>.</returns>
-        /// <param name="s">A string possibly containing a number.</param>
-        public static bool IsNumber(string s) {
-            bool toret = true;
-            int pos = 0;
-            int numMarks = 1;
-            int numEs = 1;
-
-            // Maybe there is a sign before the number
-            if ( s[ pos ] == '+'
-              || s[ pos ] == '-' )
-            {
-                ++pos;
-            }
-
-            // Maybe the decimal mark is at the beginning
-            if ( IsDecimalMark( s[ pos ] ) ) {
-                ++pos;
-                --numMarks;
-            }
-
-            // Check the remaining positions
-            while( pos < s.Length ) {
-                if ( IsDecimalMark( s[ pos ] ) ) {
-                    --numMarks;
-                }
-                else
-                if ( char.ToUpper( s[ pos ] ) == 'E' ) {
-                    --numEs;
-                }
-                else
-                if ( !char.IsDigit( s[ pos ] ) ) {
-                    toret = false;
-                    break;
-                }
-
-                ++pos;
-            }
-
-            // More than one separator oe 'e'?
-            if ( numMarks < 0
-              || numEs < 0 )
-            {
-                toret = false;
-            }
-
-            return toret;
-        }
-
-		private DecimalSeparator decimalMark;
         private Delimiter delimiter;
+        private DecimalMark decimalMark;
         private bool surroundText;
 		private Data data;
         private string fileName;

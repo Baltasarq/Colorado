@@ -82,6 +82,7 @@
     <Compile Include="Gui\DlgIncDecLogic.cs" />
     <Compile Include="Gui\DlgPropertiesView.cs" />
     <Compile Include="Gui\DlgPropertiesLogic.cs" />
+    <Compile Include="Core\DecimalMark.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />

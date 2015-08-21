@@ -55,11 +55,15 @@ namespace Colorado.Core {
                 return toret;
             }
             set {
-                if ( value == TabDelimiterName ) {
-                    value = "\t";
+                if ( !string.IsNullOrWhiteSpace( value ) ) {
+                    if ( value == TabDelimiterName ) {
+                        value = "\t";
+                    }
+
+                    this.raw = value[ 0 ];
                 }
 
-                this.raw = value[ 0 ];
+                return;
             }
         }
                     

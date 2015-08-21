@@ -4,7 +4,7 @@ using Colorado.Core;
 
 namespace Colorado.Gui {
     public partial class DlgProperties {
-        private void UpdateColumnsData()
+        public void UpdateColumnsData()
         {
             var listStore = ( (Gtk.ListStore) listHeaders.Model );
 
@@ -31,72 +31,45 @@ namespace Colorado.Gui {
             document.Changed = true;
         }
 
-        /// <summary>
-        /// Applies the preferences.
-        /// </summary>
-        public void ApplyPreferences()
-        {
-            // Get delimiter
-            string delimiter = cmbDelimiter.Entry.Text.Trim();
-
-            if ( delimiter.Length > 0
-                && delimiter[ 0 ] != document.Delimiter.Raw )
-            {
-                this.document.Delimiter.Name = delimiter;
+        public string DelimiterValue {
+            get {
+                return this.cmbDelimiter.Entry.Text.Trim();
             }
-
-            // Get surround text
-            this.document.SurroundText = this.cbSurroundWithDoubleQuotes.Active;
-
-            // Check rows and headers size
-            if ( this.document.Data.NumColumns > ( (int) sbColumns.Value ) ) {
-                if ( !Util.Ask( this, AppInfo.Name, "The new column value is lower. This will imply data loss. Are you sure ?" ) ) {
-                    sbColumns.Value = this.document.Data.NumColumns;
-                    sbRows.Value = this.document.Data.NumRows;
-                    return;
-                }
-            }
-
-            if ( this.document.Data.NumRows > ( (int) sbRows.Value ) ) {
-                if ( !Util.Ask( this, AppInfo.Name, "The new row value is lower. This will imply data loss. Are you sure ?" ) ) {
-                    sbColumns.Value = this.document.Data.NumColumns;
-                    sbRows.Value = this.document.Data.NumRows;
-                    return;
-                }
-            }
-
-            // Now yes, modify the size
-            this.document.Data.NumColumns = (int) sbColumns.Value;
-            this.document.Data.NumRows = (int) sbRows.Value;
-
-            // Modify the decimal mark
-            if ( this.DecimalMark != document.DecimalMark ) {
-                char chOldDecimalMark = CsvDocument.DecimalSeparatorChar[ (int) this.document.DecimalMark ];
-                char chNewDecimalMark = CsvDocument.DecimalSeparatorChar[ (int) this.DecimalMark ];
-
-                for(int i = 0; i < this.document.Data.NumRows; ++i) {
-                    for(int j = 0; j < this.document.Data.NumColumns; ++j) {
-                        string cell = this.document.Data[ i, j ];
-
-                        if ( CsvDocument.IsNumber( cell ) ) {
-                            this.document.Data[ i, j ] = cell.Replace( chOldDecimalMark, chNewDecimalMark );
-                        }
-                    }
-                }
-            }
-
-            // Modify headers, if needed
-            if ( this.document.Data.FirstRowForHeaders != cbFirstRowForHeaders.Active ) {
-                this.document.Data.FirstRowForHeaders = cbFirstRowForHeaders.Active;
-                sbRows.Value = System.Convert.ToDouble( this.document.Data.NumRows );
-            }
-
-            this.UpdateColumnsData();
         }
 
-        public CsvDocument.DecimalSeparator DecimalMark {
+        public bool SurroundText {
             get {
-                return (CsvDocument.DecimalSeparator) this.cmbDecimalMark.Active;
+                return this.cbSurroundWithDoubleQuotes.Active;
+            }
+        }
+
+        public bool FirstRowForHeaders {
+            get {
+                return this.cbFirstRowForHeaders.Active;
+            }
+        }
+
+        public int NumColumns {
+            get {
+                return (int) this.sbColumns.Value;
+            }
+            set {
+                this.sbColumns.Value = value;
+            }
+        }
+
+        public int NumRows {
+            get {
+                return (int) this.sbRows.Value;
+            }
+            set {
+                this.sbRows.Value = value;
+            }
+        }
+
+        public DecimalMark.DecimalSeparator DecimalMarkValue {
+            get {
+                return (DecimalMark.DecimalSeparator) this.cmbDecimalMark.Active;
             }
         }
 

@@ -324,13 +324,13 @@ namespace Colorado.Gui {
                     text = "\"field\"";
                 }
 
-                number += Document.GetDecimalMark() + "5";
+                number += DecimalMark.AsChar( this.Document.DecimalSeparator ) + "5";
 
                 this.lblType.Text = '(' + text + delimiter + number + delimiter + "...)";
                 this.lblCount.Text = "["
-                    + Document.Data.NumRows
+                    + this.Document.Data.NumRows
                     + " x "
-                    + Document.Data.NumColumns
+                    + this.Document.Data.NumColumns
                     + "]";
             } else {
                 this.lblType.Text = this.lblCount.Text = "...";
@@ -571,7 +571,7 @@ namespace Colorado.Gui {
 
         protected void UpdateDocumentView(int oldRows, int oldColumns)
         {
-            SetStatus( "Reconfiguring..." );
+            this.SetStatus( "Reconfiguring..." );
 
             if ( this.document.Changed ) {
                 if ( this.document.Data.NumRows != oldRows
@@ -592,33 +592,74 @@ namespace Colorado.Gui {
             this.SetStatus();
         }
 
+        /// <summary>
+        /// Applies the preferences of the properties dialog.
+        /// </summary>
+        /// <param name="dlg">The properties dialog</param>
+        private void ApplyPreferences(DlgProperties dlg)
+        {
+            if ( dlg.DecimalMarkValue != this.document.DecimalSeparator ) {
+                this.ShowDocument();
+                this.document.DecimalSeparator = dlg.DecimalMarkValue;
+            }
+
+            this.document.Delimiter.Name = dlg.DelimiterValue;
+            this.document.SurroundText = dlg.SurroundText;
+
+            // Check rows and headers size
+            if ( this.document.Data.NumColumns > dlg.NumColumns ) {
+                if ( !Util.Ask( this, AppInfo.Name, "The new column value is lower. This will imply data loss. Are you sure?" ) ) {
+                    dlg.NumColumns = this.document.Data.NumColumns;
+                    dlg.NumRows = this.document.Data.NumRows;
+                    goto Exit;
+                }
+            }
+
+            if ( this.document.Data.NumRows > dlg.NumRows ) {
+                if ( !Util.Ask( this, AppInfo.Name, "The new row value is lower. This will imply data loss. Are you sure?" ) ) {
+                    dlg.NumColumns = this.document.Data.NumColumns;
+                    dlg.NumRows = this.document.Data.NumRows;
+                    goto Exit;
+                }
+            }
+
+            // Now yes, modify the size
+            this.document.Data.NumColumns = dlg.NumColumns;
+            this.document.Data.NumRows = dlg.NumRows;
+
+            // Modify headers, if needed
+            if ( this.document.Data.FirstRowForHeaders != dlg.FirstRowForHeaders ) {
+                this.document.Data.FirstRowForHeaders = dlg.FirstRowForHeaders;
+                dlg.NumRows = this.document.Data.NumRows;
+            }
+
+            Exit:
+            dlg.UpdateColumnsData();
+        }
+
         private void OnProperties()
         {
             if ( this.document != null ) {
+                Gtk.ResponseType answer;
                 var dlg = new DlgProperties( this, this.document );
                 var oldRows = this.document.Data.NumRows;
                 var oldColumns = this.document.Data.NumColumns;
-                var answer = Gtk.ResponseType.Apply;
 
                 do {
                     answer = (Gtk.ResponseType) dlg.Run();
 
                     if ( answer == Gtk.ResponseType.Apply ) {
-                        dlg.ApplyPreferences();
+                        this.ApplyPreferences( dlg );
                         this.UpdateDocumentView( oldRows, oldColumns );
+                        Util.UpdateUI();
                         oldRows = this.document.Data.NumRows;
                         oldColumns = this.document.Data.NumColumns;
                     }
                 } while( answer != Gtk.ResponseType.Close );
 
                 // Apply changes
-                dlg.ApplyPreferences();
-                if ( dlg.DecimalMark != document.DecimalMark ) {
-                    this.ShowDocument();
-                    document.DecimalMark = dlg.DecimalMark;
-                } else {
-                    this.UpdateDocumentView( oldRows, oldColumns );
-                }
+                this.ApplyPreferences( dlg );
+                this.UpdateDocumentView( oldRows, oldColumns );
                 dlg.Destroy();
             } else Util.MsgError( this, AppInfo.Name, "No document loaded" );
 
