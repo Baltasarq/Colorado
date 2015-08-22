@@ -46,9 +46,15 @@ namespace Colorado.Core {
 			set { surroundText = value; Changed = true; }
 		}
 
-		public Delimiter Delimiter {
-			get { return delimiter; }
-		}
+        public string DelimiterValue {
+            get {
+                return this.delimiter.ToString();
+            }
+            set {
+                this.delimiter.Name = value;
+                this.Changed = true;
+            }
+        }
 
         public DecimalMark.DecimalSeparator DecimalSeparator {
             get {

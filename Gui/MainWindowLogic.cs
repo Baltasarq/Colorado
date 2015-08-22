@@ -316,7 +316,7 @@ namespace Colorado.Gui {
         protected void ShowProjectInfo()
         {
             if ( this.document != null ) {
-                string delimiter = this.Document.Delimiter.Name;
+                string delimiter = Delimiter.GetName( this.Document.DelimiterValue );
                 string text = "field";
                 string number = "4";
 
@@ -532,7 +532,7 @@ namespace Colorado.Gui {
                             options.IncludeRowNumbers = dlg.IncludeRowNumbers;
                             options.IncludeTableBorder = dlg.IncludeTableBorder;
                             options.ColumnsIncluded = dlg.ColumnsIncluded;
-                            options.Delimiter.Name = dlg.Delimiter;
+                            options.Delimiter.Name = dlg.DelimiterValue;
                             options.QuotedText = dlg.SurroundWithDoubleQuotes;
 
                             new CsvDocumentPersistence( Document ).Save( options );
@@ -603,7 +603,7 @@ namespace Colorado.Gui {
                 this.document.DecimalSeparator = dlg.DecimalMarkValue;
             }
 
-            this.document.Delimiter.Name = dlg.DelimiterValue;
+            this.document.DelimiterValue = dlg.DelimiterValue;
             this.document.SurroundText = dlg.SurroundText;
 
             // Check rows and headers size
@@ -933,7 +933,7 @@ namespace Colorado.Gui {
                     // Store the parameters and reload  
                     var fileName = document.FileName;
                     var firstRowForHeaders = document.Data.FirstRowForHeaders;
-                    char delimiter = document.Delimiter.Raw;
+                    char delimiter = document.DelimiterValue[ 0 ];
                     this.document = null;
 
                     try {

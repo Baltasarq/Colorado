@@ -35,7 +35,7 @@ namespace Colorado.Core {
 		/// <param name="d">The delimiter to use, as a string (can be special).</param>
 		public Delimiter(string d)
 		{
-			Name = d;
+			this.Name = d;
 		}
 
         /// <summary>
@@ -46,21 +46,15 @@ namespace Colorado.Core {
 		/// <seealso cref="TabDelimiterName"/>
         public string Name {
             get {
-                var toret = Raw.ToString();
-
-                if ( toret == "\t" ) {
-                    toret = TabDelimiterName;
-                }
-
-                return toret;
+                return GetName( this.Raw );
             }
             set {
-                if ( !string.IsNullOrWhiteSpace( value ) ) {
+                if ( !string.IsNullOrEmpty( value ) ) {
                     if ( value == TabDelimiterName ) {
                         value = "\t";
                     }
 
-                    this.raw = value[ 0 ];
+                    this.Raw = value[ 0 ];
                 }
 
                 return;
@@ -83,13 +77,28 @@ namespace Colorado.Core {
 		/// </summary>
 		/// <value>The raw.</value>
 		public char Raw {
-			get {
-				return this.raw;
-			}
+            get; private set;
 		}
 
-		/// <summary>The raw value of the delimiter</summary>
-		private char raw;
+        public static string GetName(string delimiter) {
+            var toret = TabDelimiterName;
+
+            if ( !string.IsNullOrWhiteSpace( delimiter ) ) {
+                toret = GetName( delimiter[ 0 ] );
+            }
+
+            return toret;
+        }
+
+        public static string GetName(char delimiter) {
+            var toret = delimiter.ToString();
+
+            if ( toret == "\t" ) {
+                toret = TabDelimiterName;
+            }
+
+            return toret;
+        }
 	}
 }
 

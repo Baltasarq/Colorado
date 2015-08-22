@@ -34,13 +34,9 @@ namespace Colorado.Gui {
         /// Gets the delimiter.
         /// </summary>
         /// <value>The delimiter, as a string of one position.</value>
-        public string Delimiter {
+        public string DelimiterValue {
             get {
-                string delimiter = cmbDelimiter.Entry.Text.Trim();
-
-                if ( delimiter.Length > 0 )
-                    return this.cmbDelimiter.Entry.Text;
-                else    return Core.Delimiter.TabDelimiterName;
+                return Delimiter.GetName( cmbDelimiter.Entry.Text.Trim() );
             }
         }
 

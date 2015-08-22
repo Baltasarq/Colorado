@@ -127,7 +127,7 @@ namespace Colorado.Gui {
             foreach(string delimiter in Delimiter.PredefinedDelimiterNames) {
                 cmbDelimiter.AppendText( delimiter );
             }
-            cmbDelimiter.Entry.Text = document.Delimiter.Name;
+            cmbDelimiter.Entry.Text = Delimiter.GetName( this.document.DelimiterValue );
 
             // Add decimal separators to its combo
             foreach (char separator in DecimalMark.DecimalSeparatorChar) {

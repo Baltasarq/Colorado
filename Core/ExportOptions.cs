@@ -32,7 +32,7 @@ namespace Colorado.Core {
 			this.name = name;
 			this.includeRowNumbers = false;
 			this.includeTableBorder = false;
-            this.delimiter = new Delimiter( doc.Delimiter.Raw );
+            this.delimiter = new Delimiter( doc.DelimiterValue );
 			this.QuotedText = doc.SurroundText;
             this.Format = SelectionType.Html;
 

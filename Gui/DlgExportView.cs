@@ -131,7 +131,7 @@ namespace Colorado.Gui {
             this.chkQuotes = new Gtk.CheckButton( "Enclose text with quotes" );
 
             // Set options honoring current document
-            this.cmbDelimiter.Entry.Text = this.document.Delimiter.Name;
+            this.cmbDelimiter.Entry.Text = Delimiter.GetName( this.document.DelimiterValue );
             chkQuotes.Active = this.document.SurroundText;
 
             // Layout

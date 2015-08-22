@@ -141,7 +141,7 @@ namespace Colorado.Core {
                 if ( delimiter == '\0' ) {
                     this.DetermineDelimiter( headers );
                 } else {
-                    this.Document.Delimiter.Name = delimiter.ToString();
+                    this.Document.DelimiterValue = delimiter.ToString();
                 }
 
     			// Check for the existence of a single line, and proceed
@@ -208,7 +208,7 @@ namespace Colorado.Core {
             if ( delimiterIndex < 0 ) {
                 throw new ApplicationException( "Unable to determine delimiter in file." );
             } else {
-                Document.Delimiter.Name = Delimiter.PredefinedDelimiterNames[(int) delimiterIndex];
+                Document.DelimiterValue = Delimiter.PredefinedDelimiterNames[(int) delimiterIndex];
             }
 
             return;
@@ -240,7 +240,7 @@ namespace Colorado.Core {
 
     				// Delimiter found, add cell
     				if ( !inQuoted
-    			      && line[ i ] == Document.Delimiter.Raw )
+    			      && line[ i ] == Document.DelimiterValue[ 0 ] )
     				{
     					row.Add( PrepareValue( line.Substring( pos, i - pos ) ) );
     					pos = i + 1;
@@ -258,7 +258,7 @@ namespace Colorado.Core {
     				row.Add( PrepareValue( line.Substring( pos, line.Length - pos ) ) );
     			}
     			else
-    			if ( line[ line.Length -1 ] == Document.Delimiter.Raw ) {
+    			if ( line[ line.Length -1 ] == Document.DelimiterValue[ 0 ] ) {
     				row.Add( "" );
     			}
             }
@@ -312,7 +312,7 @@ namespace Colorado.Core {
 				delimitersAndSpace.Add( ' ' );
 
                 // ...and the current delimiter of the document (could be repeated)
-                delimitersAndSpace.Add( Document.Delimiter.Raw );
+                delimitersAndSpace.Add( Document.DelimiterValue[ 0 ] );
 
 				foreach(char ch in cell) {
 					if ( delimitersAndSpace.Contains( ch ) ) {
@@ -358,7 +358,7 @@ namespace Colorado.Core {
 
 				// Write headers
 				if ( options.IncludeRowNumbers ) {
-					file.Write( "#" + Document.Delimiter );
+					file.Write( "#" + Document.DelimiterValue );
 				}
 
 				for(int col = 0; col < options.ColumnsIncluded.Length; ++col) {
@@ -374,7 +374,7 @@ namespace Colorado.Core {
 				// Write each row
                 for(int row = 0; row < Document.Data.NumRows; ++row) {
 					if ( options.IncludeRowNumbers ) {
-                        file.Write( Convert.ToString( row +1 ) + Document.Delimiter );
+                        file.Write( Convert.ToString( row +1 ) + Document.DelimiterValue );
 					}
 
 					for(int col = 0; col < options.ColumnsIncluded.Length; ++col) {
