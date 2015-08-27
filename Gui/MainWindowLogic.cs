@@ -599,8 +599,8 @@ namespace Colorado.Gui {
         private void ApplyPreferences(DlgProperties dlg)
         {
             if ( dlg.DecimalMarkValue != this.document.DecimalSeparator ) {
+				this.document.DecimalSeparator = dlg.DecimalMarkValue;
                 this.ShowDocument();
-                this.document.DecimalSeparator = dlg.DecimalMarkValue;
             }
 
             this.document.DelimiterValue = dlg.DelimiterValue;

@@ -43,9 +43,36 @@ namespace Colorado.Core {
         /// </summary>
         /// <returns><c>true</c> if the parameter is a decimal mark; otherwise, <c>false</c>.</returns>
         /// <param name="ch">A char possibly containing . or ,</param>
-        public static bool IsDecimalMark(char ch) {
-            return ( ch == ',' || ch == '.' );
+		public static bool IsDecimalMark(char ch) {
+			return ( WhichDecimalMark( ch ) >= 0 );
+		}
+
+		public static int WhichDecimalMark(char ch) {
+			int toret = -1;
+
+			for (int i = 0; i < DecimalSeparatorChar.Count; ++i) {
+				if ( DecimalSeparatorChar[ i ] == ch ) {
+					toret = i;
+					break;
+				}
+			}
+
+			return toret;
         }
+
+		public static DecimalSeparator WhichDecimalMark(string s) {
+			DecimalSeparator toret = DecimalSeparator.Point;
+
+			s = s.Trim();
+			for (int i = 0; i < DecimalSeparatorChar.Count; ++i) {
+				if ( s.IndexOf( DecimalSeparatorChar[ i ] ) >= 0 ) {
+					toret = (DecimalSeparator) i;
+					break;
+				}
+			}
+
+			return toret;
+		}
 
         /// <summary>
         /// Determines if parameter is a number.
@@ -53,51 +80,93 @@ namespace Colorado.Core {
         /// <returns><c>true</c> if parameter is a number; otherwise, <c>false</c>.</returns>
         /// <param name="s">A string possibly containing a number.</param>
         public static bool IsNumber(string s) {
-            bool toret = true;
+			bool isReal;
+
+			return ParseNumber( s, out isReal );
+		}
+
+		private static bool ParseNumber(string s, out bool isReal) {
+            bool toret = false;
             int pos = 0;
             int numMarks = 1;
             int numEs = 1;
+			int numDecs = 0;
 
-            // Maybe there is a sign before the number
-            if ( s[ pos ] == '+'
-                || s[ pos ] == '-' )
-            {
-                ++pos;
-            }
+			isReal = false;
+			if ( !string.IsNullOrWhiteSpace( s ) ) {
+				toret = true;
+				s = s.Trim();
 
-            // Maybe the decimal mark is at the beginning
-            if ( IsDecimalMark( s[ pos ] ) ) {
-                ++pos;
-                --numMarks;
-            }
+				// Maybe there is a sign before the number
+				if ( s[ pos ] == '+'
+			      || s[ pos ] == '-' )
+				{
+					++pos;
+				}
 
-            // Check the remaining positions
-            while( pos < s.Length ) {
-                if ( IsDecimalMark( s[ pos ] ) ) {
-                    --numMarks;
-                }
-                else
-                    if ( char.ToUpper( s[ pos ] ) == 'E' ) {
-                        --numEs;
-                    }
-                    else
-                        if ( !char.IsDigit( s[ pos ] ) ) {
-                            toret = false;
-                            break;
-                        }
+				// Maybe the decimal mark is at the beginning
+				if ( pos < s.Length
+				  && IsDecimalMark( s[ pos ] ) )
+				{
+					++pos;
+					--numMarks;
+					isReal = true;
+				}
 
-                ++pos;
-            }
+				// Check the remaining positions
+				while ( pos < s.Length ) {
+					if ( IsDecimalMark( s[ pos ] ) ) {
+						--numMarks;
+						isReal = true;
+					}
+					else
+					if ( char.ToUpper( s[ pos ] ) == 'E' ) {
+						--numEs;
 
-            // More than one separator oe 'e'?
-            if ( numMarks < 0
-                || numEs < 0 )
-            {
-                toret = false;
-            }
+						// Maybe there is a sign after the number
+						if ( pos < ( s.Length - 1 ) ) {
+							if ( s[ pos + 1 ] == '+'
+				  		      || s[ pos + 1 ] == '-' )
+							{
+								++pos;
+							}
+						}
+					}
+					else
+					if ( char.IsDigit( s[ pos ] ) ) {
+						++numDecs;
+					}
+					else {
+						toret = false;
+						break;
+					}
+
+					++pos;
+				}
+
+				// Do we have correct parts of the number?
+				if ( numMarks < 0
+	              || numEs < 0
+			  	  || numDecs < 1 )
+				{
+					toret = false;
+				}
+			}
+
+			// Can't be a real number if it is not a number
+			if ( !toret ) {
+				isReal = false;
+			}
 
             return toret;
         }
+
+		public static bool IsRealNumber(string s) {
+			bool isReal;
+			bool isNumber = ParseNumber( s, out isReal );
+
+			return ( isReal && isNumber );
+		}
 
         public static char AsChar(DecimalSeparator value)
         {

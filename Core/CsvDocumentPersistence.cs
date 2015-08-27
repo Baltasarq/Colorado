@@ -40,28 +40,7 @@ namespace Colorado.Core {
 
 			return;
 		}
-
-		public static string PrepareValue(string cell)
-		{
-			// Prepare
-			string toret = cell.Trim();
-
-			if ( toret.Length > 0 ) {
-				if ( toret[ 0 ] == '"' ) {
-					// Remove double quotes
-					toret = toret.Substring( 1 );
-
-					if ( toret[ toret.Length -1 ] == '"' ) {
-						toret = toret.Substring( 0, toret.Length -1 );
-					}
-				} else {
-					toret = cell;
-				}
-			}
-
-			return toret;
-		}
-
+			
         /// <summary>
         /// Strips spaces from a text line, trimming it.
         /// Note this is needed because the TAB delimiter is part of the spaces
@@ -214,6 +193,32 @@ namespace Colorado.Core {
             return;
 		}
 
+		private string FormatLoadedCell(string cell)
+		{
+			string toret = cell.Trim();
+
+			if ( toret.Length > 0 ) {
+				// Strip contents
+				if ( toret[ 0 ] == '"' ) {
+					// Remove double quotes
+					toret = toret.Substring( 1 );
+
+					if ( toret[ toret.Length -1 ] == '"' ) {
+						toret = toret.Substring( 0, toret.Length -1 );
+					}
+				} else {
+					toret = cell;
+				}
+
+				// Deduce decimal separator
+				if ( DecimalMark.IsRealNumber( toret ) ) {
+					this.Document.DecimalSeparator = DecimalMark.WhichDecimalMark( toret );
+				}
+			}
+
+			return toret;
+		}
+
 		private string[] SplitLine(string line)
 		{
 			var row = new List<string>();
@@ -242,7 +247,7 @@ namespace Colorado.Core {
     				if ( !inQuoted
     			      && line[ i ] == Document.DelimiterValue[ 0 ] )
     				{
-    					row.Add( PrepareValue( line.Substring( pos, i - pos ) ) );
+    					row.Add( FormatLoadedCell( line.Substring( pos, i - pos ) ) );
     					pos = i + 1;
     				}
     				else
@@ -255,7 +260,7 @@ namespace Colorado.Core {
 
     			// Add last column
     			if ( pos < line.Length ) {
-    				row.Add( PrepareValue( line.Substring( pos, line.Length - pos ) ) );
+    				row.Add( FormatLoadedCell( line.Substring( pos, line.Length - pos ) ) );
     			}
     			else
     			if ( line[ line.Length -1 ] == Document.DelimiterValue[ 0 ] ) {

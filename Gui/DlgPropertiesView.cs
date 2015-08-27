@@ -58,6 +58,7 @@ namespace Colorado.Gui {
             this.frmHeaders = new Gtk.Frame( "<b>Headers</b>" );
             ((Gtk.Label) this.frmHeaders.LabelWidget ).UseMarkup = true;
             this.listHeaders = new Gtk.TreeView();
+			this.listHeaders.EnableSearch = false;
             swScroll.AddWithViewport( this.listHeaders );
             this.frmHeaders.Add( swScroll );
 
@@ -85,13 +86,13 @@ namespace Colorado.Gui {
             var hBoxDecimalMark = new Gtk.HBox( false, 2 );
 
             // Rows
-            this.sbRows = new Gtk.SpinButton( 0, 100, 1 );
+			this.sbRows = new Gtk.SpinButton( 0, int.MaxValue, 1 );
             this.lblRows = new Gtk.Label( "Rows" );
             hBoxRows.PackStart( this.lblRows, false, false, 5 );
             hBoxRows.PackStart( this.sbRows, true, true, 5 );
 
             // Columns
-            this.sbColumns = new Gtk.SpinButton( 1, 100, 1 );
+			this.sbColumns = new Gtk.SpinButton( 1, int.MaxValue, 1 );
             this.lblColumns = new Gtk.Label( "Columns" );
             hBoxColumns.PackStart( this.lblColumns, false, false, 5 );
             hBoxColumns.PackStart( this.sbColumns, true, true, 5 );
