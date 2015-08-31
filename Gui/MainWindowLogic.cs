@@ -655,7 +655,8 @@ namespace Colorado.Gui {
                         oldRows = this.document.Data.NumRows;
                         oldColumns = this.document.Data.NumColumns;
                     }
-                } while( answer != Gtk.ResponseType.Close );
+				} while( answer != Gtk.ResponseType.Close
+					  && answer != Gtk.ResponseType.DeleteEvent );
 
                 // Apply changes
                 this.ApplyPreferences( dlg );

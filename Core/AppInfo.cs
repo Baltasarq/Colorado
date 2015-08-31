@@ -2,7 +2,7 @@
 namespace Colorado.Core {
 	public class AppInfo {
 		public const string Name = "Colorado";
-        public const string Version = "v1.0 20152009";
+        public const string Version = "v1.0 20152709";
 		public const string Author = "baltasarq@gmail.com";
 		public const string Website = "http://baltasarq.info/dev/";
 		public const string Comments = "A simple tool to view&edit CSV files";

@@ -110,7 +110,7 @@ namespace Colorado.Gui {
             hBoxDecimalMark.PackStart( this.cmbDecimalMark, true, true, 5 );
 
             // Double quotes
-            this.cbSurroundWithDoubleQuotes = new Gtk.CheckButton( "Surround with double quotes" );
+            this.cbSurroundWithDoubleQuotes = new Gtk.CheckButton( "Surround text with double quotes" );
             this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row for headers" );
 
             // Layout
