@@ -243,34 +243,41 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected void CloseDocument()
+        protected bool CloseDocument()
         {
-            if ( this.document != null ) {
-                if ( this.document.Changed ) {
-                    // Save the document, if needed
-                    if ( Util.Ask( this, AppInfo.Name, "Save CSV document '" + document.FileName + "' ?" ) ) {
-                        this.OnSave();
-                    }
-                }
+			bool toret = true;
 
-                this.document = null;
+			if ( this.document != null ) {
+				if ( Util.Ask( this, AppInfo.Name, "Close CSV document '" + document.FileName + "' ?" ) ) {
+					if ( this.document.Changed ) {
+						// Save the document, if needed
+						if ( Util.Ask( this, AppInfo.Name, "Save CSV document '" + document.FileName + "' ?" ) ) {
+							this.OnSave();
+						}
+					}
+
+					this.document = null;
+					this.ActivateIde( false );
+				} else {
+					toret = false;
+				}
             }
 
-            this.ActivateIde( false );
+			return toret;
         }
 
         private void OnOpen()
         {
-            this.CloseDocument();
-
-            if ( Util.DlgOpen( AppInfo.Name,
-                "Open CSV",
-                this,
-                ref lastFileName,
-                CsvDocumentPersistence.FileFilter ) )
-            {
-                this.OpenDocument( lastFileName, '\0', true );
-            }
+			if ( this.CloseDocument() ) {
+	            if ( Util.DlgOpen( AppInfo.Name,
+	                "Open CSV",
+	                this,
+	                ref lastFileName,
+	                CsvDocumentPersistence.FileFilter ) )
+	            {
+	                this.OpenDocument( lastFileName, '\0', true );
+	            }
+			}
 
             return;
         }
@@ -339,12 +346,17 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnQuit()
+        private bool OnQuit()
         {
-            this.CloseDocument();
+			bool toret = true;
 
-            this.Visible = false;
-            Gtk.Application.Quit();
+			if ( this.CloseDocument() ) {
+				this.Visible = false;
+				Gtk.Application.Quit();
+				toret = false;
+			}
+
+			return toret;
         }
 
         private void OnImport()
@@ -669,21 +681,23 @@ namespace Colorado.Gui {
 
         private void OnNew()
         {
-            this.CloseDocument();
+			if ( this.CloseDocument() ) {
+				// Create new document
+				this.PrepareDocument( new CsvDocument( 10, 10 ) );
 
-            // Create new document
-            this.PrepareDocument( new CsvDocument( 10, 10 ) );
+				// Trigger the properties dialog
+				this.ShowDocument();
+				this.SetTitle();
+				this.OnProperties();
 
-            // Trigger the properties dialog
-            this.ShowDocument();
-            this.SetTitle();
-            this.OnProperties();
+				// Show everything
+				this.ActivateIde();
+				this.ShowDocument();
+				this.SetStatus();
+				this.ShowProjectInfo();
+			}
 
-            // Show everything
-            this.ActivateIde();
-            this.ShowDocument();
-            this.SetStatus();
-            this.ShowProjectInfo();
+			return;
         }
 
         public void FindText(int rowBegin)

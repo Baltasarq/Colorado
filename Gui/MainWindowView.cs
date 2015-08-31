@@ -64,7 +64,14 @@ namespace Colorado.Gui {
             this.SetGeometryHints( this, minSize, Gdk.WindowHints.MinSize );
             this.sbStatus.Push( 0, "Ready" );
             this.SetPosition( Gtk.WindowPosition.Center );
-            this.DeleteEvent += (o, args) => { this.OnQuit(); args.RetVal = true; };
+			this.DeleteEvent += (o, args) => { args.RetVal = this.OnQuit(); };
+
+			try {
+				this.Icon = new Gdk.Pixbuf( System.Reflection.Assembly.GetAssembly( typeof( MainWindow ) ),
+					"Colorado.Res.colorado.png", 32, 32 );
+			} catch(System.Exception) {
+				// Ignored
+			}
         }
 
         private void BuildActions() {
