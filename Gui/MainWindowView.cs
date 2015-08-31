@@ -67,7 +67,8 @@ namespace Colorado.Gui {
 			this.DeleteEvent += (o, args) => { args.RetVal = this.OnQuit(); };
 
 			try {
-				this.Icon = new Gdk.Pixbuf( System.Reflection.Assembly.GetAssembly( typeof( MainWindow ) ),
+				this.Icon = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
 					"Colorado.Res.colorado.png", 32, 32 );
 			} catch(System.Exception) {
 				// Ignored
@@ -91,7 +92,7 @@ namespace Colorado.Gui {
             this.propertiesAction.Activated += (sender, e) => this.OnProperties();
 
             this.closeAction = new Gtk.Action( "close", "_Close", "close spreadhseet", Gtk.Stock.Close );
-            this.closeAction.Activated += (sender, e) => this.OnClose();
+            this.closeAction.Activated += (sender, e) => this.CloseDocument();
 
             this.aboutAction = new Gtk.Action( "about", "_About", "about...", Gtk.Stock.About );
             this.aboutAction.Activated += (sender, e) => this.OnAbout();

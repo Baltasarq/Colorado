@@ -243,21 +243,13 @@ namespace Colorado.Gui {
             return;
         }
 
-        protected bool CloseDocument()
+        private bool OnCloseDocument()
         {
 			bool toret = true;
 
 			if ( this.document != null ) {
 				if ( Util.Ask( this, AppInfo.Name, "Close CSV document '" + document.FileName + "' ?" ) ) {
-					if ( this.document.Changed ) {
-						// Save the document, if needed
-						if ( Util.Ask( this, AppInfo.Name, "Save CSV document '" + document.FileName + "' ?" ) ) {
-							this.OnSave();
-						}
-					}
-
-					this.document = null;
-					this.ActivateIde( false );
+					this.CloseDocument();
 				} else {
 					toret = false;
 				}
@@ -266,9 +258,21 @@ namespace Colorado.Gui {
 			return toret;
         }
 
+		private void CloseDocument() {
+			if ( this.document.Changed ) {
+				// Save the document, if needed
+				if ( Util.Ask( this, AppInfo.Name, "Save CSV document '" + document.FileName + "' ?" ) ) {
+					this.OnSave();
+				}
+			}
+
+			this.document = null;
+			this.ActivateIde( false );
+		}
+
         private void OnOpen()
         {
-			if ( this.CloseDocument() ) {
+			if ( this.OnCloseDocument() ) {
 	            if ( Util.DlgOpen( AppInfo.Name,
 	                "Open CSV",
 	                this,
@@ -346,11 +350,11 @@ namespace Colorado.Gui {
             return;
         }
 
-        private bool OnQuit()
+		private bool OnQuit()
         {
 			bool toret = true;
 
-			if ( this.CloseDocument() ) {
+			if ( this.OnCloseDocument() ) {
 				this.Visible = false;
 				Gtk.Application.Quit();
 				toret = false;
@@ -564,11 +568,6 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnClose()
-        {
-            this.CloseDocument();
-        }
-
         private void OnEdFindActivated()
         {
             this.txtToFind = this.edFind.Text;
@@ -681,7 +680,7 @@ namespace Colorado.Gui {
 
         private void OnNew()
         {
-			if ( this.CloseDocument() ) {
+			if ( this.OnCloseDocument() ) {
 				// Create new document
 				this.PrepareDocument( new CsvDocument( 10, 10 ) );
 
