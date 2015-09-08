@@ -47,7 +47,7 @@ namespace Colorado.Gui {
 			this.frmOptions = new Gtk.Frame( "<b>Options</b>" );
             ((Gtk.Label) this.frmOptions.LabelWidget ).UseMarkup = true;
 			this.lblDelimiter = new Gtk.Label( "Delimiter" );
-			this.cmbDelimiter = new Gtk.ComboBoxEntry( new string[]{ ";", "," } );
+			this.cmbDelimiter = new Gtk.ComboBoxEntry( new string[]{} );
 			this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row is for headers" );
 			hBoxDelimiter.PackStart( this.lblDelimiter, false, false, 5 );
 			hBoxDelimiter.PackStart( this.cmbDelimiter, true, true, 5 );
