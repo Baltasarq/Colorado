@@ -65,6 +65,7 @@ namespace Colorado.Gui {
             this.findAgainAction.Sensitive     = active;
 
             this.ShowProjectInfo();
+			this.SetCurrentCell( 0, 0, false );
             Util.UpdateUI();
         }
 
@@ -383,18 +384,23 @@ namespace Colorado.Gui {
         /// <param name="edit">Start editing the cell if set to <c>true</c>.</param>
         public void SetCurrentCell(int rowIndex, int colIndex, bool edit = false)
         {
-            var rowPath = new Gtk.TreePath( new int[]{ rowIndex } );
-            Gtk.TreeViewColumn colPath = this.tvTable.Columns[ colIndex ];
+			if ( this.document != null ) {
+				var rowPath = new Gtk.TreePath( new int[]{ rowIndex } );
+				Gtk.TreeViewColumn colPath = this.tvTable.Columns[ colIndex ];
 
-            this.tvTable.ScrollToCell(
-                rowPath,
-                colPath,
-                false,
-                (float) 0.0,
-                (float) 0.0
-            );
+				this.tvTable.ScrollToCell(
+					rowPath,
+					colPath,
+					false,
+					(float) 0.0,
+					(float) 0.0
+				);
 
-            this.tvTable.SetCursor( rowPath, colPath, edit );
+				this.tvTable.SetCursor( rowPath, colPath, edit );
+			}
+
+			this.tvTable.GrabFocus();
+			return;
         }
 
         public void GetCurrentCell(out int row, out int col)
@@ -690,10 +696,9 @@ namespace Colorado.Gui {
 				this.OnProperties();
 
 				// Show everything
-				this.ActivateIde();
 				this.ShowDocument();
-				this.SetStatus();
 				this.ShowProjectInfo();
+				this.ActivateIde();
 			}
 
 			return;
@@ -1196,7 +1201,13 @@ namespace Colorado.Gui {
 
             // Get the current position, needed in both cases.
             this.GetCurrentCell( out rowIndex, out colIndex );
+/*
+            Gtk.TreeIter itRow;
+            this.tvTable.Model.GetIter( out itRow, new Gtk.TreePath( new int[] { rowIndex } ) );
+            var cell = (Gtk.CellRendererText) ( (Gtk.ListStore) this.tvTable.Model ).GetValue( itRow, colIndex );
 
+            //if ( cell.
+*/
             // Adapt the column
             colIndex += NumFixedColumns;
 
@@ -1323,7 +1334,8 @@ namespace Colorado.Gui {
             table.GetIter( out itRow, new Gtk.TreePath( new int[] { row } ) );
 
             // Get
-            return (String) table.GetValue( itRow, col );
+            //return (String) table.GetValue( itRow, col );
+            return ((Gtk.CellRendererText) table.GetValue( itRow, col ) ).Text;
         }
 
         private void OnInsertFormula()
