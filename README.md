@@ -5,6 +5,8 @@ A TSV spreadsheet. **Colorado** allows to visualize and edit CSV and TSV files. 
 
 In order for **Colorado** to work correctly, it will need **Gtk#** installed. In GNU/Linux and Mac **mono** will also be needed.
 
+Uses <a target="_blank" href="http://github.com/baltasarq/GtkUtil/releases/">GtkUtil</a>.
+
 Concepts:
 - <a href="https://en.wikipedia.org/wiki/Tab-separated_values">TSV</a>
 - <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV</a>
