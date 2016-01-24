@@ -38,6 +38,7 @@ namespace Colorado.Gui {
             swScroll.AddWithViewport( this.tvTable );
 
             // Build them all
+			this.BuildIcons();
             this.BuildActions();
             this.BuildStatusBar();
             this.BuildMenu();
@@ -65,87 +66,176 @@ namespace Colorado.Gui {
             this.sbStatus.Push( 0, "Ready" );
             this.SetPosition( Gtk.WindowPosition.Center );
 			this.DeleteEvent += (o, args) => { args.RetVal = this.OnQuit(); };
+        }
+
+		private void BuildIcons() {
+			this.ToolbarMode = Gtk.ToolbarStyle.Icons;
 
 			try {
 				this.Icon = new Gdk.Pixbuf(
 					System.Reflection.Assembly.GetEntryAssembly(),
 					"Colorado.Res.colorado.png", 32, 32 );
+
+				this.iconAbout = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.about.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "about", 32, this.iconAbout );
+
+				this.iconAdd = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.add.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "add", 32, this.iconAdd );
+
+				this.iconClear = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.clear.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "clear", 32, this.iconClear );
+
+				this.iconClose = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.close.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "close", 32, this.iconClose );
+
+				this.iconCopy = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.copy.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "copy", 32, this.iconCopy );
+
+				this.iconExit = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.exit.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "exit", 32, this.iconExit );
+
+				this.iconExport = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.export.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "export", 32, this.iconExport );
+
+				this.iconFind = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.find.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "find", 32, this.iconFind );
+
+				this.iconFormula = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.formula.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "formula", 32, this.iconFormula );
+
+				this.iconImport = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.import.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "import", 32, this.iconImport );
+
+				this.iconNew = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.new.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "new", 32, this.iconNew );
+
+				this.iconOpen = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.open.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "open", 32, this.iconOpen );
+
+				this.iconPaste = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.paste.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "paste", 32, this.iconPaste );
+
+				this.iconProperties = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.properties.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "properties", 32, this.iconProperties );
+
+				this.iconRemove = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.remove.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "remove", 32, this.iconRemove );
+
+				this.iconRevert = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.revert.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "revert", 32, this.iconRevert );
+
+				this.iconSave = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Colorado.Res.save.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "save", 32, this.iconSave );
 			} catch(System.Exception) {
-				// Ignored
+				this.ToolbarMode = Gtk.ToolbarStyle.Text;
 			}
-        }
+		}
 
         private void BuildActions() {
-            this.newAction = new Gtk.Action( "new", "_New", "new spreadhseet", Gtk.Stock.New );
+			this.newAction = new Gtk.Action( "new", "_New", "new spreadhseet", "new" ) { IconName = "new" };
             this.newAction.Activated += (sender, e) => this.OnNew();
 
-            this.openAction = new Gtk.Action( "open", "_Open", "open spreadhseet", Gtk.Stock.Open );
+			this.openAction = new Gtk.Action( "open", "_Open", "open spreadhseet", "open") { IconName = "open" };
             this.openAction.Activated += (sender, e) => this.OnOpen();
 
-            this.saveAction = new Gtk.Action( "save", "_Save", "save spreadhseet", Gtk.Stock.Save );
+			this.saveAction = new Gtk.Action( "save", "_Save", "save spreadhseet", "save" ) { IconName = "save" };
             this.saveAction.Activated += (sender, e) => this.OnSave();
 
-            this.saveAsAction = new Gtk.Action( "save_as", "Save _as...", "save spreadhseet as...", Gtk.Stock.SaveAs );
+			this.saveAsAction = new Gtk.Action( "save_as", "Save _as...", "save spreadhseet as...", "save" ) { IconName = "save" };
             this.saveAsAction.Activated += (sender, e) => this.OnSaveAs();
 
-            this.propertiesAction = new Gtk.Action( "properties", "_Properties", "properties", Gtk.Stock.Properties );
+			this.propertiesAction = new Gtk.Action( "properties", "_Properties", "properties", "properties" ) { IconName = "properties" };
             this.propertiesAction.Activated += (sender, e) => this.OnProperties();
 
-            this.closeAction = new Gtk.Action( "close", "_Close", "close spreadhseet", Gtk.Stock.Close );
+			this.closeAction = new Gtk.Action( "close", "_Close", "close spreadhseet", "close" ) { IconName = "close" };
             this.closeAction.Activated += (sender, e) => this.CloseDocument();
 
-            this.aboutAction = new Gtk.Action( "about", "_About", "about...", Gtk.Stock.About );
+			this.aboutAction = new Gtk.Action( "about", "_About", "about...", "about" ) { IconName = "about" };
             this.aboutAction.Activated += (sender, e) => this.OnAbout();
 
-            this.importAction = new Gtk.Action( "import", "_Import", "import data", Gtk.Stock.Dnd );
+			this.importAction = new Gtk.Action( "import", "_Import", "import data", "import" ) { IconName = "import" };
             this.importAction.Activated += (sender, e) => this.OnImport();
 
-            this.exportAction = new Gtk.Action( "export", "_Export", "export to...", Gtk.Stock.Convert );
+			this.exportAction = new Gtk.Action( "export", "_Export", "export to...", "export" ) { IconName = "export" };
             this.exportAction.Activated += (sender, e) => this.OnExport();
 
-            this.revertAction = new Gtk.Action( "revert", "_Revert", "revert to file", Gtk.Stock.RevertToSaved );
+			this.revertAction = new Gtk.Action( "revert", "_Revert", "revert to file", "revert" ) { IconName = "revert" };
             this.revertAction.Activated += (sender, e) => this.OnRevert();
 
-            this.quitAction = new Gtk.Action( "quit", "_Quit", "quit", Gtk.Stock.Quit );
+			this.quitAction = new Gtk.Action( "quit", "_Quit", "quit", "exit" ) { IconName = "exit" };
             this.quitAction.Activated += (sender, e) => this.OnQuit();
 
-            this.findAction = new Gtk.Action( "find", "_Find", "find...", Gtk.Stock.Find );
+			this.findAction = new Gtk.Action( "find", "_Find", "find...", "find" ) { IconName = "find" };
             this.findAction.Activated += (sender, e) => this.OnFind();
 
-            this.findAgainAction = new Gtk.Action( "find_again", "_Find again", "find again", Gtk.Stock.Find );
+			this.findAgainAction = new Gtk.Action( "find_again", "_Find again", "find again", "find" ) { IconName = "find" };
             this.findAgainAction.Activated += (sender, e) => this.OnFindAgain();
 
-            this.insertFormulaAction = new Gtk.Action( "insert_formula", "_Insert formula", "insert formula", Gtk.Stock.Edit );
+			this.insertFormulaAction = new Gtk.Action( "insert_formula", "_Insert formula", "insert formula", "formula" ) { IconName = "formula" };
             this.insertFormulaAction.Activated += (sender, e) => this.OnInsertFormula();
 
-            this.addRowsAction = new Gtk.Action( "add_rows", "_Add rows", "add rows", Gtk.Stock.Add );
+			this.addRowsAction = new Gtk.Action( "add_rows", "_Add rows", "add rows", "add" ) { IconName = "add" };
             this.addRowsAction.Activated += (sender, e) => this.OnAddRows();
 
-            this.removeRowsAction = new Gtk.Action( "remove_rows", "_Remove rows", "remove rows", Gtk.Stock.Remove );
+			this.removeRowsAction = new Gtk.Action( "remove_rows", "_Remove rows", "remove rows", "remove" ) { IconName = "remove" };
             this.removeRowsAction.Activated += (sender, e) => this.OnRemoveRows();
 
-            this.clearRowsAction = new Gtk.Action( "clear_rows", "_Clear rows", "clear rows", Gtk.Stock.Clear );
+			this.clearRowsAction = new Gtk.Action( "clear_rows", "_Clear rows", "clear rows", "clear" ) { IconName = "clear" };
             this.clearRowsAction.Activated += (sender, e) => this.OnClearRows();
 
-            this.copyRowAction = new Gtk.Action( "copy_row", "_Copy row", "copy row", Gtk.Stock.Copy );
+			this.copyRowAction = new Gtk.Action( "copy_row", "_Copy row", "copy row", "copy" )  { IconName = "copy" };
             this.copyRowAction.Activated += (sender, e) => this.OnCopyRow();
 
-            this.fillRowAction = new Gtk.Action( "fill_row", "_Fill row", "fill row", Gtk.Stock.Paste );
+			this.fillRowAction = new Gtk.Action( "fill_row", "_Fill row", "fill row", "paste" ) { IconName = "paste" };
             this.fillRowAction.Activated += (sender, e) => this.OnFillRow();
 
-            this.addColumnsAction = new Gtk.Action( "add_columns", "_Add columns", "add columns", Gtk.Stock.Add );
+			this.addColumnsAction = new Gtk.Action( "add_columns", "_Add columns", "add columns", "add" ) { IconName = "add" };
             this.addColumnsAction.Activated += (sender, e) => this.OnAddColumns();
 
-            this.removeColumnsAction = new Gtk.Action( "remove_columns", "_Remove columns", "remove columns", Gtk.Stock.Remove );
+			this.removeColumnsAction = new Gtk.Action( "remove_columns", "_Remove columns", "remove columns", "remove" ) { IconName = "remove" };
             this.removeColumnsAction.Activated += (sender, e) => this.OnRemoveColumns();
 
-            this.clearColumnsAction = new Gtk.Action( "clear_Columns", "_Clear columns", "clear columns", Gtk.Stock.Clear );
+			this.clearColumnsAction = new Gtk.Action( "clear_Columns", "_Clear columns", "clear columns", "clear" ) { IconName = "clear" };
             this.clearColumnsAction.Activated += (sender, e) => this.OnClearColumns();
 
-            this.copyColumnAction = new Gtk.Action( "copy_column", "_Copy column", "copy column", Gtk.Stock.Copy );
+			this.copyColumnAction = new Gtk.Action( "copy_column", "_Copy column", "copy column", "copy" )  { IconName = "copy" };
             this.copyColumnAction.Activated += (sender, e) => this.OnCopyColumn();
 
-            this.fillColumnAction = new Gtk.Action( "fill_column", "_Fill column", "fill column", Gtk.Stock.Paste );
+			this.fillColumnAction = new Gtk.Action( "fill_column", "_Fill column", "fill column", "paste" )  { IconName = "paste" };
             this.fillColumnAction.Activated += (sender, e) => this.OnFillColumn();
         }
 
@@ -259,7 +349,7 @@ namespace Colorado.Gui {
 
         private void BuildToolbar() {
             this.tbTools = new Gtk.Toolbar();
-            this.tbTools.ToolbarStyle = Gtk.ToolbarStyle.Icons;
+			this.tbTools.ToolbarStyle = this.ToolbarMode;
 
             this.tbTools.Insert( (Gtk.ToolItem) this.newAction.CreateToolItem(), 0 );
             this.tbTools.Insert( (Gtk.ToolItem) this.openAction.CreateToolItem(), 1 );
@@ -308,6 +398,10 @@ namespace Colorado.Gui {
             // Finish
             this.popup.ShowAll();
         }
+
+		private Gtk.ToolbarStyle ToolbarMode {
+			get; set;
+		}
             
         // Widgets
         private Gtk.TreeView tvTable;
@@ -344,6 +438,25 @@ namespace Colorado.Gui {
         private Gtk.Action copyColumnAction;
         private Gtk.Action fillColumnAction;
         private Gtk.Action aboutAction;
+
+		// Icons
+		private Gdk.Pixbuf iconAbout;
+		private Gdk.Pixbuf iconAdd;
+		private Gdk.Pixbuf iconClear;
+		private Gdk.Pixbuf iconClose;
+		private Gdk.Pixbuf iconCopy;
+		private Gdk.Pixbuf iconExit;
+		private Gdk.Pixbuf iconExport;
+		private Gdk.Pixbuf iconFind;
+		private Gdk.Pixbuf iconFormula;
+		private Gdk.Pixbuf iconImport;
+		private Gdk.Pixbuf iconNew;
+		private Gdk.Pixbuf iconOpen;
+		private Gdk.Pixbuf iconPaste;
+		private Gdk.Pixbuf iconProperties;
+		private Gdk.Pixbuf iconRemove;
+		private Gdk.Pixbuf iconRevert;
+		private Gdk.Pixbuf iconSave;
     }
 }
 

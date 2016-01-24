@@ -35,21 +35,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>glib-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="GtkUtil">
       <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
     </Reference>
@@ -99,6 +89,23 @@
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />
     <EmbeddedResource Include="Res\colorado.png" />
+    <EmbeddedResource Include="Res\close.png" />
+    <EmbeddedResource Include="Res\new.png" />
+    <EmbeddedResource Include="Res\open.png" />
+    <EmbeddedResource Include="Res\save.png" />
+    <EmbeddedResource Include="Res\about.png" />
+    <EmbeddedResource Include="Res\add.png" />
+    <EmbeddedResource Include="Res\clear.png" />
+    <EmbeddedResource Include="Res\copy.png" />
+    <EmbeddedResource Include="Res\exit.png" />
+    <EmbeddedResource Include="Res\export.png" />
+    <EmbeddedResource Include="Res\find.png" />
+    <EmbeddedResource Include="Res\import.png" />
+    <EmbeddedResource Include="Res\paste.png" />
+    <EmbeddedResource Include="Res\properties.png" />
+    <EmbeddedResource Include="Res\remove.png" />
+    <EmbeddedResource Include="Res\revert.png" />
+    <EmbeddedResource Include="Res\formula.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
