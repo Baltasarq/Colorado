@@ -2,10 +2,10 @@
 namespace Colorado.Core {
 	public class AppInfo {
 		public const string Name = "Colorado";
-        public const string Version = "v1.0.3 20150911";
+        public const string Version = "v1.0.4 20160626";
 		public const string Author = "baltasarq@gmail.com";
 		public const string Website = "http://baltasarq.info/dev/";
-		public const string Comments = "A simple tool to view&edit CSV files";
+		public const string Comments = "A simple tool to view&edit TSV/CSV files";
 		public const string License = @"
 Copyright (c) 2015 dev::baltasarq (baltasarq@gmail.com)
 

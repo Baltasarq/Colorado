@@ -2,14 +2,16 @@
 using System.IO;
 using System.Xml;
 using System.Text;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 
 namespace Colorado.Core {
 	public class CsvDocumentPersistence {
-		public const string FileExtension = "csv";
+		public static ReadOnlyCollection<string> FileExtension = new ReadOnlyCollection<string>(new string[]{ "csv", "tsv" } );
 		public const string TempExtension = "tmp";
         public const string Spaces = " \n\r";
-		public const string FileFilter = "*." + FileExtension;
+		public static ReadOnlyCollection<string> FileFilter = new ReadOnlyCollection<string>(
+			new string[]{ "*." + FileExtension[ 0 ], "*." + FileExtension[ 1 ] } );
 
 		public CsvDocumentPersistence() {
 			this.document = null;
@@ -34,8 +36,19 @@ namespace Colorado.Core {
 			fileName = fileName.Trim();
 			string fileNameLower = fileName.ToLower();
 
-			if ( !fileNameLower.EndsWith( FileExtension.ToLower() ) ) {
-				fileName += "." + FileExtension;
+			// Look in all extensions
+			int i = 0;
+			while ( i < FileExtension.Count ) {
+				if ( fileNameLower.EndsWith( FileExtension[ i ].ToLower() ) ) {
+					break;
+				}
+
+				++i;
+			}
+
+			// Okay, no valid extension: append one.
+			if ( i >= FileExtension.Count ) {
+				fileName += "." + FileExtension[ 0 ];
 			}
 
 			return;
@@ -152,7 +165,7 @@ namespace Colorado.Core {
                     }
                 }
             } else {
-                throw new ApplicationException( "No data in CSV document" );
+                throw new ApplicationException( "No data in spreadsheet" );
             }
 
             this.Document.Changed = false;
@@ -280,7 +293,7 @@ namespace Colorado.Core {
 				int colsLength = cols.Length;
 
                 if ( colsLength > Document.Data.NumColumns ) {
-					throw new ApplicationException( "Bad CSV format -- too variable number of columns" );
+					throw new ApplicationException( "Bad format -- too variable number of columns" );
 				}
 
 				// Set data

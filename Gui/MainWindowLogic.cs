@@ -249,7 +249,7 @@ namespace Colorado.Gui {
 			bool toret = true;
 
 			if ( this.document != null ) {
-				if ( Util.Ask( this, AppInfo.Name, "Close CSV document '" + document.FileName + "' ?" ) ) {
+				if ( Util.Ask( this, AppInfo.Name, "Close spreadsheet '" + document.FileName + "' ?" ) ) {
 					this.CloseDocument();
 				} else {
 					toret = false;
@@ -262,7 +262,7 @@ namespace Colorado.Gui {
 		private void CloseDocument() {
 			if ( this.document.Changed ) {
 				// Save the document, if needed
-				if ( Util.Ask( this, AppInfo.Name, "Save CSV document '" + document.FileName + "' ?" ) ) {
+				if ( Util.Ask( this, AppInfo.Name, "Save spreadsheet '" + document.FileName + "' ?" ) ) {
 					this.OnSave();
 				}
 			}
@@ -275,10 +275,10 @@ namespace Colorado.Gui {
         {
 			if ( this.OnCloseDocument() ) {
 	            if ( Util.DlgOpen( AppInfo.Name,
-	                "Open CSV",
+					"Open spreadsheet",
 	                this,
 	                ref lastFileName,
-	                CsvDocumentPersistence.FileFilter ) )
+	                CsvDocumentPersistence.FileFilter[ 0 ] ) )
 	            {
 	                this.OpenDocument( lastFileName, '\0', true );
 	            }
@@ -514,10 +514,10 @@ namespace Colorado.Gui {
             try {
                 if ( this.document != null ) {
                     if ( Util.DlgOpen(
-                        AppInfo.Name, "Save CSV as...",
+                        AppInfo.Name, "Save spreadsheet as...",
                         this,
                         ref lastFileName,
-                        CsvDocumentPersistence.FileFilter ) )
+                        CsvDocumentPersistence.FileFilter[ 0 ] ) )
                     {
                         this.SetStatus( "Saving..." );
                         this.document.FileName = this.lastFileName;
@@ -1201,14 +1201,8 @@ namespace Colorado.Gui {
 
             // Get the current position, needed in both cases.
             this.GetCurrentCell( out rowIndex, out colIndex );
-/*
-            Gtk.TreeIter itRow;
-            this.tvTable.Model.GetIter( out itRow, new Gtk.TreePath( new int[] { rowIndex } ) );
-            var cell = (Gtk.CellRendererText) ( (Gtk.ListStore) this.tvTable.Model ).GetValue( itRow, colIndex );
 
-            //if ( cell.
-*/
-            // Adapt the column
+			// Adapt the column
             colIndex += NumFixedColumns;
 
             if ( args.Event.Key != Gdk.Key.ISO_Enter ) {
@@ -1237,8 +1231,6 @@ namespace Colorado.Gui {
 
                     this.SetCurrentCell( rowIndex, colIndex );
                     args.RetVal = true;                              // Eat the TAB
-                } else {
-                    this.SetCurrentCell( rowIndex, colIndex, true );
                 }
             }
 

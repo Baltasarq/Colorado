@@ -26,7 +26,7 @@ namespace Colorado.Gui {
                 Core.AppInfo.Name, "Open",
                 (Gtk.Window) this.Parent,
                 ref lastFileName,
-                Core.CsvDocumentPersistence.FileFilter ) )
+                Core.CsvDocumentPersistence.FileFilter[ 0 ] ) )
             {
                 this.edFileName.Text = lastFileName;
             }
