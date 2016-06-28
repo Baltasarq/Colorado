@@ -407,8 +407,8 @@ namespace Colorado.Core {
 
                 Document.Changed = false;
 				file.Close();
-				File.Delete( fileName );
 				File.Copy( fileName, options.Name, true );
+				File.Delete( fileName );
 			} catch(Exception) {
 				throw;
 			}
