@@ -361,7 +361,7 @@ namespace Colorado.Core {
 		{
 			System.IO.StreamWriter file = null;
 			ModifyCell prepareCellForSaving;
-			string fileName = options.Name + '.' + CsvDocumentPersistence.TempExtension;
+			string fileName = Path.GetTempFileName();
 
 			try {
 				// Decide whether to use quotes or not
@@ -407,7 +407,7 @@ namespace Colorado.Core {
 
                 Document.Changed = false;
 				file.Close();
-				File.Delete( options.Name );
+				File.Delete( fileName );
 				File.Copy( fileName, options.Name, true );
 			} catch(Exception) {
 				throw;
