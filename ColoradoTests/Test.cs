@@ -58,15 +58,8 @@ namespace ColoradoTests {
 			};
 
 			for(int i = 0; i < testResults.Length; ++i) {
-				double num;
-				bool actualResult = double.TryParse( testNumbers[ i ], out num );
 				bool result = DecimalMark.IsNumber( testNumbers[ i ] );
-
-				Console.WriteLine( "[\"{0}\"] -> {1} == {2} == {3} == {4}?",
-					testNumbers[ i ], testResults[ i ], result, actualResult, num );
-				
 				Assert.AreEqual( testResults[ i ], result );
-				Assert.AreEqual( testResults[ i ], actualResult );
 			}
 		}
 
