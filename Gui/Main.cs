@@ -5,7 +5,7 @@ using GtkUtil;
 
 namespace Colorado.Gui {
 	class MainClass {
-		public static void Main(string[] args)
+		static void Main(string[] args)
 		{
 			MainWindow win = null;
 			
