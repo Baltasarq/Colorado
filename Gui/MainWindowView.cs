@@ -7,7 +7,7 @@ namespace Colorado.Gui {
             this.Title = Colorado.Core.AppInfo.Name;
             this.Build();
 
-            this.lastFileName = "";
+            this.lastFileName = ".";
             this.document = null;
             this.txtToFind = "";
             this.ActivateIde( false );

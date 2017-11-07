@@ -1,12 +1,13 @@
 ﻿// Colorado, a csv spreadsheet
-
-using System;
-using Colorado.Core;
-using System.Collections.Generic;
-
-using GtkUtil;
+// Copyright 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+	using System;
+	using Colorado.Core;
+	using System.Collections.Generic;
+	
+	using GtkUtil;
+    
     public partial class MainWindow: Gtk.Window {
         public const int MaxFileLengthForTitle = 40;
         public const string LongFilePrefix = "...";
@@ -72,10 +73,9 @@ namespace Colorado.Gui {
         protected void ShowDocument()
         {
             int row = 0;
-            int column;
 
             if ( this.document != null ) {
-                this.GetCurrentCell( out row, out column );
+                this.GetCurrentCell( out row, out int column );
             }
 
             this.ShowDocument( row );
@@ -118,8 +118,7 @@ namespace Colorado.Gui {
 
                 // Create columns belonging to the document
                 for(int colNum = 0; colNum < document.Data.NumColumns; ++colNum) {
-                    column = new Gtk.TreeViewColumn();
-                    column.Expand = true;
+                    column = new Gtk.TreeViewColumn { Expand = true };
                     cell = new Gtk.CellRendererText();
                     column.Title = document.Data.ColumnInfo[ colNum ].Header;
                     column.PackStart( cell, true );
@@ -203,17 +202,17 @@ namespace Colorado.Gui {
         /// Opens a document, using its fileName, delimiter and a bool to
         /// decide whether the first row is for headers or not
         /// </summary>
-        /// <param name="fileName">
+        /// <param name="fn">
         /// A <see cref="System.String"/> holding the file name
         /// </param>
-        /// <param name="delimiter">
+        /// <param name="delim">
         /// A <see cref="System.Char"/> whihc is going to be the delimiter. A '\0'
         /// says that the delimiter must be inferred
         /// </param>
-        /// <param name="firstRowForHeaders">
+        /// <param name="useHeaders">
         /// A <see cref="System.Boolean"/> saying whether the first row is for headers or not.
         /// </param>
-        protected void OpenDocument(string fileName, char delimiter, bool firstRowForHeaders)
+        protected void OpenDocument(string fn, char delim, bool useHeaders)
         {   
             this.ActivateIde( false );
             this.SetStatus( "Loading..." );
@@ -222,21 +221,23 @@ namespace Colorado.Gui {
             try {
                 var loader = new CsvDocumentPersistence();
 
-                if ( delimiter == '\0' ) {
-                    loader.Load( fileName, firstRowForHeaders: firstRowForHeaders );
+                if ( delim == '\0' ) {
+                    loader.Load( fn, firstRowForHeaders: useHeaders );
                 } else {
-                    loader.Load( fileName, delimiter, firstRowForHeaders );
+                    loader.Load( fn, delim, useHeaders );
                 }
 
                 this.PrepareDocument( loader.Document );
 
                 // Show it
-                this.lastFileName = fileName;
+                this.lastFileName = fn;
                 this.ShowDocument();
                 this.ShowProjectInfo();
                 this.ActivateIde();
             } catch(Exception e) {
-                Util.MsgError( this, AppInfo.Name, "Error while loading file: '" + e.Message + '\'' );
+                Util.MsgError(
+                            this, AppInfo.Name,
+                            "Error while loading file: '" + e.Message + '\'' );
                 this.document = null;
                 this.SetStatus();
             }
@@ -249,7 +250,9 @@ namespace Colorado.Gui {
 			bool toret = true;
 
 			if ( this.document != null ) {
-				if ( Util.Ask( this, AppInfo.Name, "Close spreadsheet '" + document.FileName + "' ?" ) ) {
+				if ( Util.Ask( this, AppInfo.Name,
+                               "Close spreadsheet '" + document.FileName + "' ?" ) )
+                {
 					this.CloseDocument();
 				} else {
 					toret = false;
@@ -274,13 +277,14 @@ namespace Colorado.Gui {
         private void OnOpen()
         {
 			if ( this.OnCloseDocument() ) {
-	            if ( Util.DlgOpen( AppInfo.Name,
+	            if ( Util.DlgOpen(
+                    AppInfo.Name,
 					"Open spreadsheet",
 	                this,
-	                ref lastFileName,
+	                ref this.lastFileName,
 	                CsvDocumentPersistence.FileFilter[ 0 ] ) )
 	            {
-	                this.OpenDocument( lastFileName, '\0', true );
+	                this.OpenDocument( this.lastFileName, '\0', true );
 	            }
 			}
 
@@ -405,17 +409,14 @@ namespace Colorado.Gui {
 
         public void GetCurrentCell(out int row, out int col)
         {
-            Gtk.TreePath rowPath;
-            Gtk.TreeIter rowPointer;
-            Gtk.TreeViewColumn colPath;
-
             // Convert path in row and rowPointer
-            this.tvTable.GetCursor( out rowPath, out colPath );
+            this.tvTable.GetCursor( out Gtk.TreePath rowPath,
+                                    out Gtk.TreeViewColumn colPath );
 
             if ( rowPath != null
               && colPath != null )
             {
-                this.tvTable.Model.GetIter( out rowPointer, rowPath );
+                this.tvTable.Model.GetIter( out Gtk.TreeIter rowPointer, rowPath );
                 row = rowPath.Indices[ 0 ];
 
                 // Find out the column order
@@ -445,18 +446,16 @@ namespace Colorado.Gui {
 
             try {
                 // Get current position
-                Gtk.TreePath rowPath;
-                Gtk.TreeIter rowPointer;
-                Gtk.TreeViewColumn colPath;
+                Gtk.TreePath rowPath = new Gtk.TreePath( args.Path );
 
                 // Convert path in row and rowPointer
-                rowPath = new Gtk.TreePath( args.Path );
-                tvTable.Model.GetIter( out rowPointer, rowPath );
+                tvTable.Model.GetIter( out Gtk.TreeIter rowPointer, rowPath );
                 rowIndex = rowPath.Indices[ 0 ];
 
                 // Find out the column order
-                tvTable.GetCursor( out rowPath, out colPath );
-                for(colIndex = 0; colIndex < tvTable.Columns.Length; ++colIndex) {
+                tvTable.GetCursor( out rowPath, out Gtk.TreeViewColumn colPath );
+                for(colIndex = 0; colIndex < tvTable.Columns.Length; ++colIndex)
+                {
                     if ( tvTable.Columns[ colIndex ] == colPath ) {
                         break;
                     }
@@ -516,7 +515,7 @@ namespace Colorado.Gui {
                     if ( Util.DlgOpen(
                         AppInfo.Name, "Save spreadsheet as...",
                         this,
-                        ref lastFileName,
+                        ref this.lastFileName,
                         CsvDocumentPersistence.FileFilter[ 0 ] ) )
                     {
                         this.SetStatus( "Saving..." );
@@ -549,13 +548,18 @@ namespace Colorado.Gui {
 
                         if ( fn.Trim().Length > 0 ) {
                             this.lastFileName = fn;
-                            options = new ExportOptions( lastFileName, document );
-                            options.Format = dlg.Selection;
-                            options.IncludeRowNumbers = dlg.IncludeRowNumbers;
-                            options.IncludeTableBorder = dlg.IncludeTableBorder;
-                            options.ColumnsIncluded = dlg.ColumnsIncluded;
+                            
+                            options = new ExportOptions(
+                                              this.lastFileName, this.document )
+                            {
+                                Format = dlg.Selection,
+                                IncludeRowNumbers = dlg.IncludeRowNumbers,
+                                IncludeTableBorder = dlg.IncludeTableBorder,
+                                ColumnsIncluded = dlg.ColumnsIncluded,
+                                QuotedText = dlg.SurroundWithDoubleQuotes
+                            };
+                            
                             options.Delimiter.Name = dlg.DelimiterValue;
-                            options.QuotedText = dlg.SurroundWithDoubleQuotes;
 
                             new CsvDocumentPersistence( Document ).Save( options );
                             Util.MsgInfo( this, AppInfo.Name, options.Format.ToString() + " file generated" );
@@ -718,7 +722,7 @@ namespace Colorado.Gui {
                     var cell = this.document.Data[ i, j ].Trim().ToLower();
 
                     if ( cell.Contains( txtToFind ) ) {
-                        int[] path = new int[] { i };
+                        int[] path = { i };
                         this.tvTable.SetCursor( new Gtk.TreePath( path ), tvTable.Columns[ j + 1 ], false );
                         goto End;
                     }
@@ -731,12 +735,9 @@ namespace Colorado.Gui {
 
         private void OnFindAgain()
         {
-            int row;
-            int col;
-
             if ( this.document != null ) {
-                this.GetCurrentCell( out row, out col );
-                this.FindText( row +1 );
+                this.GetCurrentCell( out int row, out int col );
+                this.FindText( row + 1 );
             } else {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
             }
@@ -746,14 +747,11 @@ namespace Colorado.Gui {
 
         public void RefreshRows(int col, int begin, int end)
         {
-            Gtk.TreePath rowPath;
-            Gtk.TreeIter rowPointer;
-
             // Run over rows
             for(int i = begin; i <= end; ++i) {
                 // Get an iterator for this row
-                rowPath = new Gtk.TreePath( Convert.ToString( i ) );
-                this.tvTable.Model.GetIter( out rowPointer, rowPath );
+                Gtk.TreePath rowPath = new Gtk.TreePath( Convert.ToString( i ) );
+                this.tvTable.Model.GetIter( out Gtk.TreeIter rowPointer, rowPath );
 
                 // Refresh row
                 for(int j = col; j < document.Data.NumColumns; ++j) {
@@ -769,10 +767,6 @@ namespace Colorado.Gui {
 
         private void OnClearRows()
         {
-            int rowBegin;
-            int rowEnd;
-            int col;
-
             // Get position
             if ( document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -780,7 +774,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position and adapt it to UI
-            GetCurrentCell( out rowBegin, out col );
+            GetCurrentCell( out int rowBegin, out int col );
             ++rowBegin;
 
             var dlg = new DlgFromTo( this,
@@ -790,7 +784,7 @@ namespace Colorado.Gui {
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 // Adapt from UI to document (headers)
                 rowBegin = dlg.From - NumFixedRows;
-                rowEnd = dlg.To - NumFixedRows;
+                int rowEnd = dlg.To - NumFixedRows;
 
                 try {
                     // do it
@@ -806,10 +800,6 @@ namespace Colorado.Gui {
 
         private void OnClearColumns()
         {
-            int colBegin;
-            int colEnd;
-            int row;
-
             // Chk
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -817,7 +807,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position and adapt it to UI
-            GetCurrentCell( out row, out colBegin );
+            GetCurrentCell( out int row, out int colBegin );
             ++colBegin;
 
             var dlg = new DlgFromTo( this,
@@ -827,7 +817,7 @@ namespace Colorado.Gui {
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 // Adapt from UI to document
                 colBegin = dlg.From - 1;
-                colEnd = dlg.To - 1;
+                int colEnd = dlg.To - 1;
 
                 try {
                     // do it
@@ -843,9 +833,6 @@ namespace Colorado.Gui {
 
         private void OnAddRows()
         {
-            int row;
-            int col;
-
             // Chk
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -853,7 +840,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position
-            this.GetCurrentCell( out row, out col );
+            this.GetCurrentCell( out int row, out int col );
 
             row += NumFixedRows;
             col += NumFixedColumns;
@@ -895,9 +882,6 @@ namespace Colorado.Gui {
 
         private void OnAddColumns()
         {
-            int row;
-            int col;
-
             // Chk
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -905,7 +889,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position
-            this.GetCurrentCell( out row, out col );
+            this.GetCurrentCell( out int row, out int col );
 
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Insert,
@@ -977,9 +961,6 @@ namespace Colorado.Gui {
 
         private void OnRemoveRows()
         {
-            int row;
-            int col;
-
             // Chk
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -987,7 +968,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position
-            this.GetCurrentCell( out row, out col );
+            this.GetCurrentCell( out int row, out int col );
 
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Erase,
@@ -1013,9 +994,6 @@ namespace Colorado.Gui {
 
         private void OnRemoveColumns()
         {
-            int row;
-            int col;
-
             // Chk
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -1023,7 +1001,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position
-            this.GetCurrentCell( out row, out col );
+            this.GetCurrentCell( out int row, out int col );
 
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Erase,
@@ -1049,14 +1027,11 @@ namespace Colorado.Gui {
 
         private void OnCopyRow()
         {
-            int row;
-            int col;
-
             // Chk
             if ( this.document != null ) {
 
                 // Get current position
-                this.GetCurrentCell( out row, out col );
+                this.GetCurrentCell( out int row, out int col );
 
                 var dlg = new DlgFromTo( this,
                     row +1, document.Data.NumRows,
@@ -1085,9 +1060,6 @@ namespace Colorado.Gui {
 
         private void OnCopyColumn()
         {
-            int row;
-            int col;
-
             // Chk
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -1095,7 +1067,7 @@ namespace Colorado.Gui {
             }
 
             // Get current position
-            this.GetCurrentCell( out row, out col );
+            this.GetCurrentCell( out int row, out int col );
 
             var dlg = new DlgFromTo( this,
                 col + 1,
@@ -1120,15 +1092,11 @@ namespace Colorado.Gui {
 
         private void OnFillRow()
         {
-            int row;
-            int column;
-
             // Retrieve position
-            this.GetCurrentCell( out row, out column );
+            this.GetCurrentCell( out int row, out int column );
 
             // Ask for filling
-            var dlg = new DlgFill( this );
-            dlg.Modal = true;
+            var dlg = new DlgFill( this ) { Modal = true };
 
             if ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok ) {
                 var filler = Filler.CreateFiller(
@@ -1152,11 +1120,8 @@ namespace Colorado.Gui {
 
         private void OnFillColumn()
         {
-            int row;
-            int column;
-
             // Retrieve position
-            this.GetCurrentCell( out row, out column );
+            this.GetCurrentCell( out int row, out int column );
 
             // Ask for filling
             var dlg = new DlgFill( this );
@@ -1193,14 +1158,11 @@ namespace Colorado.Gui {
         [GLib.ConnectBefore]
         private void OnTableKeyPressed(Gtk.KeyPressEventArgs args)
         {
-            int rowIndex;
-            int colIndex;
-
             // Do not "eat" the key, by default
             args.RetVal = false;
 
             // Get the current position, needed in both cases.
-            this.GetCurrentCell( out rowIndex, out colIndex );
+            this.GetCurrentCell( out int rowIndex, out int colIndex );
 
 			// Adapt the column
             colIndex += NumFixedColumns;
@@ -1275,18 +1237,22 @@ namespace Colorado.Gui {
             if( row < 0
              || row >= this.Document.Data.NumRows )
             {
-                throw new ArgumentException( "invalid row to set: " + row.ToString(), "row" );
+                throw new ArgumentException(
+                                    "invalid row to set: " + row.ToString(),
+                                    nameof( row ) );
             }
 
             if( col < 0
              || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
             {
-                throw new ArgumentException( "invalid column to set: " + col.ToString(), "col" );
+                throw new ArgumentException(
+                                    "invalid column to set: " + col.ToString(),
+                                    nameof( col ) );
             }
 
             // Find place
-            Gtk.TreeIter itRow;
-            table.GetIter( out itRow, new Gtk.TreePath( new int[] { row } ) );
+            table.GetIter( out Gtk.TreeIter itRow,
+                           new Gtk.TreePath( new []{ row } ) );
 
             // Set
             table.SetValue( itRow, col, value );
@@ -1312,32 +1278,33 @@ namespace Colorado.Gui {
             if( row < 0
              || row >= this.Document.Data.NumRows )
             {
-                throw new ArgumentException( "invalid row to set: " + row.ToString(), "row" );
+                throw new ArgumentException(
+                                    "invalid row to set: " + row.ToString(),
+                                    nameof( row ) );
             }
 
             if( col < 0
              || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
             {
-                throw new ArgumentException( "invalid column to set: " + col.ToString(), "col" );
+                throw new ArgumentException(
+                                    "invalid column to set: " + col.ToString(),
+                                    nameof( col ) );
             }
 
             // Find place
-            Gtk.TreeIter itRow;
-            table.GetIter( out itRow, new Gtk.TreePath( new int[] { row } ) );
+            table.GetIter( out Gtk.TreeIter itRow,
+                           new Gtk.TreePath( new int[] { row } ) );
 
             // Get
-            //return (String) table.GetValue( itRow, col );
             return ((Gtk.CellRendererText) table.GetValue( itRow, col ) ).Text;
         }
 
         private void OnInsertFormula()
         {
-            int row;
-            int col;
             var dlg = new DlgFormulae( this );
 
             // Get current position
-            this.GetCurrentCell( out row, out col );
+            this.GetCurrentCell( out int row, out int col );
 
             // Fire dialog
             if ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok ) {
