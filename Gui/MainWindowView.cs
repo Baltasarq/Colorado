@@ -19,7 +19,8 @@ namespace Colorado.Gui {
             OpenDocument( fileName );
         }
 
-        private void Build() {
+        private void Build()
+        {
             var vPanel = new Gtk.VBox( false, 2 );
             var hPanel = new Gtk.HBox( false, 2 );
             var swScroll = new Gtk.ScrolledWindow();
@@ -68,7 +69,8 @@ namespace Colorado.Gui {
 			this.DeleteEvent += (o, args) => { args.RetVal = this.OnQuit(); };
         }
 
-		private void BuildIcons() {
+		private void BuildIcons()
+        {
 			this.ToolbarMode = Gtk.ToolbarStyle.Icons;
 
 			try {
@@ -303,7 +305,7 @@ namespace Colorado.Gui {
             var opFind = this.findAction.CreateMenuItem();
             opFind.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.F, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible) );
-            
+
             var opFindAgain = this.findAgainAction.CreateMenuItem();
             opFindAgain.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.F3, Gdk.ModifierType.None, Gtk.AccelFlags.Visible) );
@@ -402,7 +404,7 @@ namespace Colorado.Gui {
 		private Gtk.ToolbarStyle ToolbarMode {
 			get; set;
 		}
-            
+
         // Widgets
         private Gtk.TreeView tvTable;
         private Gtk.Statusbar sbStatus;
