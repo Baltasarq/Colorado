@@ -1,5 +1,7 @@
-﻿// Colorado, a csv spreadsheet
-// Copyright 2015 Baltasar MIT License <baltasarq@gmail.com>
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
+/*
+ * Colorado, a csv-based spreadsheet
+ */
 
 namespace Colorado.Gui {
 	using System;
@@ -9,21 +11,54 @@ namespace Colorado.Gui {
 	using GtkUtil;
     
     public partial class MainWindow: Gtk.Window {
-        public const int MaxFileLengthForTitle = 40;
-        public const string LongFilePrefix = "...";
+        private const int MaxFileLengthForTitle = 40;
+        private const string LongFilePrefix = "...";
         public const int NumFixedColumns = 1;
         public const int NumFixedRows = 1;
+
+        /// <summary>Loads all the recent files into menu.</summary>
+        private void LoadRecentFilesIntoMenu()
+        {
+            foreach(string fileName in this.cfg.RecentFiles) {
+                this.AppendRecentFileToMenu( fileName );
+            }
+
+            return;
+        }
+
+        /// <summary>Appends a given recent file to the menu.</summary>
+        /// <param name="fileName">The file name, as a string.</param>
+        private void AppendRecentFileToMenu(string fileName)
+        {
+            string fileNameOnly = System.IO.Path.GetFileName( fileName );
+            var miFile = new Gtk.MenuItem( fileNameOnly );
+
+            this.cfg.RecentFiles = new string[]{ fileName };
+            this.mRecent.Append( miFile );
+
+            miFile.Activated += (o, evt) => {
+                if ( this.OnCloseDocument() ) {
+                    this.OpenDocument( fileName );
+                }
+            };
+
+            miFile.Show();
+            this.cfg.Save();
+        }
+
 
         public CsvDocument Document {
             get { return this.document; }
         }
 
-        protected void PrepareDocument(CsvDocument doc) {
+        protected void PrepareDocument(CsvDocument doc)
+        {
             this.document = doc;
             this.Document.ClientUpdater += this.UpdateFromData;
         }   
 
-        private void ActivateIde() {
+        private void ActivateIde()
+        {
             this.ActivateIde( true );
         }
 
@@ -234,6 +269,7 @@ namespace Colorado.Gui {
                 this.ShowDocument();
                 this.ShowProjectInfo();
                 this.ActivateIde();
+                this.AppendRecentFileToMenu( fn );
             } catch(Exception e) {
                 Util.MsgError(
                             this, AppInfo.Name,
@@ -601,7 +637,8 @@ namespace Colorado.Gui {
                     this.ShowDocument();
                 } else {
                     // Update headers
-                    for(int j = 0; j < this.document.Data.ColumnInfo.Length; ++j) {
+                    for(int j = 0; j < this.document.Data.ColumnInfo.Length; ++j)
+                    {
                         this.tvTable.Columns[ j + NumFixedColumns ].Title =
                             this.document.Data.ColumnInfo[ j ].Header;
                     }
@@ -617,7 +654,7 @@ namespace Colorado.Gui {
         /// Applies the preferences of the properties dialog.
         /// </summary>
         /// <param name="dlg">The properties dialog</param>
-        private void ApplyPreferences(DlgProperties dlg)
+        private void ApplyChangedProperties(DlgProperties dlg)
         {
             if ( dlg.DecimalMarkValue != this.document.DecimalSeparator ) {
 				this.document.DecimalSeparator = dlg.DecimalMarkValue;
@@ -649,8 +686,9 @@ namespace Colorado.Gui {
             this.document.Data.NumRows = dlg.NumRows;
 
             // Modify headers, if needed
-            if ( this.document.Data.FirstRowForHeaders != dlg.FirstRowForHeaders ) {
-                this.document.Data.FirstRowForHeaders = dlg.FirstRowForHeaders;
+            if ( this.document.Data.FirstRowContainsHeaders != dlg.FirstRowForHeaders )
+            {
+                this.document.Data.FirstRowContainsHeaders = dlg.FirstRowForHeaders;
                 dlg.NumRows = this.document.Data.NumRows;
             }
 
@@ -670,7 +708,7 @@ namespace Colorado.Gui {
                     answer = (Gtk.ResponseType) dlg.Run();
 
                     if ( answer == Gtk.ResponseType.Apply ) {
-                        this.ApplyPreferences( dlg );
+                        this.ApplyChangedProperties( dlg );
                         this.UpdateDocumentView( oldRows, oldColumns );
                         Util.UpdateUI();
                         oldRows = this.document.Data.NumRows;
@@ -680,10 +718,12 @@ namespace Colorado.Gui {
 					  && answer != Gtk.ResponseType.DeleteEvent );
 
                 // Apply changes
-                this.ApplyPreferences( dlg );
+                this.ApplyChangedProperties( dlg );
                 this.UpdateDocumentView( oldRows, oldColumns );
                 dlg.Destroy();
-            } else Util.MsgError( this, AppInfo.Name, "No document loaded" );
+            } else {
+                Util.MsgError(this, AppInfo.Name, "No document loaded");
+            }
 
             return;
         }
@@ -935,7 +975,7 @@ namespace Colorado.Gui {
                 {
                     // Store the parameters and reload  
                     var fileName = document.FileName;
-                    var firstRowForHeaders = document.Data.FirstRowForHeaders;
+                    var firstRowForHeaders = document.Data.FirstRowContainsHeaders;
                     char delimiter = document.DelimiterValue[ 0 ];
                     this.document = null;
 
@@ -1324,6 +1364,7 @@ namespace Colorado.Gui {
         private CsvDocument document;
         private string txtToFind;
         public string lastFileName;
+        private Core.Cfg.Config cfg;
     }
 
 }

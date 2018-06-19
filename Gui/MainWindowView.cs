@@ -1,22 +1,27 @@
-﻿
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
+
 namespace Colorado.Gui {
+    using Core.Cfg;
+
     public partial class MainWindow {
         public MainWindow()
             : base( Gtk.WindowType.Toplevel )
         {
-            this.Title = Colorado.Core.AppInfo.Name;
+            this.Title = Core.AppInfo.Name;
             this.Build();
 
             this.lastFileName = ".";
             this.document = null;
             this.txtToFind = "";
             this.ActivateIde( false );
+            this.cfg = Config.Load();
+            this.LoadRecentFilesIntoMenu();
         }
 
         public MainWindow(string fileName)
             : this()
         {
-            OpenDocument( fileName );
+            this.OpenDocument( fileName );
         }
 
         private void Build()
@@ -30,8 +35,7 @@ namespace Colorado.Gui {
             this.edFind.Activated += (sender, e) => this.OnEdFindActivated();
             this.edFind.FocusInEvent += (sender, e) => this.edFind.Text = "";
             this.edFind.FocusOutEvent += (sender, e) => this.edFind.Text = "Find...";
-            this.tvTable = new Gtk.TreeView();
-            this.tvTable.EnableSearch = false;
+            this.tvTable = new Gtk.TreeView { EnableSearch = false };
             this.tvTable.ButtonReleaseEvent +=
                 (object o, Gtk.ButtonReleaseEventArgs args) => this.OnTableClicked( args );
             this.tvTable.KeyPressEvent +=
@@ -59,9 +63,11 @@ namespace Colorado.Gui {
             this.Add( vPanel );
 
             // Polishing
-            Gdk.Geometry minSize = new Gdk.Geometry();
-            minSize.MinHeight = 480;
-            minSize.MinWidth = 640;
+            Gdk.Geometry minSize = new Gdk.Geometry {
+                MinHeight = 480,
+                MinWidth = 640
+            };
+
             this.SetDefaultSize( minSize.MinHeight, minSize.MinWidth );
             this.SetGeometryHints( this, minSize, Gdk.WindowHints.MinSize );
             this.sbStatus.Push( 0, "Ready" );
@@ -167,7 +173,8 @@ namespace Colorado.Gui {
 			}
 		}
 
-        private void BuildActions() {
+        private void BuildActions()
+        {
 			this.newAction = new Gtk.Action( "new", "_New", "new spreadhseet", "new" ) {IconName = "clrd-new" };
             this.newAction.Activated += (sender, e) => this.OnNew();
 
@@ -254,7 +261,8 @@ namespace Colorado.Gui {
             this.sbStatus.PackStart( hPanel, false, false, 5 );
         }
 
-        private void BuildMenu() {
+        private void BuildMenu()
+        {
             var mFile = new Gtk.Menu();
             var mEdit = new Gtk.Menu();
             var mRows = new Gtk.Menu();
@@ -274,6 +282,8 @@ namespace Colorado.Gui {
             miColumns.Submenu = mColumns;
             miHelp.Submenu = mHelp;
 
+            this.mRecent = new Gtk.Menu();
+
 			var opNew = this.newAction.CreateMenuItem();
             opNew.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.n, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible) );
@@ -281,6 +291,8 @@ namespace Colorado.Gui {
             var opOpen = this.openAction.CreateMenuItem();
             opOpen.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.o, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible) );
+
+            var opRecent = new Gtk.MenuItem("_Recent") { Submenu = this.mRecent };
 
             var opSave = this.saveAction.CreateMenuItem();
             opSave.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
@@ -312,6 +324,7 @@ namespace Colorado.Gui {
 
             mFile.Append( opNew );
             mFile.Append( opOpen );
+            mFile.Append( opRecent );
             mFile.Append( opSave );
             mFile.Append( opSaveAs );
             mFile.Append( new Gtk.SeparatorMenuItem() );
@@ -350,9 +363,7 @@ namespace Colorado.Gui {
         }
 
         private void BuildToolbar() {
-            this.tbTools = new Gtk.Toolbar();
-			this.tbTools.ToolbarStyle = this.ToolbarMode;
-
+            this.tbTools = new Gtk.Toolbar { ToolbarStyle = this.ToolbarMode };
             this.tbTools.Insert( (Gtk.ToolItem) this.newAction.CreateToolItem(), 0 );
             this.tbTools.Insert( (Gtk.ToolItem) this.openAction.CreateToolItem(), 1 );
             this.tbTools.Insert( (Gtk.ToolItem) this.saveAction.CreateToolItem(), 2 );
@@ -411,6 +422,7 @@ namespace Colorado.Gui {
         private Gtk.Toolbar tbTools;
         private Gtk.MenuBar menuBar;
         private Gtk.Menu popup;
+        private Gtk.Menu mRecent;
         private Gtk.Entry edFind;
         private Gtk.Label lblType;
         private Gtk.Label lblCount;

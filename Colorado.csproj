@@ -26,8 +26,12 @@
     <DocumentationFile>bin\Debug\Colorado.xml</DocumentationFile>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeClean" />
-        <Command type="BeforeExecute" />
+        <Command>
+          <type>BeforeClean</type>
+        </Command>
+        <Command>
+          <type>BeforeExecute</type>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -41,7 +45,9 @@
     <ConsolePause>false</ConsolePause>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeExecute" />
+        <Command>
+          <type>BeforeExecute</type>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <PlatformTarget>x64</PlatformTarget>
@@ -51,7 +57,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug (x86)</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <PlatformTarget>x86</PlatformTarget>
@@ -121,6 +127,9 @@
     <Compile Include="Gui\DlgPropertiesView.cs" />
     <Compile Include="Gui\DlgPropertiesLogic.cs" />
     <Compile Include="Core\DecimalMark.cs" />
+    <Compile Include="Core\Cfg\Locale.cs" />
+    <Compile Include="Core\Cfg\L10n.cs" />
+    <Compile Include="Core\Cfg\Config.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />
@@ -149,12 +158,13 @@
     <Folder Include="Core\" />
     <Folder Include="Gui\" />
     <Folder Include="Core\Fillers\" />
+    <Folder Include="Core\Cfg\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
         </Policies>
         <GtkDesignInfo generateGettext="False" />
       </Properties>

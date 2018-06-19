@@ -30,11 +30,10 @@ namespace Colorado.Core {
 		public Data(CsvDocument doc, int numRows, int numCols)
 		{
 			this.owner = doc;
-			this.firstRowForHeaders = true;
 			this.data = new List<List<string>>( numRows );
 			this.columnInfo = new List<ColumnInfo>();
 
-			SetInitialSize( numRows, numCols );
+			this.SetInitialSize( numRows, numCols );
 		}
 
 		/// <summary>
@@ -80,7 +79,7 @@ namespace Colorado.Core {
 		/// <value>The number rows.</value>
 		public int NumRows {
 			get { return numRows; }
-			set { SetNumRows( value ); }
+			set { this.SetNumRows( value ); }
 		}
 
 		/// <summary>
@@ -89,11 +88,11 @@ namespace Colorado.Core {
 		/// <value>The number columns.</value>
 		public int NumColumns {
 			get { return numColumns; }
-			set { SetNumColumns( value ); }
+			set { this.SetNumColumns( value ); }
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Colorado.Core.Data"/> is changed.
+		/// Gets or sets a value indicating whether this <see cref="Data"/> is changed.
 		/// </summary>
 		/// <value><c>true</c> if changed; otherwise, <c>false</c>.</value>
 		public bool Changed {
@@ -105,17 +104,17 @@ namespace Colorado.Core {
 		/// When set, moves the first line to headers or viceversa, accordingly.
 		/// </summary>
 		/// <value><c>true</c> if first row for headers; otherwise, <c>false</c>.</value>
-		public bool FirstRowForHeaders {
-			get { return firstRowForHeaders; }
+		public bool FirstRowContainsHeaders {
+			get { return firstRowContainsHeaders; }
 			set {
-				if ( value != this.firstRowForHeaders ) {
+                if ( value != this.firstRowContainsHeaders ) {
 					if ( value ) {
 						this.MoveFirstRowToHeaders();
 					} else {
 						this.MoveHeadersToFirstRow();
 					}
 
-					this.firstRowForHeaders = value;
+					this.firstRowContainsHeaders = value;
 				}
 			}
 		}
@@ -143,18 +142,18 @@ namespace Colorado.Core {
 		/// <summary>
 		/// Sets the size of the Data, numRows x numCols
 		/// </summary>
-		/// <param name="numRows">Number of rows.</param>
+		/// <param name="numberOfRows">Number of rows.</param>
 		/// <param name="numCols">Number of columns.</param>
-		internal void SetInitialSize(int numRows, int numCols)
+        internal void SetInitialSize(int numberOfRows, int numCols)
 		{
 			this.data.Clear();
-			this.data.Capacity = numRows;
+			this.data.Capacity = numberOfRows;
 
-			for (int i = 0; i < numRows; ++i) {
+			for (int i = 0; i < numberOfRows; ++i) {
 				this.data.Add( ( new List<string>( new string[ numCols ] ) ) );
 			}
 
-			this.numRows = numRows;
+			this.numRows = numberOfRows;
 			this.numColumns = numCols;
 			this.CreateDefaultHeaders();
 			this.Changed = true;
@@ -288,11 +287,11 @@ namespace Colorado.Core {
 		}
 
 		/// <summary>
-		/// An adapter for <see cref="cleanRows"/>
+		/// An adapter for cleaning rows, always starting from the first col.
 		/// </summary>
 		public void CleanRows(int posBeg, int posEnd)
 		{
-			CleanRows( 0, posBeg, posEnd );
+			this.CleanRows( 0, posBeg, posEnd );
 		}
 
 		/// <summary>
@@ -330,7 +329,7 @@ namespace Colorado.Core {
 		}
 
 		/// <summary>
-		/// An adapter for <see cref="cleanColumns"/>
+		/// An adapter for cleanColumns, always starting from first row.
 		/// </summary>
 		public void CleanColumns(int posBeg, int posEnd)
 		{
@@ -492,9 +491,10 @@ namespace Colorado.Core {
 
 				// Assign values to new headers: col1, col2...
 				for (int i = oldCount; i < newColNum; ++i) {
-					this.columnInfo[ i ] = new ColumnInfo();
-					this.columnInfo[ i ].Header = Core.ColumnInfo.ColEtq + ( i + 1 ).ToString();
-				}
+                    this.columnInfo[i] = new ColumnInfo {
+                        Header = Core.ColumnInfo.ColEtq + (i + 1).ToString()
+                    };
+                }
 			}
 
 			return;
@@ -507,7 +507,7 @@ namespace Colorado.Core {
 		{
 			CreateNewColumnsInfo( NumColumns );
 			CreateDefaultHeaders( 0 );
-			this.firstRowForHeaders = false;
+            this.firstRowContainsHeaders = true;
 		}
 
 		/// <summary>
@@ -542,7 +542,7 @@ namespace Colorado.Core {
 				this.columnInfo[ i ].Header = "";
 			}
 
-			this.firstRowForHeaders = true;
+			this.firstRowContainsHeaders = true;
 		}
 
 		/// <summary>
@@ -583,7 +583,7 @@ namespace Colorado.Core {
 		private CsvDocument owner;
 		private List<List<string>> data;
 		private List<ColumnInfo> columnInfo;
-		private bool firstRowForHeaders;
+		private bool firstRowContainsHeaders;
 		private int numColumns;
 		private int numRows;
 	}

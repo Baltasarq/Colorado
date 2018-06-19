@@ -1,16 +1,26 @@
-using System;
-using Gtk;
-
-using GtkUtil;
+// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
+/*
+ * Colorado, a csv-based spreadsheet
+ */
 
 namespace Colorado.Gui {
+    using System.Diagnostics;
+
 	class MainClass {
+        [Conditional("DEBUG")]
+        private static void CreateConsoleTracing()
+        {
+            Trace.Listeners.Add( new ConsoleTraceListener( true ) );
+        }
+
 		static void Main(string[] args)
 		{
 			MainWindow win = null;
 			
 			try {
-				Application.Init();
+                CreateConsoleTracing();
+
+				Gtk.Application.Init();
 
 				if ( args.Length > 0 )
 						win = new MainWindow( args[ 0 ] );
@@ -18,11 +28,11 @@ namespace Colorado.Gui {
 					
 				win.ShowAll();
 
-				Application.Run();
+				Gtk.Application.Run();
 			}
-			catch(Exception e) {
-                System.Console.WriteLine( "CRITICAL error: " + e.Message );
-				Util.MsgError( win, Core.AppInfo.Name, e.Message );
+			catch(System.Exception e) {
+                Trace.WriteLine( "CRITICAL error: " + e.Message + e.StackTrace);
+				GtkUtil.Util.MsgError( win, Core.AppInfo.Name, e.Message );
 			}
 		}
 	}

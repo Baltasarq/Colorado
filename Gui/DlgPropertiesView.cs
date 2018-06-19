@@ -7,8 +7,9 @@ namespace Colorado.Gui {
         /// </summary>
         /// <param name="parent">Parent.</param>
         /// <param name="doc">Document.</param>
-		public DlgProperties(Gtk.Window parent, CsvDocument doc) {
-            var minSize = new Gdk.Geometry() {
+		public DlgProperties(Gtk.Window parent, CsvDocument doc)
+        {
+            var minSize = new Gdk.Geometry {
                 MinWidth = 400,
                 MinHeight = 300
             };
@@ -27,15 +28,16 @@ namespace Colorado.Gui {
             this.SetGeometryHints( this, minSize, Gdk.WindowHints.MinSize );
 			
 			// Sync info
-			sbRows.Value = document.Data.NumRows;
-			sbColumns.Value = document.Data.NumColumns;
-            cbSurroundWithDoubleQuotes.Active = document.SurroundText;
-            cbFirstRowForHeaders.Active = document.Data.FirstRowForHeaders;
+			this.sbRows.Value = document.Data.NumRows;
+            this.sbColumns.Value = document.Data.NumColumns;
+            this.cbSurroundWithDoubleQuotes.Active = document.SurroundText;
+            this.cbFirstRowForHeaders.Active = document.Data.FirstRowContainsHeaders;
             this.UpdateColumnsData();
             this.ShowAll();
 		}
 		
-        private void Build() {
+        private void Build()
+        {
             var hBox = new Gtk.HBox( false, 2 );
 
             this.BuildHeadersFrame();
@@ -52,7 +54,8 @@ namespace Colorado.Gui {
             this.VBox.PackStart( hBox, true, true, 5 );
         }
 
-        private void BuildHeadersFrame() {
+        private void BuildHeadersFrame()
+        {
             var swScroll = new Gtk.ScrolledWindow();
 
             this.frmHeaders = new Gtk.Frame( "<b>Headers</b>" );
@@ -78,7 +81,8 @@ namespace Colorado.Gui {
             this.listHeaders.EnableGridLines = Gtk.TreeViewGridLines.Horizontal;
         }
 
-        private void BuildPropertiesFrame() {
+        private void BuildPropertiesFrame()
+        {
             var vBox = new Gtk.VBox( false, 2 );
             var hBoxRows = new Gtk.HBox( false, 2 );
             var hBoxColumns = new Gtk.HBox( false, 2 );
@@ -111,7 +115,7 @@ namespace Colorado.Gui {
 
             // Double quotes
             this.cbSurroundWithDoubleQuotes = new Gtk.CheckButton( "Surround text with double quotes" );
-            this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row for headers" );
+            this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row contains the headers" );
 
             // Layout
             vBox.PackStart( hBoxRows, true, true, 5 );
@@ -128,12 +132,14 @@ namespace Colorado.Gui {
             foreach(string delimiter in Delimiter.PredefinedDelimiterNames) {
                 cmbDelimiter.AppendText( delimiter );
             }
+
             cmbDelimiter.Entry.Text = Delimiter.GetName( this.document.DelimiterValue );
 
             // Add decimal separators to its combo
             foreach (char separator in DecimalMark.DecimalSeparatorChar) {
                 cmbDecimalMark.AppendText( separator.ToString() );
             }
+
             cmbDecimalMark.Active = (int) this.document.DecimalSeparator;
         }
 

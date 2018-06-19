@@ -1,13 +1,17 @@
+// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
+/*
+ * Colorado, a csv-based spreadsheet
+ */
 
 namespace Colorado.Core {
 	public class AppInfo {
 		public const string Name = "Colorado";
-        public const string Version = "v1.0.5 20160628";
+        public const string Version = "v1.0.6 20180618";
 		public const string Author = "baltasarq@gmail.com";
 		public const string Website = "http://baltasarq.info/dev/";
 		public const string Comments = "A simple tool to view&edit TSV/CSV files";
 		public const string License = @"
-Copyright (c) 2015 dev::baltasarq (baltasarq@gmail.com)
+Copyright (c) 2015 dev::baltasarq MIT License <baltasarq@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the Software), to deal in the

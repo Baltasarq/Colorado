@@ -1,4 +1,4 @@
-﻿using GtkUtil;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 using Colorado.Core;
 
@@ -19,10 +19,9 @@ namespace Colorado.Gui {
         {
             int row;
             var rowPath = new Gtk.TreePath( args.Path );
-            Gtk.TreeIter rowPointer;
 
             // Update GUI
-            listHeaders.Model.GetIter( out rowPointer, rowPath );
+            listHeaders.Model.GetIter(out Gtk.TreeIter rowPointer, rowPath);
             row = rowPath.Indices[ 0 ];
             listHeaders.Model.SetValue( rowPointer, 0, args.NewText );
 
@@ -76,4 +75,3 @@ namespace Colorado.Gui {
         private CsvDocument document;       
     }
 }
-
