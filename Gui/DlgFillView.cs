@@ -1,6 +1,6 @@
-using System;
-namespace Colorado.Gui {
-	
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
+
+namespace Colorado.Gui {	
 	public partial class DlgFill : Gtk.Dialog {
 		public DlgFill(Gtk.Window parent)
 		{

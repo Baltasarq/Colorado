@@ -1,8 +1,10 @@
-﻿using System;
-
-using Colorado.Core;
+﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using System;
+
+    using Colorado.Core;
+
     public partial class DlgFormulae {
         public int Formula {
             get { return Math.Max( this.cbFormula.Active, 0 ); }

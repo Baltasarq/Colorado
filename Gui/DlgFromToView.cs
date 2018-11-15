@@ -1,3 +1,5 @@
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
+
 namespace Colorado.Gui {
 	public partial class DlgFromTo : Gtk.Dialog {
 		public DlgFromTo(Gtk.Window parent, int org, int max, ActionType action, ItemType item)

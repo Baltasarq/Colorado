@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System.Collections.ObjectModel;
+
 	public class Delimiter {
         public const string TabDelimiterName = "<TAB>";
         public const char CommaDelimiter = ',';

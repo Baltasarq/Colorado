@@ -1,4 +1,4 @@
-using Core = Colorado.Core;
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
 	public partial class DlgImport : Gtk.Dialog {

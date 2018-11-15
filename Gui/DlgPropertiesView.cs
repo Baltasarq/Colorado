@@ -1,6 +1,8 @@
-using Colorado.Core;
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using Core;
+
 	public partial class DlgProperties : Gtk.Dialog {		
         /// <summary>
         /// Initializes a new instance of the <see cref="Colorado.Gui.DlgProperties"/> class.

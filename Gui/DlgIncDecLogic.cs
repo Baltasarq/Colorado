@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using System.Collections.ObjectModel;
+
     public partial class DlgIncDec {
         public enum DialogType { Insert, Erase };
         public enum WherePosition { After, Before };

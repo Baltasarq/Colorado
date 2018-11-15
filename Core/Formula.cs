@@ -1,15 +1,10 @@
-// Nombre: Formula.cs
-// Fecha:  2011-01-17
-// Autor:  baltasarq@gmail.com
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
-using Colorado.Core;
+// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+
 	
 	public abstract class Formula {
 		private CsvDocument csvDocument = null;

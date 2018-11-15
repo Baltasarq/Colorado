@@ -1,11 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using System.Text;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System;
+    using System.IO;
+    using System.Xml;
+    using System.Text;
+    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
+
 	public class CsvDocumentPersistence {
 		public static ReadOnlyCollection<string> FileExtension = new ReadOnlyCollection<string>(new string[]{ "csv", "tsv" } );
 		public const string TempExtension = "tmp";
@@ -13,7 +15,8 @@ namespace Colorado.Core {
 		public static ReadOnlyCollection<string> FileFilter = new ReadOnlyCollection<string>(
 			new string[]{ "*." + FileExtension[ 0 ], "*." + FileExtension[ 1 ] } );
 
-		public CsvDocumentPersistence() {
+		public CsvDocumentPersistence()
+        {
 			this.document = null;
 		}
 
@@ -61,7 +64,8 @@ namespace Colorado.Core {
         /// </summary>
         /// <returns>The line passed, without spaces to the right or left</returns>
         /// <param name="line">The string to trim</param>
-        private string TrimSpaces(string line) {
+        public static string TrimSpaces(string line)
+        {
             int lIndex = 0;
             int rIndex = line.Length - 1;
             string toret = "";
@@ -88,50 +92,69 @@ namespace Colorado.Core {
             return toret;
         }
 
-        private void Read(string fileName, bool firstRowForHeaders, List<string> dynLines, ref string headers)
+        static void Read(TextReader reader, bool firstRowForHeaders, List<string> dynLines, ref string headers)
         {
             string line;
 
-            using (var file = new StreamReader( fileName ))
+            while ( ( line = reader.ReadLine() ) != null )
             {
-                while ( ( line = file.ReadLine() ) != null )
+                line = TrimSpaces( line );
+
+                if ( line.Length == 0 )
                 {
-                    line = TrimSpaces( line );
+                    continue;
+                }
 
-                    if ( line.Length == 0 )
-                    {
-                        continue;
-                    }
-
-                    if ( headers.Length == 0
-                      && firstRowForHeaders )
-                    {
-                        headers = line;
-                    } else {
-                        dynLines.Add( line );
-                    }
+                if ( headers.Length == 0
+                  && firstRowForHeaders )
+                {
+                    headers = line;
+                } else {
+                    dynLines.Add( line );
                 }
             }
 
             return;
         }
 
-		public void Load(string fileName, char delimiter = '\0', bool firstRowForHeaders = true)
+        public void Load(string fileName, char delimiter = '\0', bool firstRowForHeaders = true)
+        {
+            using (var reader = new StreamReader( fileName ) )
+            {
+                this.Load( reader, delimiter, firstRowForHeaders );
+            }
+
+            this.Document.FileName = fileName;
+            return;
+        }
+
+        public void Load(TextReader reader, char delimiter = '\0', bool firstRowForHeaders = true)
 		{
 			var dynLines = new List<string>();
 			string headers = "";
 
-			this.document = new CsvDocument( 0, 0 );
-			this.Document.FileName = fileName;
+            this.document = new CsvDocument( 0, 0 );
+            this.Document.FileName = "unknown.csv";
+
 			this.Document.SurroundText = false;
-			this.Read( fileName, firstRowForHeaders, dynLines, ref headers );
+            Read( reader, firstRowForHeaders, dynLines, ref headers );
 
             if ( dynLines.Count > 0
               || headers.Length > 0 )
             {
                 // Determine the delimiter
                 if ( delimiter == '\0' ) {
-                    this.DetermineDelimiter( headers );
+                    string firstLine = "";
+
+                    if ( firstRowForHeaders ) {
+                        firstLine = headers;
+                    } else {
+                        if ( dynLines.Count > 0 ) {
+                            firstLine = dynLines[ 0 ];
+                        }
+                    }
+
+                    this.DetermineDelimiter( firstLine );
                 } else {
                     this.Document.DelimiterValue = delimiter.ToString();
                 }
@@ -145,7 +168,7 @@ namespace Colorado.Core {
     				if ( firstRowForHeaders ) {
                         this.Document.Data.CreateNamedHeaders( SplitLine( headers ) );
                     } else {
-                        dynLines.Insert( 0, headers );
+                        this.Document.Data.CreateDefaultHeaders();
                     }
 
                     // Fill all data in
@@ -165,7 +188,17 @@ namespace Colorado.Core {
                     }
                 }
             } else {
-                throw new ApplicationException( "No data in spreadsheet" );
+                // No data in the document - invent a new one
+                this.Document.Data.SetInitialSize( 1, 1 );
+
+                if ( delimiter == '\0' ) {
+                    this.document.DelimiterValue = Delimiter.TabDelimiter.ToString();    
+                } else {
+                    this.document.DelimiterValue = delimiter.ToString();
+                }
+
+                this.Document.Data.CreateDefaultHeaders();
+                this.Document.Data.FirstRowContainsHeaders = true;
             }
 
             this.Document.Changed = false;
@@ -174,6 +207,9 @@ namespace Colorado.Core {
 
 		protected void DetermineDelimiter(string line)
 		{
+            // Tab separator as default, for documents of one column.
+            Document.DelimiterValue = Delimiter.TabDelimiter.ToString();
+
 			// Eliminate all double-quoted text
 			int qpos2 = 0;
 			int qpos = line.IndexOf( CsvDocument.Quote );
@@ -190,23 +226,17 @@ namespace Colorado.Core {
 			}
 
 			// Now yes, determine delimiter
-            int delimiterIndex = -1;
             for(int i = 0; i < Delimiter.PredefinedDelimiters.Count; ++i) {
                 if ( line.IndexOf( Delimiter.PredefinedDelimiters[ i ] ) > -1 ) {
-                    delimiterIndex = i;
+                    Document.DelimiterValue = Delimiter.PredefinedDelimiterNames[ i ];
+                    break;
                 }
-            }
-
-            if ( delimiterIndex < 0 ) {
-                throw new ApplicationException( "Unable to determine delimiter in file." );
-            } else {
-                Document.DelimiterValue = Delimiter.PredefinedDelimiterNames[(int) delimiterIndex];
             }
 
             return;
 		}
 
-		private string FormatLoadedCell(string cell)
+		string FormatLoadedCell(string cell)
 		{
 			string toret = cell.Trim();
 
@@ -232,7 +262,7 @@ namespace Colorado.Core {
 			return toret;
 		}
 
-		private string[] SplitLine(string line)
+		string[] SplitLine(string line)
 		{
 			var row = new List<string>();
 			var pos = 0;
@@ -258,7 +288,7 @@ namespace Colorado.Core {
 
     				// Delimiter found, add cell
     				if ( !inQuoted
-    			      && line[ i ] == Document.DelimiterValue[ 0 ] )
+    			      && line[ i ] == this.Document.DelimiterValue[ 0 ] )
     				{
     					row.Add( FormatLoadedCell( line.Substring( pos, i - pos ) ) );
     					pos = i + 1;
@@ -266,17 +296,17 @@ namespace Colorado.Core {
     				else
     				// Quote found
     				if ( line[ i ] == CsvDocument.Quote ) {
-    					Document.SurroundText = true;
+    					this.Document.SurroundText = true;
     					inQuoted = !inQuoted;
     				}
     			}
 
     			// Add last column
     			if ( pos < line.Length ) {
-    				row.Add( FormatLoadedCell( line.Substring( pos, line.Length - pos ) ) );
+    				row.Add( this.FormatLoadedCell( line.Substring( pos, line.Length - pos ) ) );
     			}
     			else
-    			if ( line[ line.Length -1 ] == Document.DelimiterValue[ 0 ] ) {
+    			if ( line[ line.Length -1 ] == this.Document.DelimiterValue[ 0 ] ) {
     				row.Add( "" );
     			}
             }
@@ -286,19 +316,31 @@ namespace Colorado.Core {
 
         protected void LoadCsvData(IList<string> lines)
 		{
+            int numRows = lines.Count;
+            int numCols = this.Document.Data.NumColumns;
+
+            // Convert data to fixed structure
+            string[][] rawData = new string[ numRows ][];
+
+            for(int i = 0; i < numRows; ++i) {
+                rawData[ i ] = SplitLine( lines[ i ] );
+                numCols = Math.Max( numCols, rawData[ i ].Length );
+            }
+
+            // Resize document accordingly
+            if ( this.Document.Data.NumRows != numRows
+              || this.Document.Data.NumColumns != numCols )
+            {
+                string[] headers = this.Document.Data.Headers;
+
+                this.Document.Data.SetInitialSize( numRows, numCols );
+                this.Document.Data.CreateNamedHeaders( headers );
+            }
+
 			// Load all data, line by line
-            for(int rowIndex = 0; rowIndex < Document.Data.NumRows; ++rowIndex) {
-				// Get line info
-				string[] cols = SplitLine( lines[ rowIndex ] );
-				int colsLength = cols.Length;
-
-                if ( colsLength > Document.Data.NumColumns ) {
-					throw new ApplicationException( "Bad format -- too variable number of columns" );
-				}
-
-				// Set data
-                for(int colIndex = 0; colIndex < colsLength; ++colIndex) {
-                    Document.Data[ rowIndex, colIndex ] = cols[ colIndex ];
+            for(int i = 0; i < numRows; ++i) {
+                for(int j = 0; j < rawData[ i ].Length; ++j) {
+                    Document.Data[ i, j ] = rawData[ i ][ j ];
 				}
 			}
 
@@ -323,16 +365,16 @@ namespace Colorado.Core {
 			if ( toret == null ) {
 				toret = "";
 			} else {
-				// Take into account delimiters...
-				var delimitersAndSpace = new HashSet<char>( Delimiter.PredefinedDelimiters );
+                // Take into account delimiters...
+                var delimitersAndSpace = new HashSet<char>( Delimiter.PredefinedDelimiters )
+                {
+                    // ...and spaces...
+                    ' ',
+                    // ...and the current delimiter of the document (could be repeated)
+                    Document.DelimiterValue[ 0 ]
+                };
 
-				// ...and spaces...
-				delimitersAndSpace.Add( ' ' );
-
-                // ...and the current delimiter of the document (could be repeated)
-                delimitersAndSpace.Add( Document.DelimiterValue[ 0 ] );
-
-				foreach(char ch in cell) {
+                foreach (char ch in cell) {
 					if ( delimitersAndSpace.Contains( ch ) ) {
 						// Quoting needed
 						toret = CsvDocument.Quote + toret + CsvDocument.Quote;
@@ -650,6 +692,6 @@ namespace Colorado.Core {
             return;
         }
 
-		private CsvDocument document;
+		CsvDocument document;
 	}
 }

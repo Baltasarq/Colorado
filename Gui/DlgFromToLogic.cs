@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using System.Collections.ObjectModel;
+
     public partial class DlgFromTo {
         public enum ItemType { Rows, Columns };
         public enum ActionType { Clean, Copy };

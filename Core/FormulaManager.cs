@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System.Collections.Generic;
+
+
 	public class FormulaManager {
 		public FormulaManager(CsvDocument doc)
 		{

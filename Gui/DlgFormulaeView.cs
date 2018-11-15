@@ -1,8 +1,4 @@
-// Nombre: DlgFormulae.cs
-// Fecha:  2011-01-17
-// Autor:  baltasarq@gmail.com
-
-using System;
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
 	public partial class DlgFormulae : Gtk.Dialog {

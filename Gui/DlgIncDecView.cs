@@ -1,7 +1,8 @@
-using System;
-
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using System;
+
 	public partial class DlgIncDec : Gtk.Dialog {
 		public DlgIncDec(Gtk.Window parent, DialogType type, Target target, int begin, int max)
 		{

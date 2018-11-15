@@ -1,8 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Collections.ObjectModel;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System.Globalization;
+    using System.Collections.ObjectModel;
+
+
     public class DecimalMark {
         public enum DecimalSeparator { Point, Comma };
         public static readonly ReadOnlyCollection<char> DecimalSeparatorChar =

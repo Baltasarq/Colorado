@@ -1,10 +1,7 @@
-// Nombre: Position.cs
-// Fecha:  2011-01-17
-// Autor:  baltasarq@gmail.com
-
-using System;
+// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System;
 	
 	public class Position : IComparable<Position> {
 		public enum Direction { Left, Up, Right, Down };
@@ -144,9 +141,6 @@ namespace Colorado.Core {
 		/// <summary>
 		/// Decides whether the position represented by this object is valid for the document. 
 		/// </summary>
-		/// <param name="doc">
-		/// A <see cref="CsvDocument"/> holding the document to be used as reference.
-		/// </param>
 		/// <returns>
 		/// A <see cref="System.Boolean"/> holding true if this position is valid; false otherwise.
 		/// </returns>
@@ -189,12 +183,12 @@ namespace Colorado.Core {
 			return ( this.Row + this.Column );
 		}
 		
-		public override bool Equals(object o)
+		public override bool Equals(object obj)
 		{
 			bool toret = false;
 			
-			if ( o is Position ) {
-				toret = ( this.CompareTo( (Position) o) == 0 );
+			if ( obj is Position ) {
+				toret = ( this.CompareTo( (Position) obj) == 0 );
 			}
 			
 			return toret;

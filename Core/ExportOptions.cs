@@ -1,9 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+
 
 	public class ExportOptions {
 		

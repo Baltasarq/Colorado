@@ -1,8 +1,8 @@
-﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
-
-using Colorado.Core;
+﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using Colorado.Core;
+
     public partial class DlgProperties {
         public void UpdateColumnsData()
         {

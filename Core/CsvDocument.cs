@@ -1,4 +1,4 @@
-using System;
+// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
     /// <summary>

@@ -1,7 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Core {
+    using System;
+    using System.Collections.Generic;
+
+
 	/// <summary>
 	/// Represents the whole column info, i.e., type and header.
 	/// </summary>
@@ -478,7 +481,7 @@ namespace Colorado.Core {
 		/// Creates the new columns info vector, saving the info from the previous one.
 		/// </summary>
 		/// <param name="newColNum">New number of columns.</param>
-		private void CreateNewColumnsInfo(int newColNum)
+		void CreateNewColumnsInfo(int newColNum)
 		{
 			int oldCount = this.columnInfo.Count;
 
@@ -548,7 +551,7 @@ namespace Colorado.Core {
 		/// <summary>
 		/// Moves the first row to headers.
 		/// </summary>
-		private void MoveFirstRowToHeaders()
+		void MoveFirstRowToHeaders()
 		{
             if ( this.NumRows > 0 ) {
     			// Copy the data into headers
@@ -563,7 +566,7 @@ namespace Colorado.Core {
             return;
 		}
 
-		private void MoveHeadersToFirstRow()
+		void MoveHeadersToFirstRow()
 		{
             if ( this.NumRows > 0 ) {
         			// Shift rows down
@@ -580,12 +583,28 @@ namespace Colorado.Core {
             return;
 		}
 
-		private CsvDocument owner;
-		private List<List<string>> data;
-		private List<ColumnInfo> columnInfo;
-		private bool firstRowContainsHeaders;
-		private int numColumns;
-		private int numRows;
+        /// <summary>
+        /// Gets the headers.
+        /// </summary>
+        /// <value>The headers, as an array of string.</value>
+        public string[] Headers {
+            get {
+                var toret = new List<string>();
+
+                foreach(ColumnInfo colInfo in this.columnInfo) {
+                    toret.Add( colInfo.Header );
+                }
+
+                return toret.ToArray();
+            }
+        }
+
+		CsvDocument owner;
+		List<List<string>> data;
+		List<ColumnInfo> columnInfo;
+		bool firstRowContainsHeaders;
+		int numColumns;
+		int numRows;
 	}
 }
 

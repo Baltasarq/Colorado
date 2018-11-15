@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
-
-using GtkUtil;
-
-using Colorado.Core;
+﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using System.Collections.Generic;
+
+    using GtkUtil;
+
+    using Colorado.Core;
+
+
     public partial class DlgExport {
         public ExportOptions.SelectionType Selection {
             get { return ( (ExportOptions.SelectionType) cmbOutput.Active ); }

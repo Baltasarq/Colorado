@@ -1,6 +1,8 @@
-﻿using GtkUtil;
+﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using GtkUtil;
+
     public partial class DlgImport {
         public string FileName {
             get { return this.edFileName.Text; }

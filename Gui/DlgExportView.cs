@@ -1,8 +1,8 @@
-using System;
-
-using Colorado.Core;
+// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
+    using Colorado.Core;
+
 	public partial class DlgExport : Gtk.Dialog {
 		public DlgExport(Gtk.Window parent, CsvDocument doc)
 		{
