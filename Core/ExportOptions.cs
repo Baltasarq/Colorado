@@ -8,15 +8,16 @@ namespace Colorado.Core {
 
 	public class ExportOptions {
 		
-		public enum SelectionType { Rtf, Html, Csv, Excel };
+		public enum SelectionType { Rtf, Html, Csv, Excel, Txt };
 		public static readonly ReadOnlyCollection<string> SelectionExtension =
 			new ReadOnlyCollection<string>(
-				new string[]{ ".rtf", ".html", ".csv", ".xls" }
+				new string[]{ ".rtf", ".html", ".csv", ".xls", ".txt" }
 			);
 		public static readonly ReadOnlyCollection<string> SelectionExplanation =
 			new ReadOnlyCollection<string>(
 				new string[]{ "RTF (Rich Text Format)", "HTML (web page)",
-			                  "CSV (Comma Separated Values)", "XLS (MS Excel)" }
+			                  "CSV (Comma Separated Values)", "XLS (MS Excel)",
+                              "TXT (UTF-8 Text)" }
 			);
 
 		/// <summary>

@@ -3,8 +3,6 @@
 namespace Colorado.Core {
     using System;
     using System.IO;
-    using System.Xml;
-    using System.Text;
     using System.Collections.ObjectModel;
     using System.Collections.Generic;
 
@@ -17,21 +15,12 @@ namespace Colorado.Core {
 
 		public CsvDocumentPersistence()
         {
-			this.document = null;
+			this.Document = null;
 		}
 
-		public CsvDocumentPersistence(CsvDocument doc) {
-			this.document = doc;
-		}
-
-		/// <summary>
-		/// Gets the document.
-		/// </summary>
-		/// <value>The CsvDocument.</value>
-		public CsvDocument Document {
-			get {
-				return this.document;
-			}
+		public CsvDocumentPersistence(CsvDocument doc)
+        {
+			this.Document = doc;
 		}
 
 		public static void PrepareFileName(ref string fileName)
@@ -133,10 +122,11 @@ namespace Colorado.Core {
 			var dynLines = new List<string>();
 			string headers = "";
 
-            this.document = new CsvDocument( 0, 0 );
-            this.Document.FileName = "unknown.csv";
+            this.Document = new CsvDocument( 0, 0 ) {
+                FileName = "unknown.csv",
+                SurroundText = false
+            };
 
-			this.Document.SurroundText = false;
             Read( reader, firstRowForHeaders, dynLines, ref headers );
 
             if ( dynLines.Count > 0
@@ -192,9 +182,9 @@ namespace Colorado.Core {
                 this.Document.Data.SetInitialSize( 1, 1 );
 
                 if ( delimiter == '\0' ) {
-                    this.document.DelimiterValue = Delimiter.TabDelimiter.ToString();    
+                    this.Document.DelimiterValue = Delimiter.TabDelimiter.ToString();    
                 } else {
-                    this.document.DelimiterValue = delimiter.ToString();
+                    this.Document.DelimiterValue = delimiter.ToString();
                 }
 
                 this.Document.Data.CreateDefaultHeaders();
@@ -349,68 +339,21 @@ namespace Colorado.Core {
 
 		public void SaveCsvData()
 		{
-            SaveCsvData( new ExportOptions( Document.FileName, Document ) );
+            this.SaveCsvData( new ExportOptions( Document.FileName, Document ) );
 		}
 
-		/// <summary>
-		/// Quotes the cell for saving, if needed.
-		/// A cell needs quoting if it contains a delimiter or a space.
-		/// </summary>
-		/// <returns>The cell for saving, with the modifications.</returns>
-		/// <param name="cell">The cell information to save, as a string</param>
-		protected string QuoteValueForSaving(string cell)
+        public void SaveCsvData(ExportOptions options)
 		{
-			string toret = cell;
-
-			if ( toret == null ) {
-				toret = "";
-			} else {
-                // Take into account delimiters...
-                var delimitersAndSpace = new HashSet<char>( Delimiter.PredefinedDelimiters )
-                {
-                    // ...and spaces...
-                    ' ',
-                    // ...and the current delimiter of the document (could be repeated)
-                    Document.DelimiterValue[ 0 ]
-                };
-
-                foreach (char ch in cell) {
-					if ( delimitersAndSpace.Contains( ch ) ) {
-						// Quoting needed
-						toret = CsvDocument.Quote + toret + CsvDocument.Quote;
-						break;
-					}
-				}
-			}
-
-			return toret;
-		}
-
-		protected string DontQuoteCellForSaving(string cell)
-		{
-			string toret = cell;
-
-			if ( toret == null ) {
-				toret = "";
-			}
-
-			return toret;
-		}
-
-		protected delegate string ModifyCell(string cell);
-
-		public void SaveCsvData(ExportOptions options)
-		{
-			System.IO.StreamWriter file = null;
-			ModifyCell prepareCellForSaving;
+			StreamWriter file = null;
 			string fileName = Path.GetTempFileName();
+            Func<string, string, string> prepareCellForSaving = null;
 
 			try {
 				// Decide whether to use quotes or not
                 if ( options.QuotedText ) {
-                    prepareCellForSaving = new ModifyCell( QuoteValueForSaving );
+                    prepareCellForSaving = QuoteCellForSaving;
                 } else {
-                    prepareCellForSaving = new ModifyCell( DontQuoteCellForSaving );
+                    prepareCellForSaving = (cell, delimiter) => cell ?? "";
                 }
 
 				// Open file for saving
@@ -421,14 +364,19 @@ namespace Colorado.Core {
 					file.Write( "#" + Document.DelimiterValue );
 				}
 
-				for(int col = 0; col < options.ColumnsIncluded.Length; ++col) {
-					file.Write( prepareCellForSaving(
-                        Document.Data.ColumnInfo[ options.ColumnsIncluded[ col ] ].Header ) );
+                for(int i = 0; i < options.ColumnsIncluded.Length; ++i) {
+                    int colIndex = options.ColumnsIncluded[ i ];
 
-					if ( col < ( options.ColumnsIncluded.Length -1 ) ) {
+					file.Write(
+                        prepareCellForSaving(
+                            Document.Data.ColumnInfo[ colIndex ].Header,
+                            this.Document.DelimiterValue ) );
+
+					if ( i < ( options.ColumnsIncluded.Length -1 ) ) {
 						file.Write( options.Delimiter );
 					}
 				}
+
 				file.WriteLine();
 
 				// Write each row
@@ -437,13 +385,19 @@ namespace Colorado.Core {
                         file.Write( Convert.ToString( row +1 ) + Document.DelimiterValue );
 					}
 
-					for(int col = 0; col < options.ColumnsIncluded.Length; ++col) {
-                        file.Write( prepareCellForSaving( Document.Data[ row, options.ColumnsIncluded[ col ] ] ) );
+                    for(int i = 0; i < options.ColumnsIncluded.Length; ++i) {
+                        int colIndex = options.ColumnsIncluded[ i ];
 
-						if ( col < ( options.ColumnsIncluded.Length -1 ) ) {
+                        file.Write(
+                            prepareCellForSaving(
+                                this.Document.Data[ row, colIndex ],
+                                this.Document.DelimiterValue ) );
+
+						if ( i < ( options.ColumnsIncluded.Length - 1 ) ) {
 							file.Write( options.Delimiter );
 						}
 					}
+
 					file.WriteLine();
 				}
 
@@ -464,234 +418,78 @@ namespace Colorado.Core {
 			return;
 		}
 
-		public void SaveCsvDataAsHtml(ExportOptions options)
-		{
-			string fileName = options.Name;
-			int tableBorder = 0;
-
-			// Determine border
-			if ( options.IncludeTableBorder ) {
-				++tableBorder;
-			}
-
-			// Open file for saving
-			var file = new StreamWriter( fileName );
-
-			// Write html header
-			file.WriteLine( "<html><header>" );
-			file.WriteLine( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" );
-			file.WriteLine( "<title>"
-				+ System.IO.Path.GetFileNameWithoutExtension( fileName )
-				+ "</title>"
-			);
-
-			file.WriteLine( "</header><body><table border={0}>\n", tableBorder );
-
-			// Write headers
-			file.WriteLine( "<tr>\n" );
-
-			if ( options.IncludeRowNumbers ) {
-				file.Write( "<td style=\"color: white; background-color: black;\"><b>#</b></td>" );
-			}
-
-            for(int col = 0; col < Document.Data.NumColumns; ++col) {
-				if ( options.IsColumnIncluded( col ) ) {
-					file.Write( "<td style=\"color: white; background-color: black;\"><b>"
-                        + Document.Data.ColumnInfo[ col ].Header + "</b></td>"
-					);
-				}
-			}
-			file.WriteLine();
-
-			// Write each row
-            for(int row = 0; row < Document.Data.NumRows; ++row) {
-				file.WriteLine( "<tr>\n" );
-
-				if ( options.IncludeRowNumbers ) {
-					file.Write( "<td style=\"color: black; background-color: rgb(204,204,204);\"><b>" + Convert.ToString( row +1 ) + "</b></td>" );
-				}
-
-                for(int col = 0; col < Document.Data.NumColumns; ++col) {		
-					if ( options.IsColumnIncluded( col ) ) {
-
-						file.Write( "<td" );
-
-						if ( ( row % 2 ) == 0 ) {
-							file.Write( " style=\"color: black; background-color: rgb(204,204,204);\"" );
-						}
-
-                        file.Write( ">" + Document.Data[ row, col ] + "</td>" );
-					}
-				}
-				file.WriteLine();
-			}
-
-			// End
-			file.WriteLine( "</table></body></html>\n" );
-			file.Close();
-			return;
-		}
-
-		public void SaveCsvDataAsRtf(ExportOptions options)
-		{
-			int colNumber = 0;
-			string fileName = options.Name;
-			const string TableBorder = "\\clbrdrt\\brdrs\\clbrdrl\\brdrs\\clbrdrb\\brdrs\\clbrdrr\\brdrs";
-
-			// Open file for saving
-			var file = new StreamWriter( fileName );
-
-			// write rtf header
-			file.WriteLine( "{\\rtf2\\ansi\\deff0\n{\\fonttbl {\\f0 Times;}{\\f1 Courier;}}" );
-
-			// write rtf table codes
-			file.WriteLine( "\\trowd\\trautofit1\\trgaph144" );
-
-			if ( options.IncludeRowNumbers ) {
-				if ( options.IncludeTableBorder ) {
-					file.Write( TableBorder );
-				}
-
-				file.Write( "\\cellx1000" );
-				colNumber = 1;
-			}
-
-            for(; colNumber < Document.Data.ColumnInfo.Length; ++colNumber)
-			{
-				if ( options.IsColumnIncluded( colNumber - ( options.IncludeRowNumbers ? 1 : 0 ) ) )
-				{
-					if ( options.IncludeTableBorder ) {
-						file.Write( TableBorder );
-					}
-
-					file.WriteLine( "\\cellx" + Convert.ToString( ( colNumber + 1 ) * 2000 ) );
-				}
-			}
-			file.WriteLine( "\\intbl\n" );
-
-			// write headers
-			if ( options.IncludeRowNumbers ) {
-				file.WriteLine( "{\\b #}\\cell" );
-			}
-
-			for(int col = 0; col < Document.Data.NumColumns; ++col) {
-				if ( options.IsColumnIncluded( col ) ) {
-                    file.WriteLine( "{\\b " + Document.Data.ColumnInfo[ col ].Header + "}\\cell" );
-				}
-			}
-			file.WriteLine( "\\row\\trow\n" );
-
-			// write each row
-            for(int row = 0; row < Document.Data.NumRows; ++row) {
-				if ( options.IncludeRowNumbers ) {
-					file.WriteLine( Convert.ToString( row +1 ) + "\\cell" );
-				}
-
-                for(int col = 0; col < Document.Data.NumColumns; ++col) {
-					if ( options.IsColumnIncluded( col ) ) {
-                        file.WriteLine( Document.Data[ row, col ] + "\\cell" );
-					}
-				}
-				file.WriteLine( "\\row\\trow\n" );
-			}
-
-			// End
-			file.WriteLine( "\n\\pard\n}" );
-			file.Close();
-			return;
-		}
-
-		public void SaveCsvDataAsExcel(ExportOptions options)
-		{
-			XmlTextWriter textWriter = new XmlTextWriter( options.Name, Encoding.UTF8 );
-			textWriter.WriteStartDocument();
-
-			textWriter.WriteStartElement( "Workbook" );              // Workbook
-
-			textWriter.WriteStartAttribute( "xmlns" );
-			textWriter.WriteString( "urn:schemas-microsoft-com:office:spreadsheet" );
-			textWriter.WriteEndAttribute();
-
-			textWriter.WriteStartAttribute( "xmlns:o" );
-			textWriter.WriteString( "urn:schemas-microsoft-com:office:office" );
-			textWriter.WriteEndAttribute();
-
-			textWriter.WriteStartAttribute( "xmlns:x" );
-			textWriter.WriteString( "urn:schemas-microsoft-com:office:excel" );
-			textWriter.WriteEndAttribute();
-
-			textWriter.WriteStartAttribute( "xmlns:ss" );
-			textWriter.WriteString( "urn:schemas-microsoft-com:office:spreadsheet" );
-			textWriter.WriteEndAttribute();
-
-			textWriter.WriteStartAttribute( "xmlns:html" );
-			textWriter.WriteString( "http://www.w3.org/TR/REC-html40" );
-			textWriter.WriteEndAttribute();
-
-			textWriter.WriteStartElement( "Worksheet" );             // Worksheet
-			textWriter.WriteStartAttribute( "ss:Name" );
-			textWriter.WriteString( AppInfo.Name + " XSL export" );
-			textWriter.WriteEndAttribute();
-
-			textWriter.WriteStartElement( "Table" );                 // Table
-
-			for(int row = 0; row < Document.Data.NumRows; ++row) {
-				textWriter.WriteStartElement( "Row" );               // Row
-
-				foreach(var column in options.ColumnsIncluded) {							
-					textWriter.WriteStartElement( "Cell" );          // Cell
-					textWriter.WriteStartElement( "Data" );          // Data
-					var data = Document.Data[ row, column ];
-					double d;
-
-					textWriter.WriteStartAttribute( "ss:Type" );
-					if ( Double.TryParse( data, out d ) ) {
-						textWriter.WriteString( "Number" );
-					} else {
-						textWriter.WriteString( "String" );
-					}
-					textWriter.WriteEndAttribute();
-
-					textWriter.WriteString( data );
-					textWriter.WriteEndElement();                    // /Data
-					textWriter.WriteEndElement();                    // /Cell
-				}
-				textWriter.WriteEndElement();                        // /Row
-			}
-
-			textWriter.WriteEndElement();                            // /Table
-			textWriter.WriteEndElement();                            // /Worksheet
-
-
-
-			textWriter.WriteEndElement();                            // /WorkBook
-			textWriter.WriteEndDocument();
-			textWriter.Close();
-			return;
-		}
-
+        /// <summary>
+        /// Saves or exports the document honoring
+        /// the Format attribute in the <see cref="ExportOptions"/> object.
+        /// </summary>
+        /// <param name="options">The <see cref="ExportOptions"/> settings.</param>
         public void Save(ExportOptions options)
         {
-            switch( options.Format ) {
-                case ExportOptions.SelectionType.Rtf:
-                    SaveCsvDataAsRtf( options );
-                    break;
-                case ExportOptions.SelectionType.Html:
-                    SaveCsvDataAsHtml( options );
-                    break;
-                case ExportOptions.SelectionType.Excel:
-                    SaveCsvDataAsExcel( options );
-                    break;
-                case ExportOptions.SelectionType.Csv:
-                    SaveCsvData( options );
-                    break;
-                default:
-                    throw new ApplicationException( "Internal: conversion not understood" );
-            }
+            if ( options.Format == ExportOptions.SelectionType.Csv ) {
+                this.Save( options );
+            } else {
+                Exporter exporter = null;
 
-            return;
+                switch( options.Format ) {
+                    case ExportOptions.SelectionType.Rtf:
+                        exporter = new Exporters.RtfExporter( this.Document, options );
+                        break;
+                    case ExportOptions.SelectionType.Html:
+                        exporter = new Exporters.HtmlExporter( this.Document, options );
+                        break;
+                    case ExportOptions.SelectionType.Excel:
+                        exporter = new Exporters.ExcelExporter( this.Document, options );
+                        break;
+                    case ExportOptions.SelectionType.Txt:
+                        exporter = new Exporters.TxtExporter( this.Document, options );
+                        break;
+                    case ExportOptions.SelectionType.Csv:
+                        throw new ApplicationException( "Internal: to CSV is not a export" );
+                    default:
+                        throw new ApplicationException( "Internal: conversion not understood" );
+                }
+
+                exporter.Save();
+            }
         }
 
-		CsvDocument document;
-	}
+        /// <summary>
+        /// Quotes the cell for saving, if needed.
+        /// A cell needs quoting if it contains a delimiter or a space.
+        /// </summary>
+        /// <returns>The cell for saving, with the modifications.</returns>
+        /// <param name="cell">The cell information to save, as a string</param>
+        /// <param name="delimiter">The delimiter to use</param>
+        static string QuoteCellForSaving(string cell, string delimiter)
+        {
+            string toret = cell ?? "";
+
+            // Take into account delimiters...
+            var delimitersAndSpace = new HashSet<char>( Delimiter.PredefinedDelimiters )
+            {
+                // ...and spaces...
+                ' ',
+                // ...and the current delimiter of the document (could be repeated)
+                delimiter[ 0 ]
+            };
+
+            foreach (char ch in cell) {
+                if ( delimitersAndSpace.Contains( ch ) ) {
+                    // Quoting needed
+                    toret = CsvDocument.Quote + toret + CsvDocument.Quote;
+                    break;
+                }
+            }
+
+            return toret;
+        }
+
+        /// <summary>
+        /// Gets the document.
+        /// </summary>
+        /// <value>The CsvDocument.</value>
+        public CsvDocument Document {
+            get; private set;
+        }
+    }
 }

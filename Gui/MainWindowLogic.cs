@@ -557,7 +557,7 @@ namespace Colorado.Gui {
                         this.SetStatus( "Saving..." );
                         this.document.FileName = this.lastFileName;
                         this.lastFileName = this.document.FileName;  // CSVDoc fixed filename
-                        new CsvDocumentPersistence( Document ).SaveCsvData(
+                        new CsvDocumentPersistence( Document ).Save(
                             new ExportOptions( this.lastFileName, this.document ) );
                         this.SetTitle();
                         this.SetStatus();
@@ -585,8 +585,7 @@ namespace Colorado.Gui {
                         if ( fn.Trim().Length > 0 ) {
                             this.lastFileName = fn;
                             
-                            options = new ExportOptions(
-                                              this.lastFileName, this.document )
+                            options = new ExportOptions( fn, this.document )
                             {
                                 Format = dlg.Selection,
                                 IncludeRowNumbers = dlg.IncludeRowNumbers,

@@ -130,6 +130,11 @@
     <Compile Include="Core\Cfg\Locale.cs" />
     <Compile Include="Core\Cfg\L10n.cs" />
     <Compile Include="Core\Cfg\Config.cs" />
+    <Compile Include="Core\Exporter.cs" />
+    <Compile Include="Core\Exporters\HtmlExporter.cs" />
+    <Compile Include="Core\Exporters\RtfExporter.cs" />
+    <Compile Include="Core\Exporters\ExcelExporter.cs" />
+    <Compile Include="Core\Exporters\TxtExporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />
@@ -159,6 +164,7 @@
     <Folder Include="Gui\" />
     <Folder Include="Core\Fillers\" />
     <Folder Include="Core\Cfg\" />
+    <Folder Include="Core\Exporters\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
