@@ -23,7 +23,8 @@ namespace Colorado.Gui {
 			this.OnOutputFormatChanged();
 		}
 				
-        private void Build() {
+        void Build()
+        {
             var hBoxOptions = new Gtk.HBox( false, 2 );
 
             this.BuildDocOptions();
@@ -48,7 +49,7 @@ namespace Colorado.Gui {
             this.VBox.PackStart( this.frmFields, true, true, 5 );
         }
 
-        private void BuildChecksForFields()
+        void BuildChecksForFields()
         {
             // Add fields
             this.fieldChecks = new Gtk.CheckButton[ document.Data.ColumnInfo.Length ];
@@ -69,7 +70,8 @@ namespace Colorado.Gui {
             this.frmFields.Add( this.swScroll );
         }
 
-        private void BuildFileFrame() {
+        void BuildFileFrame()
+        {
             var vBoxFile = new Gtk.VBox( false, 2 );
             var hBoxFileName = new Gtk.HBox( false, 2 );
             var hBoxOutput = new Gtk.HBox( false, 2 );
@@ -79,17 +81,17 @@ namespace Colorado.Gui {
             this.btSaveAs = new Gtk.Button( Gtk.Stock.SaveAs );
             this.btSaveAs.Clicked += (obj, args) => this.OnSaveAs();
             this.lblFile = new Gtk.Label( "File:" );
+
             hBoxFileName.PackStart( this.lblFile, false, false, 5 );
             hBoxFileName.PackStart( this.edFile, true, true, 5 );
             hBoxFileName.PackStart( this.btSaveAs, false, false, 5 );
 
             // Output format
-            string[] formatOptions = new string[ ExportOptions.SelectionExtension.Count ];
-            ExportOptions.SelectionExplanation.CopyTo( formatOptions, 0 );
+            BuildAllFormatOptions();
             this.lblOutput = new Gtk.Label( "Output format:" );
-            this.cmbOutput = new Gtk.ComboBox( formatOptions );
+            this.cmbOutput = new Gtk.ComboBox( formatOptions ) { Active = 0 };
             this.cmbOutput.Changed += (obj, args) => this.OnOutputFormatChanged();
-            this.cmbOutput.Active = 0;
+
             hBoxOutput.PackStart( this.lblOutput, false, false, 5 );
             hBoxOutput.PackStart( this.cmbOutput, true, true, 5 );
 
@@ -101,7 +103,8 @@ namespace Colorado.Gui {
             this.frmFile.Add( vBoxFile );
         }
 
-        private void BuildDocOptions() {
+        void BuildDocOptions()
+        {
             var vBoxDocOptions = new Gtk.VBox( false, 2 );
 
             // Doc options
@@ -115,13 +118,14 @@ namespace Colorado.Gui {
             this.frmDocOptions.Add( vBoxDocOptions );
         }
 
-        private void BuildCsvOptions() {
+        void BuildCsvOptions()
+        {
             var hBoxDelimiter = new Gtk.HBox( false, 2 );
             var vBoxOptions = new Gtk.VBox( false, 2 );
 
             // Delimiter
-            var delimiters = new string[ Core.Delimiter.PredefinedDelimiters.Count ];
-            Core.Delimiter.PredefinedDelimiterNames.CopyTo( delimiters, 0 );
+            var delimiters = new string[ Delimiter.PredefinedDelimiters.Count ];
+            Delimiter.PredefinedDelimiterNames.CopyTo( delimiters, 0 );
             this.lblDelimiter = new Gtk.Label( "Delimiter:" );
             this.cmbDelimiter = new Gtk.ComboBoxEntry( delimiters );
             hBoxDelimiter.PackStart( this.lblDelimiter, false, false, 5 );
@@ -142,21 +146,37 @@ namespace Colorado.Gui {
             this.frmCsvOptions.Add( vBoxOptions );
         }
 
-        private Gtk.Frame frmFields;
-        private Gtk.Frame frmDocOptions;
-        private Gtk.Frame frmCsvOptions;
-        private Gtk.Frame frmFile;
-        private Gtk.Label lblFile;
-        private Gtk.Label lblOutput;
-        private Gtk.Entry edFile;
-        private Gtk.Button btSaveAs;
-        private Gtk.ComboBox cmbOutput;
-        private Gtk.ScrolledWindow swScroll;
-        private Gtk.CheckButton cbRowNumbers;
-        private Gtk.CheckButton cbTableBorders;
-        private Gtk.Label lblDelimiter;
-        private Gtk.ComboBoxEntry cmbDelimiter;
-        private Gtk.CheckButton chkQuotes;
-        private Gtk.CheckButton[] fieldChecks;
+        static void BuildAllFormatOptions()
+        {
+            if ( formatOptions == null ) {
+                Exporter[] exporters = Exporter.GetAllExporters();
+
+                formatOptions = new string[ exporters.Length ];
+                for(int i = 0; i < exporters.Length; ++i) {
+                    formatOptions[ i ] = exporters[ i ].Id;
+                }
+            }
+
+            return;
+        }
+
+        static string[] formatOptions;
+
+        Gtk.Frame frmFields;
+        Gtk.Frame frmDocOptions;
+        Gtk.Frame frmCsvOptions;
+        Gtk.Frame frmFile;
+        Gtk.Label lblFile;
+        Gtk.Label lblOutput;
+        Gtk.Entry edFile;
+        Gtk.Button btSaveAs;
+        Gtk.ComboBox cmbOutput;
+        Gtk.ScrolledWindow swScroll;
+        Gtk.CheckButton cbRowNumbers;
+        Gtk.CheckButton cbTableBorders;
+        Gtk.Label lblDelimiter;
+        Gtk.ComboBoxEntry cmbDelimiter;
+        Gtk.CheckButton chkQuotes;
+        Gtk.CheckButton[] fieldChecks;
 	}
 }

@@ -9,8 +9,62 @@ namespace Colorado.Gui {
 
 
     public partial class DlgExport {
-        public ExportOptions.SelectionType Selection {
-            get { return ( (ExportOptions.SelectionType) cmbOutput.Active ); }
+        void OnSaveAs()
+        {
+            // Prepare
+            if ( this.cmbOutput.Active < 0 ) {
+                this.cmbOutput.Active = 0;
+            }
+
+            string filter = "*." + Exporter.GetExporter( this.cmbOutput.ActiveText ).FileExtension;
+
+            if ( Util.DlgSave( AppInfo.Name,
+                              "Save as...",
+                              (Gtk.Window) this.Parent,
+                              ref lastFileName,
+                              filter ) )
+            {
+                this.OnOutputFormatChanged();
+            }
+            else {
+                lastFileName = this.edFile.Text;   
+            }
+
+            return;
+        }
+
+        void OnOutputFormatChanged()
+        {
+            // Prepare
+            if ( this.cmbOutput.Active < 0 ) {
+                this.cmbOutput.Active = 0;
+            }
+
+            if ( string.IsNullOrWhiteSpace( lastFileName ) ) {
+                lastFileName = "output_file.csv";
+            }
+
+            // Options
+            if ( this.cmbOutput.ActiveText == Core.Exporters.CsvExporter.Name )
+            {
+                this.frmCsvOptions.Visible = true;
+                this.frmDocOptions.Visible = false;
+            } else {
+                this.frmCsvOptions.Visible = false;
+                this.frmDocOptions.Visible = true;
+
+            }
+
+            // File name
+            var exporter = Exporter.GetExporter( this.cmbOutput.ActiveText );
+            lastFileName = System.IO.Path.ChangeExtension( lastFileName, "." + exporter.FileExtension );
+
+            this.edFile.Text = lastFileName;
+            this.edFile.Position = lastFileName.Length;
+        }
+
+        public string ExporterId {
+            get { return cmbOutput.ActiveText; }
         }
 
         public string FileName {
@@ -59,52 +113,7 @@ namespace Colorado.Gui {
             }
         }
 
-        private void OnSaveAs()
-        {
-            string filter = "*" + ExportOptions.SelectionExtension[ this.cmbOutput.Active ];
-
-            if ( Util.DlgSave( AppInfo.Name,
-                "Save as...",
-                (Gtk.Window) this.Parent,
-                ref lastFileName,
-                filter ) )
-            {
-                this.OnOutputFormatChanged();
-            }
-            else lastFileName = this.edFile.Text;
-        }
-
-        private void OnOutputFormatChanged()
-        {
-            int active = this.cmbOutput.Active;
-
-            // Prepare
-            if ( active < 0 ) {
-                this.cmbOutput.Active = active = 0;
-            }
-
-            if ( string.IsNullOrWhiteSpace( lastFileName ) ) {
-                lastFileName = "output_file.csv";
-            }
-
-            // Options
-            if ( ( (ExportOptions.SelectionType) active ) == ExportOptions.SelectionType.Csv )
-            {
-                this.frmCsvOptions.Visible = true;
-                this.frmDocOptions.Visible = false;
-            } else {
-                this.frmCsvOptions.Visible = false;
-                this.frmDocOptions.Visible = true;
-
-            }
-
-            // File name
-            lastFileName = System.IO.Path.ChangeExtension( lastFileName, ExportOptions.SelectionExtension[ active ] );
-            this.edFile.Text = lastFileName;
-            this.edFile.Position = lastFileName.Length;
-        }
-
-        private CsvDocument document;
+        CsvDocument document;
         public static string lastFileName;
     }
 }

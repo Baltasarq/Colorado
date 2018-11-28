@@ -132,9 +132,10 @@
     <Compile Include="Core\Cfg\Config.cs" />
     <Compile Include="Core\Exporter.cs" />
     <Compile Include="Core\Exporters\HtmlExporter.cs" />
-    <Compile Include="Core\Exporters\RtfExporter.cs" />
+    <Compile Include="Core\Exporters\MarkdownExporter.cs" />
     <Compile Include="Core\Exporters\ExcelExporter.cs" />
     <Compile Include="Core\Exporters\TxtExporter.cs" />
+    <Compile Include="Core\Exporters\CsvExporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />

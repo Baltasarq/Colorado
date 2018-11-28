@@ -7,11 +7,18 @@ namespace Colorado.Core {
     using System.Collections.Generic;
 
 	public class CsvDocumentPersistence {
+        /// <summary>The available file extensions for CSV documents.</summary>
 		public static ReadOnlyCollection<string> FileExtension = new ReadOnlyCollection<string>(new string[]{ "csv", "tsv" } );
+
+        /// <summary>The file filters for the available extensions.</summary>
+        public static ReadOnlyCollection<string> FileFilter = new ReadOnlyCollection<string>(
+            new string[]{ "*." + FileExtension[ 0 ], "*." + FileExtension[ 1 ] } );
+
+        /// <summary>Extension for temporary files.</summary>
 		public const string TempExtension = "tmp";
+
+        /// <summary>Spaces. Beware of including delimiters such tabs.</summary>
         public const string Spaces = " \n\r";
-		public static ReadOnlyCollection<string> FileFilter = new ReadOnlyCollection<string>(
-			new string[]{ "*." + FileExtension[ 0 ], "*." + FileExtension[ 1 ] } );
 
 		public CsvDocumentPersistence()
         {
@@ -19,6 +26,7 @@ namespace Colorado.Core {
 		}
 
 		public CsvDocumentPersistence(CsvDocument doc)
+            :this()
         {
 			this.Document = doc;
 		}
@@ -403,7 +411,7 @@ namespace Colorado.Core {
 
                 Document.Changed = false;
 				file.Close();
-				File.Copy( fileName, options.Name, true );
+				File.Copy( fileName, options.Path, true );
 				File.Delete( fileName );
 			} catch(Exception) {
 				throw;
@@ -417,41 +425,6 @@ namespace Colorado.Core {
 
 			return;
 		}
-
-        /// <summary>
-        /// Saves or exports the document honoring
-        /// the Format attribute in the <see cref="ExportOptions"/> object.
-        /// </summary>
-        /// <param name="options">The <see cref="ExportOptions"/> settings.</param>
-        public void Save(ExportOptions options)
-        {
-            if ( options.Format == ExportOptions.SelectionType.Csv ) {
-                this.Save( options );
-            } else {
-                Exporter exporter = null;
-
-                switch( options.Format ) {
-                    case ExportOptions.SelectionType.Rtf:
-                        exporter = new Exporters.RtfExporter( this.Document, options );
-                        break;
-                    case ExportOptions.SelectionType.Html:
-                        exporter = new Exporters.HtmlExporter( this.Document, options );
-                        break;
-                    case ExportOptions.SelectionType.Excel:
-                        exporter = new Exporters.ExcelExporter( this.Document, options );
-                        break;
-                    case ExportOptions.SelectionType.Txt:
-                        exporter = new Exporters.TxtExporter( this.Document, options );
-                        break;
-                    case ExportOptions.SelectionType.Csv:
-                        throw new ApplicationException( "Internal: to CSV is not a export" );
-                    default:
-                        throw new ApplicationException( "Internal: conversion not understood" );
-                }
-
-                exporter.Save();
-            }
-        }
 
         /// <summary>
         /// Quotes the cell for saving, if needed.

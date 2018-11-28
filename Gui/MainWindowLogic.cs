@@ -11,10 +11,12 @@ namespace Colorado.Gui {
 	using GtkUtil;
     
     public partial class MainWindow: Gtk.Window {
-        private const int MaxFileLengthForTitle = 40;
-        private const string LongFilePrefix = "...";
         public const int NumFixedColumns = 1;
         public const int NumFixedRows = 1;
+
+        const int MaxFileLengthForTitle = 40;
+        const string LongFilePrefix = "...";
+        const string NoNamedFile = "nonamed.csv";
 
         /// <summary>Loads all the recent files into menu.</summary>
         private void LoadRecentFilesIntoMenu()
@@ -547,6 +549,15 @@ namespace Colorado.Gui {
         private void OnSaveAs()
         {
             try {
+                // Prepare file name
+                if ( string.IsNullOrWhiteSpace( this.lastFileName ) ) {
+                    string docsPath = Environment.GetFolderPath(
+                                        Environment.SpecialFolder.MyDocuments );
+
+                    this.lastFileName = System.IO.Path.Combine( docsPath, NoNamedFile );
+                }
+
+                // Ask for name
                 if ( this.document != null ) {
                     if ( Util.DlgOpen(
                         AppInfo.Name, "Save spreadsheet as...",
@@ -557,8 +568,7 @@ namespace Colorado.Gui {
                         this.SetStatus( "Saving..." );
                         this.document.FileName = this.lastFileName;
                         this.lastFileName = this.document.FileName;  // CSVDoc fixed filename
-                        new CsvDocumentPersistence( Document ).Save(
-                            new ExportOptions( this.lastFileName, this.document ) );
+                        new CsvDocumentPersistence( this.Document ).SaveCsvData();
                         this.SetTitle();
                         this.SetStatus();
                     }
@@ -585,9 +595,8 @@ namespace Colorado.Gui {
                         if ( fn.Trim().Length > 0 ) {
                             this.lastFileName = fn;
                             
-                            options = new ExportOptions( fn, this.document )
-                            {
-                                Format = dlg.Selection,
+                            options = new ExportOptions( fn, this.document ) {
+                                ExporterId = dlg.ExporterId,
                                 IncludeRowNumbers = dlg.IncludeRowNumbers,
                                 IncludeTableBorder = dlg.IncludeTableBorder,
                                 ColumnsIncluded = dlg.ColumnsIncluded,
@@ -596,8 +605,10 @@ namespace Colorado.Gui {
                             
                             options.Delimiter.Name = dlg.DelimiterValue;
 
-                            new CsvDocumentPersistence( Document ).Save( options );
-                            Util.MsgInfo( this, AppInfo.Name, options.Format.ToString() + " file generated" );
+                            Exporter.Save( options );
+                            Util.MsgInfo( this, AppInfo.Name,
+                                         options.Exporter.FileExtension
+                                            + " file generated" );
                         }
                     } catch(Exception exc) {
                         Util.MsgError( this, AppInfo.Name, exc.Message );

@@ -7,16 +7,14 @@ namespace Colorado.Core.Exporters
     using System.Text;
 
     /// <summary>Exports CSV data to Html.</summary>
-    public class HtmlExporter: Exporter
-    {
-        public HtmlExporter(CsvDocument doc, ExportOptions options)
-            :base( doc, options )
-        {
-        }
+    public class HtmlExporter: Exporter {
+        public const string Name = "HTML";
+        const string Extension = "html";
 
         public override void Save()
         {
-            string fileName = this.Options.Name;
+            CsvDocument doc = this.Options.Document;
+            string fileName = this.Options.Path;
             int tableBorder = 0;
 
             // Determine border
@@ -45,24 +43,24 @@ namespace Colorado.Core.Exporters
                     file.Write( "<td style=\"color: white; background-color: black;\"><b>#</b></td>" );
                 }
 
-                for(int col = 0; col < Document.Data.NumColumns; ++col) {
+                for(int col = 0; col < doc.Data.NumColumns; ++col) {
                     if ( this.Options.IsColumnIncluded( col ) ) {
                         file.Write( "<td style=\"color: white; background-color: black;\"><b>"
-                                   + Document.Data.ColumnInfo[ col ].Header + "</b></td>"
+                                   + doc.Data.ColumnInfo[ col ].Header + "</b></td>"
                                   );
                     }
                 }
                 file.WriteLine();
 
                 // Write each row
-                for(int row = 0; row < Document.Data.NumRows; ++row) {
+                for(int row = 0; row < doc.Data.NumRows; ++row) {
                     file.WriteLine( "<tr>\n" );
 
                     if ( this.Options.IncludeRowNumbers ) {
                         file.Write( "<td style=\"color: black; background-color: rgb(204,204,204);\"><b>" + Convert.ToString( row +1 ) + "</b></td>" );
                     }
 
-                    for(int col = 0; col < Document.Data.NumColumns; ++col) {       
+                    for(int col = 0; col < doc.Data.NumColumns; ++col) {       
                         if ( this.Options.IsColumnIncluded( col ) ) {
 
                             file.Write( "<td" );
@@ -71,7 +69,7 @@ namespace Colorado.Core.Exporters
                                 file.Write( " style=\"color: black; background-color: rgb(204,204,204);\"" );
                             }
 
-                            file.Write( ">" + Document.Data[ row, col ] + "</td>" );
+                            file.Write( ">" + doc.Data[ row, col ] + "</td>" );
                         }
                     }
                     file.WriteLine();
@@ -83,5 +81,11 @@ namespace Colorado.Core.Exporters
 
             return;
         }
+
+        /// <summary>Gets the name of the exporter.</summary>
+        public override string Id => Name;
+
+        /// <summary>Gets the extension for this exporter's output.</summary>
+        public override string FileExtension => Extension;
     }
 }

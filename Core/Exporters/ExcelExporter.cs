@@ -9,16 +9,15 @@ namespace Colorado.Core.Exporters
 
     /// <summary>Exports CSV data to Excel 2003 XML format.</summary>
     public class ExcelExporter: Exporter {
-        public enum DataType { String, Number };
-
-        public ExcelExporter(CsvDocument doc, ExportOptions opts)
-            :base( doc, opts )
-        {
-        }
+        public const string Name = "Excel";
+        const string Extension = "xls";
+        enum DataType { String, Number };
 
         public override void Save()
         {
-            using(var textWriter = new XmlTextWriter( this.Options.Name, Encoding.UTF8 )) {
+            CsvDocument doc = this.Options.Document;
+
+            using(var textWriter = new XmlTextWriter( this.Options.Path, Encoding.UTF8 )) {
                 textWriter.WriteStartDocument();
 
                 WriteStartWorkBook( textWriter );                        // WkBk
@@ -34,13 +33,13 @@ namespace Colorado.Core.Exporters
 
                 foreach(int col in this.Options.ColumnsIncluded) {                            
                     WriteCell( textWriter,
-                              this.Document.Data.ColumnInfo[ col ].Header );
+                              doc.Data.ColumnInfo[ col ].Header );
                 }
 
                 textWriter.WriteEndElement();    
 
                 // Data
-                for(int row = 0; row < Document.Data.NumRows; ++row) {
+                for(int row = 0; row < doc.Data.NumRows; ++row) {
                     textWriter.WriteStartElement( "Row" );               // Row
 
                     if ( this.Options.IncludeRowNumbers ) {
@@ -48,7 +47,7 @@ namespace Colorado.Core.Exporters
                     }
 
                     foreach(int col in this.Options.ColumnsIncluded) {
-                        string data = Document.Data[ row, col ];
+                        string data = doc.Data[ row, col ];
                         DataType type = DataType.String;
 
                         if ( Double.TryParse( data, out double d ) ) {
@@ -120,5 +119,11 @@ namespace Colorado.Core.Exporters
             textWriter.WriteEndElement();                                // /Data
             textWriter.WriteEndElement();                                // /Cell
         }
+
+        /// <summary>Gets the name of the exporter.</summary>
+        public override string Id => Name;
+
+        /// <summary>Gets the extension for this exporter's output.</summary>
+        public override string FileExtension => Extension;
     }
 }
