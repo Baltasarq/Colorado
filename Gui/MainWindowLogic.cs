@@ -19,7 +19,7 @@ namespace Colorado.Gui {
         const string NoNamedFile = "nonamed.csv";
 
         /// <summary>Loads all the recent files into menu.</summary>
-        private void LoadRecentFilesIntoMenu()
+        void LoadRecentFilesIntoMenu()
         {
             foreach(string fileName in this.cfg.RecentFiles) {
                 this.AppendRecentFileToMenu( fileName );
@@ -30,7 +30,7 @@ namespace Colorado.Gui {
 
         /// <summary>Appends a given recent file to the menu.</summary>
         /// <param name="fileName">The file name, as a string.</param>
-        private void AppendRecentFileToMenu(string fileName)
+        void AppendRecentFileToMenu(string fileName)
         {
             string fileNameOnly = System.IO.Path.GetFileName( fileName );
             var miFile = new Gtk.MenuItem( fileNameOnly );
@@ -59,12 +59,12 @@ namespace Colorado.Gui {
             this.Document.ClientUpdater += this.UpdateFromData;
         }   
 
-        private void ActivateIde()
+        void ActivateIde()
         {
             this.ActivateIde( true );
         }
 
-        private void ActivateIde(bool active)
+        void ActivateIde(bool active)
         {
             this.SetStatus();
             this.SetTitle();
@@ -130,7 +130,7 @@ namespace Colorado.Gui {
 
             try {
                 // Create liststore
-                var types = new System.Type[ document.Data.NumColumns + 1 ];
+                var types = new Type[ document.Data.NumColumns + 1 ];
                 for(int typeNumber = 0; typeNumber < types.Length; ++typeNumber) {
                     types[ typeNumber ] = typeof( string );
                 }
@@ -211,7 +211,7 @@ namespace Colorado.Gui {
             about.Destroy();
         }
 
-        private void OnFind()
+        void OnFind()
         {
             if ( this.document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
@@ -283,7 +283,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private bool OnCloseDocument()
+        bool OnCloseDocument()
         {
 			bool toret = true;
 
@@ -300,7 +300,7 @@ namespace Colorado.Gui {
 			return toret;
         }
 
-		private void CloseDocument() {
+		void CloseDocument() {
 			if ( this.document.Changed ) {
 				// Save the document, if needed
 				if ( Util.Ask( this, AppInfo.Name, "Save spreadsheet '" + document.FileName + "' ?" ) ) {
@@ -312,7 +312,7 @@ namespace Colorado.Gui {
 			this.ActivateIde( false );
 		}
 
-        private void OnOpen()
+        void OnOpen()
         {
 			if ( this.OnCloseDocument() ) {
 	            if ( Util.DlgOpen(
@@ -393,7 +393,7 @@ namespace Colorado.Gui {
             return;
         }
 
-		private bool OnQuit()
+		bool OnQuit()
         {
 			bool toret = true;
 
@@ -406,7 +406,7 @@ namespace Colorado.Gui {
 			return toret;
         }
 
-        private void OnImport()
+        void OnImport()
         {
             var dlg = new DlgImport( this );
 
@@ -477,7 +477,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnTableCellEdited(Gtk.EditedArgs args)
+        void OnTableCellEdited(Gtk.EditedArgs args)
         {
             int rowIndex;
             int colIndex;
@@ -522,7 +522,7 @@ namespace Colorado.Gui {
             }
         }
 
-        private void OnSave()
+        void OnSave()
         {
             try {
                 if ( this.document != null ) {
@@ -546,7 +546,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnSaveAs()
+        void OnSaveAs()
         {
             try {
                 // Prepare file name
@@ -581,7 +581,7 @@ namespace Colorado.Gui {
             }       
         }
 
-        private void OnExport()
+        void OnExport()
         {
             ExportOptions options = null;
 
@@ -624,7 +624,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnEdFindActivated()
+        void OnEdFindActivated()
         {
             this.txtToFind = this.edFind.Text;
 
@@ -664,7 +664,7 @@ namespace Colorado.Gui {
         /// Applies the preferences of the properties dialog.
         /// </summary>
         /// <param name="dlg">The properties dialog</param>
-        private void ApplyChangedProperties(DlgProperties dlg)
+        void ApplyChangedProperties(DlgProperties dlg)
         {
             if ( dlg.DecimalMarkValue != this.document.DecimalSeparator ) {
 				this.document.DecimalSeparator = dlg.DecimalMarkValue;
@@ -706,7 +706,7 @@ namespace Colorado.Gui {
             dlg.UpdateColumnsData();
         }
 
-        private void OnProperties()
+        void OnProperties()
         {
             if ( this.document != null ) {
                 Gtk.ResponseType answer;
@@ -738,7 +738,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnNew()
+        void OnNew()
         {
 			if ( this.OnCloseDocument() ) {
 				// Create new document
@@ -783,7 +783,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnFindAgain()
+        void OnFindAgain()
         {
             if ( this.document != null ) {
                 this.GetCurrentCell( out int row, out int col );
@@ -815,7 +815,28 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnClearRows()
+        /// <summary>
+        /// Determines the selected rows.
+        /// </summary>
+        /// <param name="first">To be filled with the first row.</param>
+        /// <param name="last">To be filled with the last row.</param>
+        void DetermineSelectedRows(out int first, out int last)
+        {
+            var orgList = (Gtk.ListStore) this.tvTable.Model;
+            Gtk.TreeSelection selected = this.tvTable.Selection;
+            Gtk.TreePath[] rowPaths = selected.GetSelectedRows();
+
+            if ( rowPaths.Length > 0 ) {
+                first = rowPaths[ 0 ].Indices[ 0 ] + NumFixedRows;
+                last = rowPaths[ rowPaths.Length - 1 ].Indices[ 0 ] + NumFixedRows;
+            } else {
+                first = last = -1;
+            }
+
+            return;
+        }
+
+        void OnClearRows()
         {
             // Get position
             if ( document == null ) {
@@ -823,23 +844,22 @@ namespace Colorado.Gui {
                 return;
             }
 
-            // Get current position and adapt it to UI
-            GetCurrentCell( out int rowBegin, out int col );
-            ++rowBegin;
+            // Get current selection
+            this.DetermineSelectedRows( out int rowBegin, out int rowEnd );
 
             var dlg = new DlgFromTo( this,
-                rowBegin, document.Data.NumRows,
+                rowBegin, rowEnd, document.Data.NumRows,
                 DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Rows );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 // Adapt from UI to document (headers)
                 rowBegin = dlg.From - NumFixedRows;
-                int rowEnd = dlg.To - NumFixedRows;
+                rowEnd = dlg.To - NumFixedRows;
 
                 try {
                     // do it
-                    this.document.Data.CleanRows( col, rowBegin, rowEnd );
-                    this.RefreshRows( col, rowBegin, rowEnd );
+                    this.document.Data.CleanRows( 0, rowBegin, rowEnd );
+                    this.RefreshRows( 0, rowBegin, rowEnd );
                 } catch(Exception exc) {
                     Util.MsgError( this, AppInfo.Name, exc.Message );
                 }
@@ -848,7 +868,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnClearColumns()
+        void OnClearColumns()
         {
             // Chk
             if ( this.document == null ) {
@@ -861,7 +881,7 @@ namespace Colorado.Gui {
             ++colBegin;
 
             var dlg = new DlgFromTo( this,
-                colBegin, document.Data.NumColumns,
+                colBegin, colBegin + 1, document.Data.NumColumns,
                 DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Columns );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
@@ -881,7 +901,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnAddRows()
+        void OnAddRows()
         {
             // Chk
             if ( this.document == null ) {
@@ -889,16 +909,14 @@ namespace Colorado.Gui {
                 return;
             }
 
-            // Get current position
+            // Get current selection
             this.GetCurrentCell( out int row, out int col );
-
-            row += NumFixedRows;
-            col += NumFixedColumns;
 
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Insert,
                 DlgIncDec.Target.Rows,
-                row,
+                row + 1,
+                1,
                 int.MaxValue
             );
 
@@ -930,7 +948,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnAddColumns()
+        void OnAddColumns()
         {
             // Chk
             if ( this.document == null ) {
@@ -944,7 +962,7 @@ namespace Colorado.Gui {
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Insert,
                 DlgIncDec.Target.Columns,
-				col + 1, int.MaxValue
+				col + 1, col + 2, int.MaxValue
             );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
@@ -975,7 +993,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnRevert()
+        void OnRevert()
         {
             var oldDocument = this.document;
 
@@ -1009,7 +1027,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnRemoveRows()
+        void OnRemoveRows()
         {
             // Chk
             if ( this.document == null ) {
@@ -1017,20 +1035,20 @@ namespace Colorado.Gui {
                 return;
             }
 
-            // Get current position
-            this.GetCurrentCell( out int row, out int col );
+            // Get current selection
+            this.DetermineSelectedRows( out int rowBegin, out int rowEnd );
 
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Erase,
                 DlgIncDec.Target.Rows,
-                row + 1,
+                rowBegin, rowEnd,
                 this.document.Data.NumRows
             );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
-                    this.SetStatus( "Removing columns" );
+                    this.SetStatus( "Removing rows" );
                     this.document.Data.RemoveRows( dlg.From - NumFixedRows, dlg.Number );
                     this.ShowDocument();
                     this.SetStatus();
@@ -1042,7 +1060,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnRemoveColumns()
+        void OnRemoveColumns()
         {
             // Chk
             if ( this.document == null ) {
@@ -1056,7 +1074,7 @@ namespace Colorado.Gui {
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Erase,
                 DlgIncDec.Target.Columns,
-                col + 1,
+                col + 1, col + 2,
                 this.document.Data.NumColumns
             );
 
@@ -1075,16 +1093,16 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnCopyRow()
+        void OnCopyRow()
         {
             // Chk
             if ( this.document != null ) {
 
                 // Get current position
-                this.GetCurrentCell( out int row, out int col );
+                this.DetermineSelectedRows( out int rowBegin, out int rowEnd );
 
                 var dlg = new DlgFromTo( this,
-                    row +1, document.Data.NumRows,
+                    rowBegin, rowBegin + 1, document.Data.NumRows,
                     DlgFromTo.ActionType.Copy, DlgFromTo.ItemType.Rows );
 
                 if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
@@ -1108,7 +1126,7 @@ namespace Colorado.Gui {
             return;
         }
 
-        private void OnCopyColumn()
+        void OnCopyColumn()
         {
             // Chk
             if ( this.document == null ) {
@@ -1120,7 +1138,7 @@ namespace Colorado.Gui {
             this.GetCurrentCell( out int row, out int col );
 
             var dlg = new DlgFromTo( this,
-                col + 1,
+                col + 1, col + 2,
                 this.document.Data.NumColumns,
                 DlgFromTo.ActionType.Copy,
                 DlgFromTo.ItemType.Columns );
@@ -1140,7 +1158,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnFillRow()
+        void OnFillRow()
         {
             // Retrieve position
             this.GetCurrentCell( out int row, out int column );
@@ -1168,7 +1186,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnFillColumn()
+        void OnFillColumn()
         {
             // Retrieve position
             this.GetCurrentCell( out int row, out int column );
@@ -1196,7 +1214,7 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private void OnTableClicked(Gtk.ButtonReleaseEventArgs args)
+        void OnTableClicked(Gtk.ButtonReleaseEventArgs args)
         {
             if ( args.Event.Button == 3 ) {
                 this.popup.Popup();
@@ -1206,7 +1224,7 @@ namespace Colorado.Gui {
         }
 
         [GLib.ConnectBefore]
-        private void OnTableKeyPressed(Gtk.KeyPressEventArgs args)
+        void OnTableKeyPressed(Gtk.KeyPressEventArgs args)
         {
             // Do not "eat" the key, by default
             args.RetVal = false;
@@ -1349,7 +1367,7 @@ namespace Colorado.Gui {
             return ((Gtk.CellRendererText) table.GetValue( itRow, col ) ).Text;
         }
 
-        private void OnInsertFormula()
+        void OnInsertFormula()
         {
             var dlg = new DlgFormulae( this );
 
@@ -1371,10 +1389,10 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        private CsvDocument document;
-        private string txtToFind;
+        CsvDocument document;
+        string txtToFind;
         public string lastFileName;
-        private Core.Cfg.Config cfg;
+        Core.Cfg.Config cfg;
     }
 
 }

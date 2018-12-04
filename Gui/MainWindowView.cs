@@ -24,25 +24,24 @@ namespace Colorado.Gui {
             this.OpenDocument( fileName );
         }
 
-        private void Build()
+        void Build()
         {
             var vPanel = new Gtk.VBox( false, 2 );
             var hPanel = new Gtk.HBox( false, 2 );
-            var swScroll = new Gtk.ScrolledWindow();
 
             // Create components
             this.edFind = new Gtk.Entry( "Find..." );
             this.edFind.Activated += (sender, e) => this.OnEdFindActivated();
             this.edFind.FocusInEvent += (sender, e) => this.edFind.Text = "";
             this.edFind.FocusOutEvent += (sender, e) => this.edFind.Text = "Find...";
-            this.tvTable = new Gtk.TreeView { EnableSearch = false };
-            this.tvTable.ButtonReleaseEvent +=
-                (object o, Gtk.ButtonReleaseEventArgs args) => this.OnTableClicked( args );
-            this.tvTable.KeyPressEvent +=
-                (object o, Gtk.KeyPressEventArgs args) => this.OnTableKeyPressed( args );
+
+            // Create tree view
+            this.tvTable = this.BuildTable();
+
+            var swScroll = new Gtk.ScrolledWindow();
             swScroll.AddWithViewport( this.tvTable );
 
-            // Build them all
+            // Build'em all
 			this.BuildIcons();
             this.BuildActions();
             this.BuildStatusBar();
@@ -75,7 +74,21 @@ namespace Colorado.Gui {
 			this.DeleteEvent += (o, args) => { args.RetVal = this.OnQuit(); };
         }
 
-		private void BuildIcons()
+        Gtk.TreeView BuildTable()
+        {
+            Gtk.TreeView toret = new Gtk.TreeView { EnableSearch = false };
+
+            toret.Selection.Mode = Gtk.SelectionMode.Multiple;
+
+            toret.ButtonReleaseEvent +=
+                    (object o, Gtk.ButtonReleaseEventArgs args) => this.OnTableClicked( args );
+            toret.KeyPressEvent +=
+                    (object o, Gtk.KeyPressEventArgs args) => this.OnTableKeyPressed( args );
+
+            return toret;
+        }
+
+		void BuildIcons()
         {
 			this.ToolbarMode = Gtk.ToolbarStyle.Icons;
 
@@ -173,7 +186,7 @@ namespace Colorado.Gui {
 			}
 		}
 
-        private void BuildActions()
+        void BuildActions()
         {
 			this.newAction = new Gtk.Action( "new", "_New", "new spreadhseet", "new" ) {IconName = "clrd-new" };
             this.newAction.Activated += (sender, e) => this.OnNew();
@@ -248,7 +261,8 @@ namespace Colorado.Gui {
             this.fillColumnAction.Activated += (sender, e) => this.OnFillColumn();
         }
 
-        private void BuildStatusBar() {
+        void BuildStatusBar()
+        {
             var hPanel = new Gtk.HBox( false, 2 );
             this.lblCount = new Gtk.Label( "..." );
             this.lblType = new Gtk.Label( "..." );
@@ -261,7 +275,7 @@ namespace Colorado.Gui {
             this.sbStatus.PackStart( hPanel, false, false, 5 );
         }
 
-        private void BuildMenu()
+        void BuildMenu()
         {
             var mFile = new Gtk.Menu();
             var mEdit = new Gtk.Menu();
@@ -322,6 +336,10 @@ namespace Colorado.Gui {
             opFindAgain.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
                 Gdk.Key.F3, Gdk.ModifierType.None, Gtk.AccelFlags.Visible) );
 
+            var opRemoveRows = this.removeRowsAction.CreateMenuItem();
+            opRemoveRows.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
+                Gdk.Key.Delete, Gdk.ModifierType.None, Gtk.AccelFlags.Visible) );
+
             mFile.Append( opNew );
             mFile.Append( opOpen );
             mFile.Append( opRecent );
@@ -343,7 +361,7 @@ namespace Colorado.Gui {
             mEdit.Append( miRows );
             mEdit.Append( miColumns );
             mRows.Append( opAddRows );
-            mRows.Append( this.removeRowsAction.CreateMenuItem() );
+            mRows.Append( opRemoveRows );
             mRows.Append( this.clearRowsAction.CreateMenuItem() );
             mRows.Append( this.copyRowAction.CreateMenuItem() );
             mRows.Append( this.fillRowAction.CreateMenuItem() );
@@ -362,7 +380,8 @@ namespace Colorado.Gui {
             this.AddAccelGroup( accelGroup );
         }
 
-        private void BuildToolbar() {
+        void BuildToolbar()
+        {
             this.tbTools = new Gtk.Toolbar { ToolbarStyle = this.ToolbarMode };
             this.tbTools.Insert( (Gtk.ToolItem) this.newAction.CreateToolItem(), 0 );
             this.tbTools.Insert( (Gtk.ToolItem) this.openAction.CreateToolItem(), 1 );
@@ -383,7 +402,7 @@ namespace Colorado.Gui {
             this.tbTools.Insert( (Gtk.ToolItem) this.fillColumnAction.CreateToolItem(), 16 );
         }
 
-        private void BuildPopup()
+        void BuildPopup()
         {
             // Menus
             this.popup = new Gtk.Menu();
@@ -412,65 +431,65 @@ namespace Colorado.Gui {
             this.popup.ShowAll();
         }
 
-		private Gtk.ToolbarStyle ToolbarMode {
+		Gtk.ToolbarStyle ToolbarMode {
 			get; set;
 		}
 
         // Widgets
-        private Gtk.TreeView tvTable;
-        private Gtk.Statusbar sbStatus;
-        private Gtk.Toolbar tbTools;
-        private Gtk.MenuBar menuBar;
-        private Gtk.Menu popup;
-        private Gtk.Menu mRecent;
-        private Gtk.Entry edFind;
-        private Gtk.Label lblType;
-        private Gtk.Label lblCount;
+        Gtk.TreeView tvTable;
+        Gtk.Statusbar sbStatus;
+        Gtk.Toolbar tbTools;
+        Gtk.MenuBar menuBar;
+        Gtk.Menu popup;
+        Gtk.Menu mRecent;
+        Gtk.Entry edFind;
+        Gtk.Label lblType;
+        Gtk.Label lblCount;
 
         // Actions
-        private Gtk.Action newAction;
-        private Gtk.Action openAction;
-        private Gtk.Action saveAction;
-        private Gtk.Action saveAsAction;
-        private Gtk.Action propertiesAction;
-        private Gtk.Action closeAction;
-        private Gtk.Action importAction;
-        private Gtk.Action exportAction;
-        private Gtk.Action revertAction;
-        private Gtk.Action quitAction;
-        private Gtk.Action findAction;
-        private Gtk.Action findAgainAction;
-        private Gtk.Action insertFormulaAction;
-        private Gtk.Action addRowsAction;
-        private Gtk.Action removeRowsAction;
-        private Gtk.Action clearRowsAction;
-        private Gtk.Action copyRowAction;
-        private Gtk.Action fillRowAction;
-        private Gtk.Action addColumnsAction;
-        private Gtk.Action removeColumnsAction;
-        private Gtk.Action clearColumnsAction;
-        private Gtk.Action copyColumnAction;
-        private Gtk.Action fillColumnAction;
-        private Gtk.Action aboutAction;
+        Gtk.Action newAction;
+        Gtk.Action openAction;
+        Gtk.Action saveAction;
+        Gtk.Action saveAsAction;
+        Gtk.Action propertiesAction;
+        Gtk.Action closeAction;
+        Gtk.Action importAction;
+        Gtk.Action exportAction;
+        Gtk.Action revertAction;
+        Gtk.Action quitAction;
+        Gtk.Action findAction;
+        Gtk.Action findAgainAction;
+        Gtk.Action insertFormulaAction;
+        Gtk.Action addRowsAction;
+        Gtk.Action removeRowsAction;
+        Gtk.Action clearRowsAction;
+        Gtk.Action copyRowAction;
+        Gtk.Action fillRowAction;
+        Gtk.Action addColumnsAction;
+        Gtk.Action removeColumnsAction;
+        Gtk.Action clearColumnsAction;
+        Gtk.Action copyColumnAction;
+        Gtk.Action fillColumnAction;
+        Gtk.Action aboutAction;
 
 		// Icons
-		private Gdk.Pixbuf iconAbout;
-		private Gdk.Pixbuf iconAdd;
-		private Gdk.Pixbuf iconClear;
-		private Gdk.Pixbuf iconClose;
-		private Gdk.Pixbuf iconCopy;
-		private Gdk.Pixbuf iconExit;
-		private Gdk.Pixbuf iconExport;
-		private Gdk.Pixbuf iconFind;
-		private Gdk.Pixbuf iconFormula;
-		private Gdk.Pixbuf iconImport;
-		private Gdk.Pixbuf iconNew;
-		private Gdk.Pixbuf iconOpen;
-		private Gdk.Pixbuf iconPaste;
-		private Gdk.Pixbuf iconProperties;
-		private Gdk.Pixbuf iconRemove;
-		private Gdk.Pixbuf iconRevert;
-		private Gdk.Pixbuf iconSave;
+		Gdk.Pixbuf iconAbout;
+		Gdk.Pixbuf iconAdd;
+		Gdk.Pixbuf iconClear;
+		Gdk.Pixbuf iconClose;
+		Gdk.Pixbuf iconCopy;
+		Gdk.Pixbuf iconExit;
+		Gdk.Pixbuf iconExport;
+		Gdk.Pixbuf iconFind;
+		Gdk.Pixbuf iconFormula;
+		Gdk.Pixbuf iconImport;
+		Gdk.Pixbuf iconNew;
+		Gdk.Pixbuf iconOpen;
+		Gdk.Pixbuf iconPaste;
+		Gdk.Pixbuf iconProperties;
+		Gdk.Pixbuf iconRemove;
+		Gdk.Pixbuf iconRevert;
+		Gdk.Pixbuf iconSave;
     }
 }
 

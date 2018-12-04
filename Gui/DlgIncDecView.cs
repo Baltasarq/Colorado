@@ -4,7 +4,7 @@ namespace Colorado.Gui {
     using System;
 
 	public partial class DlgIncDec : Gtk.Dialog {
-		public DlgIncDec(Gtk.Window parent, DialogType type, Target target, int begin, int max)
+		public DlgIncDec(Gtk.Window parent, DialogType type, Target target, int begin, int end, int max)
 		{
 			string info = "<b>Number of ";
 			this.Build();
@@ -23,7 +23,7 @@ namespace Colorado.Gui {
 			sbFrom.SetRange( 1, max );
 			sbNumber.SetRange( 1, max - 1 );
 			sbFrom.Value = begin;
-			sbNumber.Value = 1;
+            sbNumber.Value = ( end - begin ) + 1; 
 
 			// Info
 			info += StrTarget[ (int) target ] + "</b>: ";
@@ -36,7 +36,8 @@ namespace Colorado.Gui {
 			this.lblInfo.Markup = info;
 		}
 
-		private void Build() {
+		void Build()
+        {
 			var hBoxFrames = new Gtk.HBox( false, 2 );
 			var hBoxFrom = new Gtk.HBox( false, 2 );
 			var hBoxTo = new Gtk.HBox( false, 2 );
@@ -94,14 +95,14 @@ namespace Colorado.Gui {
             this.Resizable = false;
 		}
 
-		private Gtk.Frame frmWhere;
-		private Gtk.Frame frmValues;
-		private Gtk.RadioButton rbBefore;
-		private Gtk.RadioButton rbAfter;
-		private Gtk.SpinButton sbFrom;
-		private Gtk.SpinButton sbNumber;
-		private Gtk.Label lblFrom;
-		private Gtk.Label lblTo;
-		private Gtk.Label lblInfo;
+		Gtk.Frame frmWhere;
+		Gtk.Frame frmValues;
+		Gtk.RadioButton rbBefore;
+		Gtk.RadioButton rbAfter;
+		Gtk.SpinButton sbFrom;
+		Gtk.SpinButton sbNumber;
+		Gtk.Label lblFrom;
+		Gtk.Label lblTo;
+		Gtk.Label lblInfo;
 	}
 }

@@ -2,13 +2,11 @@
 
 namespace Colorado.Gui {
 	public partial class DlgFromTo : Gtk.Dialog {
-		public DlgFromTo(Gtk.Window parent, int org, int max, ActionType action, ItemType item)
+		public DlgFromTo(Gtk.Window parent, int org, int end, int max, ActionType action, ItemType item)
 		{
-			int to = org + 1;
-			
 			// Prepare limits
-			if ( to > max ) {
-				to = max;
+            if ( end > max ) {
+				end = max;
 			}
 			
 			// Prepare dialog
@@ -24,7 +22,7 @@ namespace Colorado.Gui {
 			sbFrom.SetRange( 1, max );
 			sbTo.SetRange( 1, max );
 			sbFrom.Value = org;
-			sbTo.Value = to;
+			sbTo.Value = end;
 		}
 		
 		private void Build() {
