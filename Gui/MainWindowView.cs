@@ -1,29 +1,7 @@
 ﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
-    using Core.Cfg;
-
     public partial class MainWindow {
-        public MainWindow()
-            : base( Gtk.WindowType.Toplevel )
-        {
-            this.Title = Core.AppInfo.Name;
-            this.Build();
-
-            this.lastFileName = "";
-            this.document = null;
-            this.txtToFind = "";
-            this.ActivateIde( false );
-            this.cfg = Config.Load();
-            this.LoadRecentFilesIntoMenu();
-        }
-
-        public MainWindow(string fileName)
-            : this()
-        {
-            this.OpenDocument( fileName );
-        }
-
         void Build()
         {
             var vPanel = new Gtk.VBox( false, 2 );

@@ -4,11 +4,13 @@
  */
 
 namespace Colorado.Gui {
-	using System;
-	using Colorado.Core;
-	using System.Collections.Generic;
-	
-	using GtkUtil;
+    using System;
+    using System.Collections.Generic;
+
+    using Core;
+    using Core.Cfg;
+
+    using GtkUtil;
     
     public partial class MainWindow: Gtk.Window {
         public const int NumFixedColumns = 1;
@@ -17,6 +19,26 @@ namespace Colorado.Gui {
         const int MaxFileLengthForTitle = 40;
         const string LongFilePrefix = "...";
         const string NoNamedFile = "nonamed.csv";
+
+        public MainWindow()
+            : base( Gtk.WindowType.Toplevel )
+        {
+            this.Title = AppInfo.Name;
+            this.Build();
+
+            this.lastFileName = "";
+            this.Document = null;
+            this.txtToFind = "";
+            this.ActivateIde( false );
+            this.cfg = Config.Load();
+            this.LoadRecentFilesIntoMenu();
+        }
+
+        public MainWindow(string fileName)
+            : this()
+        {
+            this.OpenDocument( fileName );
+        }
 
         /// <summary>Loads all the recent files into menu.</summary>
         void LoadRecentFilesIntoMenu()
@@ -49,13 +71,9 @@ namespace Colorado.Gui {
         }
 
 
-        public CsvDocument Document {
-            get { return this.document; }
-        }
-
         protected void PrepareDocument(CsvDocument doc)
         {
-            this.document = doc;
+            this.Document = doc;
             this.Document.ClientUpdater += this.UpdateFromData;
         }   
 
@@ -103,7 +121,7 @@ namespace Colorado.Gui {
             this.findAgainAction.Sensitive     = active;
 
             this.ShowProjectInfo();
-			this.SetCurrentCell( 0, 0, false );
+            this.SetCurrentCell( 0, 0, false );
             Util.UpdateUI();
         }
 
@@ -111,7 +129,7 @@ namespace Colorado.Gui {
         {
             int row = 0;
 
-            if ( this.document != null ) {
+            if ( this.Document != null ) {
                 this.GetCurrentCell( out row, out int column );
             }
 
@@ -120,7 +138,7 @@ namespace Colorado.Gui {
 
         protected void ShowDocument(int numRow)
         {
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -130,7 +148,7 @@ namespace Colorado.Gui {
 
             try {
                 // Create liststore
-                var types = new Type[ document.Data.NumColumns + 1 ];
+                var types = new Type[ this.Document.Data.NumColumns + 1 ];
                 for(int typeNumber = 0; typeNumber < types.Length; ++typeNumber) {
                     types[ typeNumber ] = typeof( string );
                 }
@@ -154,10 +172,11 @@ namespace Colorado.Gui {
                 tvTable.AppendColumn( column );
 
                 // Create columns belonging to the document
-                for(int colNum = 0; colNum < document.Data.NumColumns; ++colNum) {
+                for(int colNum = 0; colNum < this.Document.Data.NumColumns; ++colNum)
+                {
                     column = new Gtk.TreeViewColumn { Expand = true };
                     cell = new Gtk.CellRendererText();
-                    column.Title = document.Data.ColumnInfo[ colNum ].Header;
+                    column.Title = this.Document.Data.ColumnInfo[ colNum ].Header;
                     column.PackStart( cell, true );
                     cell.Editable = true;
                     column.AddAttribute( cell, "text", colNum + 1 );
@@ -168,9 +187,9 @@ namespace Colorado.Gui {
 
                 // Insert data
                 var row = new List<string>();
-                for (int i = 0; i < document.Data.NumRows; ++i) {
+                for (int i = 0; i < this.Document.Data.NumRows; ++i) {
                     row.Clear();
-                    row.AddRange( document.Data[ i ] );
+                    row.AddRange( this.Document.Data[ i ] );
                     row.Insert( 0, Convert.ToString( i + 1 ) );
 
                     listStore.AppendValues( row.ToArray() );
@@ -213,7 +232,7 @@ namespace Colorado.Gui {
 
         void OnFind()
         {
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -276,7 +295,7 @@ namespace Colorado.Gui {
                 Util.MsgError(
                             this, AppInfo.Name,
                             "Error while loading file: '" + e.Message + '\'' );
-                this.document = null;
+                this.Document = null;
                 this.SetStatus();
             }
 
@@ -285,46 +304,56 @@ namespace Colorado.Gui {
 
         bool OnCloseDocument()
         {
-			bool toret = true;
+            bool toret = true;
 
-			if ( this.document != null ) {
-				if ( Util.Ask( this, AppInfo.Name,
-                               "Close spreadsheet '" + document.FileName + "' ?" ) )
+            if ( this.Document != null ) {
+                if ( Util.Ask( this, AppInfo.Name,
+                               "Close spreadsheet '" + this.Document.FileName + "' ?" ) )
                 {
-					this.CloseDocument();
-				} else {
-					toret = false;
-				}
+                    this.CloseDocument();
+                } else {
+                    toret = false;
+                }
             }
 
-			return toret;
+            return toret;
         }
 
-		void CloseDocument() {
-			if ( this.document.Changed ) {
-				// Save the document, if needed
-				if ( Util.Ask( this, AppInfo.Name, "Save spreadsheet '" + document.FileName + "' ?" ) ) {
-					this.OnSave();
-				}
-			}
+        void CloseDocument() {
+            if ( this.Document.Changed ) {
+                // Save the document, if needed
+                if ( Util.Ask( this, AppInfo.Name,
+                                        "Save spreadsheet '"
+                                        + this.Document.FileName + "' ?" ) )
+                {
+                    this.OnSave();
+                }
+            }
 
-			this.document = null;
-			this.ActivateIde( false );
-		}
+            this.Document = null;
+            this.ActivateIde( false );
+        }
 
+        /// <summary>
+        /// Opens a new document.
+        /// </summary>
         void OnOpen()
         {
-			if ( this.OnCloseDocument() ) {
-	            if ( Util.DlgOpen(
+            if ( this.OnCloseDocument() ) {
+                if ( string.IsNullOrWhiteSpace( this.lastFileName ) ) {
+                    this.lastFileName = ".";    
+                }
+
+                if ( Util.DlgOpen(
                     AppInfo.Name,
-					"Open spreadsheet",
-	                this,
-	                ref this.lastFileName,
-	                CsvDocumentPersistence.FileFilter[ 0 ] ) )
-	            {
-	                this.OpenDocument( this.lastFileName, '\0', true );
-	            }
-			}
+                    "Open spreadsheet",
+                    this,
+                    ref this.lastFileName,
+                    CsvDocumentPersistence.FileFilter[ 0 ] ) )
+                {
+                    this.OpenDocument( this.lastFileName, '\0', true );
+                }
+            }
 
             return;
         }
@@ -348,8 +377,8 @@ namespace Colorado.Gui {
             string titleFile;
 
             // Prepare file title
-            if ( this.document != null ) {
-                titleFile = this.document.FileName;
+            if ( this.Document != null ) {
+                titleFile = this.Document.FileName;
 
                 if ( titleFile.Length > ( MaxFileLengthForTitle + LongFilePrefix.Length ) )
                 {
@@ -369,12 +398,12 @@ namespace Colorado.Gui {
 
         protected void ShowProjectInfo()
         {
-            if ( this.document != null ) {
+            if ( this.Document != null ) {
                 string delimiter = Delimiter.GetName( this.Document.DelimiterValue );
                 string text = "field";
                 string number = "4";
 
-                if ( this.document.SurroundText ) {
+                if ( this.Document.SurroundText ) {
                     text = "\"field\"";
                 }
 
@@ -393,17 +422,17 @@ namespace Colorado.Gui {
             return;
         }
 
-		bool OnQuit()
+        bool OnQuit()
         {
-			bool toret = true;
+            bool toret = true;
 
-			if ( this.OnCloseDocument() ) {
-				this.Visible = false;
-				Gtk.Application.Quit();
-				toret = false;
-			}
+            if ( this.OnCloseDocument() ) {
+                this.Visible = false;
+                Gtk.Application.Quit();
+                toret = false;
+            }
 
-			return toret;
+            return toret;
         }
 
         void OnImport()
@@ -426,23 +455,23 @@ namespace Colorado.Gui {
         /// <param name="edit">Start editing the cell if set to <c>true</c>.</param>
         public void SetCurrentCell(int rowIndex, int colIndex, bool edit = false)
         {
-			if ( this.document != null ) {
-				var rowPath = new Gtk.TreePath( new int[]{ rowIndex } );
-				Gtk.TreeViewColumn colPath = this.tvTable.Columns[ colIndex ];
+            if ( this.Document != null ) {
+                var rowPath = new Gtk.TreePath( new int[]{ rowIndex } );
+                Gtk.TreeViewColumn colPath = this.tvTable.Columns[ colIndex ];
 
-				this.tvTable.ScrollToCell(
-					rowPath,
-					colPath,
-					false,
-					(float) 0.0,
-					(float) 0.0
-				);
+                this.tvTable.ScrollToCell(
+                    rowPath,
+                    colPath,
+                    false,
+                    (float) 0.0,
+                    (float) 0.0
+                );
 
-				this.tvTable.SetCursor( rowPath, colPath, edit );
-			}
+                this.tvTable.SetCursor( rowPath, colPath, edit );
+            }
 
-			this.tvTable.GrabFocus();
-			return;
+            this.tvTable.GrabFocus();
+            return;
         }
 
         public void GetCurrentCell(out int row, out int col)
@@ -501,7 +530,7 @@ namespace Colorado.Gui {
 
                 // Store data
                 try {
-                    this.document.Data[ rowIndex, colIndex - NumFixedColumns ] = args.NewText;
+                    this.Document.Data[ rowIndex, colIndex - NumFixedColumns ] = args.NewText;
                     this.tvTable.Model.SetValue( rowPointer, colIndex, args.NewText );
 
                     if ( args.NewText == "" ) {
@@ -511,8 +540,8 @@ namespace Colorado.Gui {
                     this.Document.Changed = true;
                 } catch(Exception exc) {
                     Util.MsgError( this, AppInfo.Name, "Passing coordinates to data:\n"
-                        + "Rows: " + document.Data.NumRows + "\n"
-                        + "Columns: " + document.Data.NumColumns + "\n"
+                        + "Rows: " + this.Document.Data.NumRows + "\n"
+                        + "Columns: " + this.Document.Data.NumColumns + "\n"
                         + exc.Message
                     );
                 }
@@ -525,11 +554,11 @@ namespace Colorado.Gui {
         void OnSave()
         {
             try {
-                if ( this.document != null ) {
-                    if ( this.document.Changed ) {
-                        if ( this.document.HasName ) {
+                if ( this.Document != null ) {
+                    if ( this.Document.Changed ) {
+                        if ( this.Document.HasName ) {
                             this.SetStatus( "Saving..." );
-                            new CsvDocumentPersistence( Document ).SaveCsvData();
+                            new CsvDocumentPersistence( this.Document ).SaveCsvData();
                             this.SetStatus();
                         } else {
                             this.OnSaveAs();
@@ -558,7 +587,7 @@ namespace Colorado.Gui {
                 }
 
                 // Ask for name
-                if ( this.document != null ) {
+                if ( this.Document != null ) {
                     if ( Util.DlgOpen(
                         AppInfo.Name, "Save spreadsheet as...",
                         this,
@@ -566,8 +595,8 @@ namespace Colorado.Gui {
                         CsvDocumentPersistence.FileFilter[ 0 ] ) )
                     {
                         this.SetStatus( "Saving..." );
-                        this.document.FileName = this.lastFileName;
-                        this.lastFileName = this.document.FileName;  // CSVDoc fixed filename
+                        this.Document.FileName = this.lastFileName;
+                        this.lastFileName = this.Document.FileName;  // CSVDoc fixed filename
                         new CsvDocumentPersistence( this.Document ).SaveCsvData();
                         this.SetTitle();
                         this.SetStatus();
@@ -585,8 +614,8 @@ namespace Colorado.Gui {
         {
             ExportOptions options = null;
 
-            if ( this.document != null ) {
-                DlgExport dlg = new DlgExport( this, this.document );
+            if ( this.Document != null ) {
+                DlgExport dlg = new DlgExport( this, this.Document );
 
                 if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                     try {
@@ -595,7 +624,7 @@ namespace Colorado.Gui {
                         if ( fn.Trim().Length > 0 ) {
                             this.lastFileName = fn;
                             
-                            options = new ExportOptions( fn, this.document ) {
+                            options = new ExportOptions( fn, this.Document ) {
                                 ExporterId = dlg.ExporterId,
                                 IncludeRowNumbers = dlg.IncludeRowNumbers,
                                 IncludeTableBorder = dlg.IncludeTableBorder,
@@ -640,17 +669,17 @@ namespace Colorado.Gui {
         {
             this.SetStatus( "Reconfiguring..." );
 
-            if ( this.document.Changed ) {
-                if ( this.document.Data.NumRows != oldRows
-                  || this.document.Data.NumColumns != oldColumns )
+            if ( this.Document.Changed ) {
+                if ( this.Document.Data.NumRows != oldRows
+                  || this.Document.Data.NumColumns != oldColumns )
                 {
                     this.ShowDocument();
                 } else {
                     // Update headers
-                    for(int j = 0; j < this.document.Data.ColumnInfo.Length; ++j)
+                    for(int j = 0; j < this.Document.Data.ColumnInfo.Length; ++j)
                     {
                         this.tvTable.Columns[ j + NumFixedColumns ].Title =
-                            this.document.Data.ColumnInfo[ j ].Header;
+                            this.Document.Data.ColumnInfo[ j ].Header;
                     }
                 }
 
@@ -666,40 +695,40 @@ namespace Colorado.Gui {
         /// <param name="dlg">The properties dialog</param>
         void ApplyChangedProperties(DlgProperties dlg)
         {
-            if ( dlg.DecimalMarkValue != this.document.DecimalSeparator ) {
-				this.document.DecimalSeparator = dlg.DecimalMarkValue;
+            if ( dlg.DecimalMarkValue != this.Document.DecimalSeparator ) {
+                this.Document.DecimalSeparator = dlg.DecimalMarkValue;
                 this.ShowDocument();
             }
 
-            this.document.DelimiterValue = dlg.DelimiterValue;
-            this.document.SurroundText = dlg.SurroundText;
+            this.Document.DelimiterValue = dlg.DelimiterValue;
+            this.Document.SurroundText = dlg.SurroundText;
 
             // Check rows and headers size
-            if ( this.document.Data.NumColumns > dlg.NumColumns ) {
+            if ( this.Document.Data.NumColumns > dlg.NumColumns ) {
                 if ( !Util.Ask( this, AppInfo.Name, "The new column value is lower. This will imply data loss. Are you sure?" ) ) {
-                    dlg.NumColumns = this.document.Data.NumColumns;
-                    dlg.NumRows = this.document.Data.NumRows;
+                    dlg.NumColumns = this.Document.Data.NumColumns;
+                    dlg.NumRows = this.Document.Data.NumRows;
                     goto Exit;
                 }
             }
 
-            if ( this.document.Data.NumRows > dlg.NumRows ) {
+            if ( this.Document.Data.NumRows > dlg.NumRows ) {
                 if ( !Util.Ask( this, AppInfo.Name, "The new row value is lower. This will imply data loss. Are you sure?" ) ) {
-                    dlg.NumColumns = this.document.Data.NumColumns;
-                    dlg.NumRows = this.document.Data.NumRows;
+                    dlg.NumColumns = this.Document.Data.NumColumns;
+                    dlg.NumRows = this.Document.Data.NumRows;
                     goto Exit;
                 }
             }
 
             // Now yes, modify the size
-            this.document.Data.NumColumns = dlg.NumColumns;
-            this.document.Data.NumRows = dlg.NumRows;
+            this.Document.Data.NumColumns = dlg.NumColumns;
+            this.Document.Data.NumRows = dlg.NumRows;
 
             // Modify headers, if needed
-            if ( this.document.Data.FirstRowContainsHeaders != dlg.FirstRowForHeaders )
+            if ( this.Document.Data.FirstRowContainsHeaders != dlg.FirstRowForHeaders )
             {
-                this.document.Data.FirstRowContainsHeaders = dlg.FirstRowForHeaders;
-                dlg.NumRows = this.document.Data.NumRows;
+                this.Document.Data.FirstRowContainsHeaders = dlg.FirstRowForHeaders;
+                dlg.NumRows = this.Document.Data.NumRows;
             }
 
             Exit:
@@ -708,11 +737,11 @@ namespace Colorado.Gui {
 
         void OnProperties()
         {
-            if ( this.document != null ) {
+            if ( this.Document != null ) {
                 Gtk.ResponseType answer;
-                var dlg = new DlgProperties( this, this.document );
-                var oldRows = this.document.Data.NumRows;
-                var oldColumns = this.document.Data.NumColumns;
+                var dlg = new DlgProperties( this, this.Document );
+                var oldRows = this.Document.Data.NumRows;
+                var oldColumns = this.Document.Data.NumColumns;
 
                 do {
                     answer = (Gtk.ResponseType) dlg.Run();
@@ -721,11 +750,11 @@ namespace Colorado.Gui {
                         this.ApplyChangedProperties( dlg );
                         this.UpdateDocumentView( oldRows, oldColumns );
                         Util.UpdateUI();
-                        oldRows = this.document.Data.NumRows;
-                        oldColumns = this.document.Data.NumColumns;
+                        oldRows = this.Document.Data.NumRows;
+                        oldColumns = this.Document.Data.NumColumns;
                     }
-				} while( answer != Gtk.ResponseType.Close
-					  && answer != Gtk.ResponseType.DeleteEvent );
+                } while( answer != Gtk.ResponseType.Close
+                      && answer != Gtk.ResponseType.DeleteEvent );
 
                 // Apply changes
                 this.ApplyChangedProperties( dlg );
@@ -740,22 +769,22 @@ namespace Colorado.Gui {
 
         void OnNew()
         {
-			if ( this.OnCloseDocument() ) {
-				// Create new document
-				this.PrepareDocument( new CsvDocument( 10, 10 ) );
+            if ( this.OnCloseDocument() ) {
+                // Create new document
+                this.PrepareDocument( new CsvDocument( 10, 10 ) );
 
-				// Trigger the properties dialog
-				this.ShowDocument();
-				this.SetTitle();
-				this.OnProperties();
+                // Trigger the properties dialog
+                this.ShowDocument();
+                this.SetTitle();
+                this.OnProperties();
 
-				// Show everything
-				this.ShowDocument();
-				this.ShowProjectInfo();
-				this.ActivateIde();
-			}
+                // Show everything
+                this.ShowDocument();
+                this.ShowProjectInfo();
+                this.ActivateIde();
+            }
 
-			return;
+            return;
         }
 
         public void FindText(int rowBegin)
@@ -767,9 +796,9 @@ namespace Colorado.Gui {
         {
             this.tvTable.GrabFocus();
 
-            for(int i = rowBegin; i < this.document.Data.NumRows; ++i) {
-                for(int j = 0; j < this.document.Data.NumColumns; ++j) {
-                    var cell = this.document.Data[ i, j ].Trim().ToLower();
+            for(int i = rowBegin; i < this.Document.Data.NumRows; ++i) {
+                for(int j = 0; j < this.Document.Data.NumColumns; ++j) {
+                    var cell = this.Document.Data[ i, j ].Trim().ToLower();
 
                     if ( cell.Contains( txtToFind ) ) {
                         int[] path = { i };
@@ -785,7 +814,7 @@ namespace Colorado.Gui {
 
         void OnFindAgain()
         {
-            if ( this.document != null ) {
+            if ( this.Document != null ) {
                 this.GetCurrentCell( out int row, out int col );
                 this.FindText( row + 1 );
             } else {
@@ -804,10 +833,10 @@ namespace Colorado.Gui {
                 this.tvTable.Model.GetIter( out Gtk.TreeIter rowPointer, rowPath );
 
                 // Refresh row
-                for(int j = col; j < document.Data.NumColumns; ++j) {
+                for(int j = col; j < this.Document.Data.NumColumns; ++j) {
                     // do It for each cell
                     this.tvTable.Model.SetValue( rowPointer, j + 1,
-                        Convert.ToString( this.document.Data[ i, j ] )
+                        Convert.ToString( this.Document.Data[ i, j ] )
                     );
                 }
             }
@@ -839,7 +868,7 @@ namespace Colorado.Gui {
         void OnClearRows()
         {
             // Get position
-            if ( document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -848,7 +877,7 @@ namespace Colorado.Gui {
             this.DetermineSelectedRows( out int rowBegin, out int rowEnd );
 
             var dlg = new DlgFromTo( this,
-                rowBegin, rowEnd, document.Data.NumRows,
+                rowBegin, rowEnd, this.Document.Data.NumRows,
                 DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Rows );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
@@ -858,7 +887,7 @@ namespace Colorado.Gui {
 
                 try {
                     // do it
-                    this.document.Data.CleanRows( 0, rowBegin, rowEnd );
+                    this.Document.Data.CleanRows( 0, rowBegin, rowEnd );
                     this.RefreshRows( 0, rowBegin, rowEnd );
                 } catch(Exception exc) {
                     Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -871,7 +900,7 @@ namespace Colorado.Gui {
         void OnClearColumns()
         {
             // Chk
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -881,7 +910,7 @@ namespace Colorado.Gui {
             ++colBegin;
 
             var dlg = new DlgFromTo( this,
-                colBegin, colBegin + 1, document.Data.NumColumns,
+                colBegin, colBegin + 1, this.Document.Data.NumColumns,
                 DlgFromTo.ActionType.Clean, DlgFromTo.ItemType.Columns );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
@@ -891,7 +920,7 @@ namespace Colorado.Gui {
 
                 try {
                     // do it
-                    this.document.Data.CleanColumns( row, colBegin, colEnd );
+                    this.Document.Data.CleanColumns( row, colBegin, colEnd );
                     ShowDocument();
                 } catch (System.Exception exc) {
                     Util.MsgError( this, AppInfo.Name, exc.Message );
@@ -904,7 +933,7 @@ namespace Colorado.Gui {
         void OnAddRows()
         {
             // Chk
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -926,7 +955,7 @@ namespace Colorado.Gui {
                         && dlg.Where == DlgIncDec.WherePosition.After )
                     {
                         // Add mode
-                        this.document.Data.NumRows += dlg.Number;
+                        this.Document.Data.NumRows += dlg.Number;
                     } else {
                         int modifier = 0;
 
@@ -936,7 +965,7 @@ namespace Colorado.Gui {
                             modifier = -1;
                         }
 
-                        this.document.Data.InsertRows( dlg.From - NumFixedRows - modifier, dlg.Number );
+                        this.Document.Data.InsertRows( dlg.From - NumFixedRows - modifier, dlg.Number );
                     }
 
                     this.ShowDocument();
@@ -951,7 +980,7 @@ namespace Colorado.Gui {
         void OnAddColumns()
         {
             // Chk
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -962,7 +991,7 @@ namespace Colorado.Gui {
             var dlg = new DlgIncDec( this,
                 DlgIncDec.DialogType.Insert,
                 DlgIncDec.Target.Columns,
-				col + 1, col + 2, int.MaxValue
+                col + 1, col + 2, int.MaxValue
             );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
@@ -971,7 +1000,7 @@ namespace Colorado.Gui {
                     if ( dlg.From == this.Document.Data.NumColumns
                         && dlg.Where == DlgIncDec.WherePosition.After )
                     {
-                        this.document.Data.NumColumns += dlg.Number;
+                        this.Document.Data.NumColumns += dlg.Number;
                     } else {
                         int modifier = 0;
 
@@ -981,7 +1010,7 @@ namespace Colorado.Gui {
                             modifier = -1;
                         }
 
-                        this.document.Data.InsertColumns( dlg.From - NumFixedColumns - modifier, dlg.Number );
+                        this.Document.Data.InsertColumns( dlg.From - NumFixedColumns - modifier, dlg.Number );
                     }
 
                     this.ShowDocument();
@@ -995,28 +1024,28 @@ namespace Colorado.Gui {
 
         void OnRevert()
         {
-            var oldDocument = this.document;
+            var oldDocument = this.Document;
 
             // Chk
-            if ( this.document != null ) {
+            if ( this.Document != null ) {
                 if ( Util.Ask( this, AppInfo.Name, "Revert to the file on disk. Are you sure?" ) )
                 {
                     // Store the parameters and reload  
-                    var fileName = document.FileName;
-                    var firstRowForHeaders = document.Data.FirstRowContainsHeaders;
-                    char delimiter = document.DelimiterValue[ 0 ];
-                    this.document = null;
+                    var fileName = this.Document.FileName;
+                    var firstRowForHeaders = this.Document.Data.FirstRowContainsHeaders;
+                    char delimiter = this.Document.DelimiterValue[ 0 ];
+                    this.Document = null;
 
                     try {
                         OpenDocument( fileName, delimiter, firstRowForHeaders );
 
                         // Check result
-                        if ( this.document == null ) {
-                            this.document = oldDocument;
+                        if ( this.Document == null ) {
+                            this.Document = oldDocument;
                         }
                     } catch(Exception exc)
                     {
-                        this.document = oldDocument;
+                        this.Document = oldDocument;
                         Util.MsgError( this, AppInfo.Name, exc.Message );
                     }
                 }
@@ -1030,7 +1059,7 @@ namespace Colorado.Gui {
         void OnRemoveRows()
         {
             // Chk
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -1042,14 +1071,14 @@ namespace Colorado.Gui {
                 DlgIncDec.DialogType.Erase,
                 DlgIncDec.Target.Rows,
                 rowBegin, rowEnd,
-                this.document.Data.NumRows
+                this.Document.Data.NumRows
             );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
                     this.SetStatus( "Removing rows" );
-                    this.document.Data.RemoveRows( dlg.From - NumFixedRows, dlg.Number );
+                    this.Document.Data.RemoveRows( dlg.From - NumFixedRows, dlg.Number );
                     this.ShowDocument();
                     this.SetStatus();
                 } catch(Exception exc) {
@@ -1063,7 +1092,7 @@ namespace Colorado.Gui {
         void OnRemoveColumns()
         {
             // Chk
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -1075,14 +1104,14 @@ namespace Colorado.Gui {
                 DlgIncDec.DialogType.Erase,
                 DlgIncDec.Target.Columns,
                 col + 1, col + 2,
-                this.document.Data.NumColumns
+                this.Document.Data.NumColumns
             );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                 try {
                     // do it
                     this.SetStatus( "Removing columns" );
-                    this.document.Data.RemoveColumns( dlg.From - NumFixedColumns, dlg.Number );
+                    this.Document.Data.RemoveColumns( dlg.From - NumFixedColumns, dlg.Number );
                     this.ShowDocument();
                     this.SetStatus();
                 } catch(Exception exc) {
@@ -1096,20 +1125,20 @@ namespace Colorado.Gui {
         void OnCopyRow()
         {
             // Chk
-            if ( this.document != null ) {
+            if ( this.Document != null ) {
 
                 // Get current position
                 this.DetermineSelectedRows( out int rowBegin, out int rowEnd );
 
                 var dlg = new DlgFromTo( this,
-                    rowBegin, rowBegin + 1, document.Data.NumRows,
+                    rowBegin, rowBegin + 1, this.Document.Data.NumRows,
                     DlgFromTo.ActionType.Copy, DlgFromTo.ItemType.Rows );
 
                 if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
                     try {
                         // do it
                         this.SetStatus( "Copying row" );
-                        this.document.Data.CopyRow( dlg.From - NumFixedRows, dlg.To - NumFixedRows );
+                        this.Document.Data.CopyRow( dlg.From - NumFixedRows, dlg.To - NumFixedRows );
                         this.ShowDocument();
                         this.SetStatus();
                     } catch(Exception exc) {
@@ -1129,7 +1158,7 @@ namespace Colorado.Gui {
         void OnCopyColumn()
         {
             // Chk
-            if ( this.document == null ) {
+            if ( this.Document == null ) {
                 Util.MsgError( this, AppInfo.Name, "Document does not exist" );
                 return;
             }
@@ -1139,7 +1168,7 @@ namespace Colorado.Gui {
 
             var dlg = new DlgFromTo( this,
                 col + 1, col + 2,
-                this.document.Data.NumColumns,
+                this.Document.Data.NumColumns,
                 DlgFromTo.ActionType.Copy,
                 DlgFromTo.ItemType.Columns );
 
@@ -1147,7 +1176,7 @@ namespace Colorado.Gui {
                 try {
                     // do it
                     this.SetStatus( "Copying column" );
-                    this.document.Data.CopyColumn( dlg.From - NumFixedColumns, dlg.To - NumFixedColumns );
+                    this.Document.Data.CopyColumn( dlg.From - NumFixedColumns, dlg.To - NumFixedColumns );
                     this.ShowDocument();
                     this.SetStatus();
                 } catch(Exception exc) {
@@ -1232,7 +1261,7 @@ namespace Colorado.Gui {
             // Get the current position, needed in both cases.
             this.GetCurrentCell( out int rowIndex, out int colIndex );
 
-			// Adapt the column
+            // Adapt the column
             colIndex += NumFixedColumns;
 
             if ( args.Event.Key != Gdk.Key.ISO_Enter ) {
@@ -1243,7 +1272,7 @@ namespace Colorado.Gui {
                         // Back
                         colIndex -= 1;
                         if ( colIndex < 1 ) {
-                            colIndex = document.Data.NumColumns;
+                            colIndex = this.Document.Data.NumColumns;
                             --rowIndex;
                         }
 
@@ -1251,12 +1280,12 @@ namespace Colorado.Gui {
                     } else {
                         // Advance
                         colIndex += 1;
-                        if ( colIndex > document.Data.NumColumns ) {
+                        if ( colIndex > this.Document.Data.NumColumns ) {
                             colIndex = 1;
                             ++rowIndex;
                         }
 
-                        rowIndex = Math.Min( rowIndex, document.Data.NumRows );
+                        rowIndex = Math.Min( rowIndex, this.Document.Data.NumRows );
                     }
 
                     this.SetCurrentCell( rowIndex, colIndex );
@@ -1389,7 +1418,15 @@ namespace Colorado.Gui {
             dlg.Destroy();
         }
 
-        CsvDocument document;
+        /// <summary>
+        /// Gets the document being edited.
+        /// Can be null if no document is being edited.
+        /// </summary>
+        /// <value>The document.</value>
+        public CsvDocument Document {
+            get; private set;
+        }
+
         string txtToFind;
         public string lastFileName;
         Core.Cfg.Config cfg;
