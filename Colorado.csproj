@@ -86,6 +86,7 @@
       <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="System.Json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -136,6 +137,8 @@
     <Compile Include="Core\Exporters\ExcelExporter.cs" />
     <Compile Include="Core\Exporters\TxtExporter.cs" />
     <Compile Include="Core\Exporters\CsvExporter.cs" />
+    <Compile Include="Core\Exporters\JsonExporter.cs" />
+    <Compile Include="Core\Exporters\XmlExporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />

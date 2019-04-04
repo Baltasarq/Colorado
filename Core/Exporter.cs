@@ -8,6 +8,8 @@ namespace Colorado.Core {
 
     /// <summary>Base class for all exporters.</summary>
     public abstract class Exporter {
+        protected const string EtqId = "_id_";
+
         /// <summary>Save this instance.</summary>
         public abstract void Save();
 
