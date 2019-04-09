@@ -48,7 +48,7 @@ namespace Colorado.Gui {
                 Core.AppInfo.Name, "Open",
                 (Gtk.Window) this.Parent,
                 ref lastFileName,
-                importer.FileExtension ) )
+                "*." + importer.FileExtension ) )
             {
                 this.edFileName.Text = lastFileName;
             }
