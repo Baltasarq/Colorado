@@ -71,10 +71,19 @@ namespace Colorado.Gui {
         }
 
 
-        protected void PrepareDocument(CsvDocument doc)
+        void PrepareForDocument(CsvDocument doc)
         {
             this.Document = doc;
-            this.Document.ClientUpdater += this.UpdateFromData;
+
+            if ( doc != null ) {
+                this.Document.ClientUpdater += this.UpdateFromData;
+                this.lastFileName = doc.FileName;
+                this.AppendRecentFileToMenu( doc.FileName );
+                this.ShowDocument();
+                this.ShowProjectInfo();
+            }
+
+            this.ActivateIde( doc != null );
         }   
 
         void ActivateIde()
@@ -283,14 +292,7 @@ namespace Colorado.Gui {
                     loader.Load( fn, delim, useHeaders );
                 }
 
-                this.PrepareDocument( loader.Document );
-
-                // Show it
-                this.lastFileName = fn;
-                this.ShowDocument();
-                this.ShowProjectInfo();
-                this.ActivateIde();
-                this.AppendRecentFileToMenu( fn );
+                this.PrepareForDocument( loader.Document );
             } catch(Exception e) {
                 Util.MsgError(
                             this, AppInfo.Name,
@@ -319,7 +321,8 @@ namespace Colorado.Gui {
             return toret;
         }
 
-        void CloseDocument() {
+        void CloseDocument()
+        {
             if ( this.Document.Changed ) {
                 // Save the document, if needed
                 if ( Util.Ask( this, AppInfo.Name,
@@ -390,8 +393,7 @@ namespace Colorado.Gui {
                 }
 
                 this.Title = titleFile + " - " + AppInfo.Name;
-            }
-            else {
+            } else {
                 this.Title = AppInfo.Name;
             }
         }
@@ -440,7 +442,19 @@ namespace Colorado.Gui {
             var dlg = new DlgImport( this );
 
             if ( ( (Gtk.ResponseType) dlg.Run() ) == Gtk.ResponseType.Ok ) {
-                this.OpenDocument( dlg.FileName, dlg.Delimiter, dlg.FirstRowForHeaders );
+                try {
+                    if ( this.OnCloseDocument() ) {
+                        var options = dlg.Options;
+                        var importer = Importer.GetImporter( options.ImportId );
+
+                        importer.Options = options;
+                        this.PrepareForDocument( importer.Load() );
+                    }
+                } catch(Exception exc) {
+                    Util.MsgError( this, AppInfo.Name,
+                                         "unable to import: " + exc.Message );
+                    this.PrepareForDocument( null );
+                }
             }
 
             this.lastFileName = dlg.FileName;
@@ -771,17 +785,11 @@ namespace Colorado.Gui {
         {
             if ( this.OnCloseDocument() ) {
                 // Create new document
-                this.PrepareDocument( new CsvDocument( 10, 10 ) );
+                this.PrepareForDocument( new CsvDocument( 10, 10 ) );
 
                 // Trigger the properties dialog
-                this.ShowDocument();
-                this.SetTitle();
                 this.OnProperties();
-
-                // Show everything
-                this.ShowDocument();
-                this.ShowProjectInfo();
-                this.ActivateIde();
+                this.PrepareForDocument( this.Document );
             }
 
             return;

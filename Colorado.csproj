@@ -139,6 +139,11 @@
     <Compile Include="Core\Exporters\CsvExporter.cs" />
     <Compile Include="Core\Exporters\JsonExporter.cs" />
     <Compile Include="Core\Exporters\XmlExporter.cs" />
+    <Compile Include="Core\Importer.cs" />
+    <Compile Include="Core\Importers\JsonImporter.cs" />
+    <Compile Include="Core\ImportOptions.cs" />
+    <Compile Include="Core\Importers\CsvImporter.cs" />
+    <Compile Include="Core\Importers\XmlImporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\colorado.ico" />
@@ -169,6 +174,7 @@
     <Folder Include="Core\Fillers\" />
     <Folder Include="Core\Cfg\" />
     <Folder Include="Core\Exporters\" />
+    <Folder Include="Core\Importers\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

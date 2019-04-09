@@ -494,7 +494,7 @@ namespace Colorado.Core {
 
 				// Assign values to new headers: col1, col2...
 				for (int i = oldCount; i < newColNum; ++i) {
-                    this.columnInfo[i] = new ColumnInfo {
+                    this.columnInfo[ i ] = new ColumnInfo {
                         Header = Core.ColumnInfo.ColEtq + (i + 1).ToString()
                     };
                 }
@@ -508,8 +508,8 @@ namespace Colorado.Core {
 		/// </summary>
 		internal void CreateDefaultHeaders()
 		{
-			CreateNewColumnsInfo( NumColumns );
-			CreateDefaultHeaders( 0 );
+			this.CreateNewColumnsInfo( NumColumns );
+			this.CreateDefaultHeaders( 0 );
             this.firstRowContainsHeaders = true;
 		}
 
@@ -584,18 +584,23 @@ namespace Colorado.Core {
 		}
 
         /// <summary>
-        /// Gets the headers.
+        /// Gets or set all the headers.
         /// </summary>
         /// <value>The headers, as an array of string.</value>
         public string[] Headers {
             get {
-                var toret = new List<string>();
+                var toret = new List<string>( this.columnInfo.Count );
 
                 foreach(ColumnInfo colInfo in this.columnInfo) {
                     toret.Add( colInfo.Header );
                 }
 
                 return toret.ToArray();
+            }
+            set {
+                for(int j = 0; j < this.columnInfo.Count; ++j) {
+                    this.ColumnInfo[ j ].Header = value[ j ];
+                }
             }
         }
 

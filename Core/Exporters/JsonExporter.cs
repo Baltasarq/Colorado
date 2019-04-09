@@ -1,4 +1,6 @@
-﻿namespace Colorado.Core.Exporters {
+﻿// Colorado (c) 2015/19 Baltasar MIT License <baltasarq@gmail.com>
+
+namespace Colorado.Core.Exporters {
     using System.IO;
     using System.Text;
     using System.Json;
