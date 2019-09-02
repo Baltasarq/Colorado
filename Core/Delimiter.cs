@@ -22,7 +22,7 @@ namespace Colorado.Core {
 			);
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Colorado.Delimiter"/> class.
+		/// Initializes a new instance of the <see cref="Colorado.Core.Delimiter"/> class.
 		/// </summary>
 		/// <param name="c">The delimiter to use, as char.</param>
 		public Delimiter(char c)
@@ -31,7 +31,7 @@ namespace Colorado.Core {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Colorado.Delimiter"/> class.
+		/// Initializes a new instance of the <see cref="Colorado.Core.Delimiter"/> class.
 		/// </summary>
 		/// <param name="d">The delimiter to use, as a string (can be special).</param>
 		public Delimiter(string d)
@@ -64,10 +64,10 @@ namespace Colorado.Core {
                     
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents the current
-        /// <see cref="Colorado.Delimiter"/>.
+        /// <see cref="Colorado.Core.Delimiter"/>.
         /// </summary>
         /// <returns>A <see cref="System.String"/>
-        /// that represents the current <see cref="Colorado.Delimiter"/>.</returns>
+        /// that represents the current <see cref="Colorado.Core.Delimiter"/>.</returns>
 		public override string ToString()
 		{
 			return Raw.ToString();
@@ -81,20 +81,31 @@ namespace Colorado.Core {
             get; private set;
 		}
 
-        public static string GetName(string delimiter) {
+        /// <summary>
+        /// Gets the name of a given delimiter.
+        /// </summary>
+        /// <returns>The name.</returns>
+        /// <param name="delimiter">Delimiter.</param>
+        public static string GetName(string delimiter)
+        {
             var toret = TabDelimiterName;
 
             if ( !string.IsNullOrWhiteSpace( delimiter ) ) {
-                toret = GetName( delimiter[ 0 ] );
+                if ( delimiter == TabDelimiterName) {
+                    toret = TabDelimiter.ToString();
+                } else {
+                    toret = GetName( delimiter[ 0 ] );
+                }
             }
 
             return toret;
         }
 
-        public static string GetName(char delimiter) {
+        public static string GetName(char delimiter)
+        {
             var toret = delimiter.ToString();
 
-            if ( toret == "\t" ) {
+            if ( toret == TabDelimiter.ToString() ) {
                 toret = TabDelimiterName;
             }
 

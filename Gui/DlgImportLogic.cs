@@ -1,7 +1,6 @@
 ﻿// Colorado (c) 2015-2018 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace Colorado.Gui {
-    using System;
     using GtkUtil;
 
     public partial class DlgImport {
@@ -10,6 +9,7 @@ namespace Colorado.Gui {
                 return new Core.ImportOptions( this.FileName ) {
                     ImportId = this.cmbType.ActiveText,
                     FirstRowIsForHeaders = this.FirstRowForHeaders,
+                    Delimiter = this.Delimiter
                 };
             }
         }
@@ -20,14 +20,7 @@ namespace Colorado.Gui {
 
         public char Delimiter {
             get {
-                string delimiter = this.cmbDelimiter.Entry.Text.Trim();
-                char toret = delimiter[ 0 ];
-
-                if ( delimiter.Length == 1 ) {
-                    toret = Core.Delimiter.TabDelimiter;
-                }
-
-                return toret;
+                return new Core.Delimiter( this.cmbDelimiter.Entry.Text.Trim() ).Raw;
             }
         }
 
@@ -42,7 +35,6 @@ namespace Colorado.Gui {
             }
 
             var importer = Core.Importer.GetImporter( this.cmbType.ActiveText );
-
 
             if ( Util.DlgOpen(
                 Core.AppInfo.Name, "Open",

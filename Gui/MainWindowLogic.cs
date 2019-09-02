@@ -645,7 +645,7 @@ namespace Colorado.Gui {
                                 ColumnsIncluded = dlg.ColumnsIncluded,
                                 QuotedText = dlg.SurroundWithDoubleQuotes
                             };
-                            
+
                             options.Delimiter.Name = dlg.DelimiterValue;
 
                             Exporter.Save( options );
