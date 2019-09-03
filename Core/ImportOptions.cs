@@ -8,7 +8,7 @@ namespace Colorado.Core {
             this.Path = path;
             this.FirstRowIsForHeaders = false;
             this.ImportId = Importers.CsvImporter.Name;
-            this.Delimiter = Core.Delimiter.CommaDelimiter;
+            this.Delimiter = new Delimiter();
         }
 
         /// <summary>Gets or sets the path to the file.</summary>
@@ -25,7 +25,7 @@ namespace Colorado.Core {
 
         /// <summary>Gets or sets the delimiter.</summary>
         /// <value>The delimiter, as a char.</value>
-        public char Delimiter {
+        public Delimiter Delimiter {
             get; set;
         }
 

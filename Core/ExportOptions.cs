@@ -16,12 +16,14 @@ namespace Colorado.Core {
 		/// <param name="doc">
 		/// A <see cref="CsvDocument"/> reference to the document to export.
 		/// </param>
-        public ExportOptions(String path, CsvDocument doc) {
+        public ExportOptions(String path, CsvDocument doc)
+        {
+            this.ExporterId = Exporters.CsvExporter.Name;
 			this.Path = path;
             this.Document = doc;
             this.IncludeRowNumbers = false;
 			this.IncludeTableBorder = false;
-            this.Delimiter = new Delimiter( doc.DelimiterValue );
+            this.Delimiter = doc.Delimiter;
 			this.QuotedText = doc.SurroundText;
 
 			this.FillDefaultColumnsIncluded();

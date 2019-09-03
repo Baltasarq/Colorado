@@ -714,7 +714,7 @@ namespace Colorado.Gui {
                 this.ShowDocument();
             }
 
-            this.Document.DelimiterValue = dlg.DelimiterValue;
+            this.Document.Delimiter = dlg.Delimiter;
             this.Document.SurroundText = dlg.SurroundText;
 
             // Check rows and headers size

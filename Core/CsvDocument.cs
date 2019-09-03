@@ -76,16 +76,28 @@ namespace Colorado.Core {
 		}
 
         /// <summary>
-        /// Gets or sets the delimiter value between data in the same row.
+        /// Gets the delimiter among between data in the same row.
         /// </summary>
         /// <value>The delimiter value.</value>
         public string DelimiterValue {
             get {
                 return this.delimiter.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets the delimiter among data in the same row.
+        /// </summary>
+        /// <value>The <see cref="Delimiter"/>.</value>
+        public Delimiter Delimiter {
+            get {
+                return this.delimiter;
+            }
             set {
-                this.delimiter.Name = value;
-                this.Changed = true;
+                if ( this.delimiter.Raw != value.Raw ) {
+                    this.delimiter = value;
+                    this.Changed = true;
+                }
             }
         }
 

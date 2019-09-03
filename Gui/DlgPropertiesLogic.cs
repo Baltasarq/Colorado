@@ -30,9 +30,9 @@ namespace Colorado.Gui {
             document.Changed = true;
         }
 
-        public string DelimiterValue {
+        public Delimiter Delimiter {
             get {
-                return this.cmbDelimiter.Entry.Text.Trim();
+                return new Delimiter( this.cmbDelimiter.Entry.Text.Trim() );
             }
         }
 

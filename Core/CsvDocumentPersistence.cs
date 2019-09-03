@@ -154,7 +154,7 @@ namespace Colorado.Core {
 
                     this.DetermineDelimiter( firstLine );
                 } else {
-                    this.Document.DelimiterValue = delimiter.ToString();
+                    this.Document.Delimiter = new Delimiter( delimiter );
                 }
 
     			// Check for the existence of a single line, and proceed
@@ -190,9 +190,9 @@ namespace Colorado.Core {
                 this.Document.Data.SetInitialSize( 1, 1 );
 
                 if ( delimiter == '\0' ) {
-                    this.Document.DelimiterValue = Delimiter.TabDelimiter.ToString();    
+                    this.Document.Delimiter = new Delimiter( Delimiter.TabDelimiter );
                 } else {
-                    this.Document.DelimiterValue = delimiter.ToString();
+                    this.Document.Delimiter = new Delimiter( delimiter );
                 }
 
                 this.Document.Data.CreateDefaultHeaders();
@@ -206,7 +206,7 @@ namespace Colorado.Core {
 		protected void DetermineDelimiter(string line)
 		{
             // Tab separator as default, for documents of one column.
-            Document.DelimiterValue = Delimiter.TabDelimiter.ToString();
+            Document.Delimiter = new Delimiter( Delimiter.TabDelimiter );
 
 			// Eliminate all double-quoted text
 			int qpos2 = 0;
@@ -225,8 +225,10 @@ namespace Colorado.Core {
 
 			// Now yes, determine delimiter
             for(int i = 0; i < Delimiter.PredefinedDelimiters.Count; ++i) {
-                if ( line.IndexOf( Delimiter.PredefinedDelimiters[ i ] ) > -1 ) {
-                    Document.DelimiterValue = Delimiter.PredefinedDelimiterNames[ i ];
+                char delimiter = Delimiter.PredefinedDelimiters[ i ];
+
+                if ( line.IndexOf( delimiter ) > -1 ) {
+                    Document.Delimiter = new Delimiter( delimiter );
                     break;
                 }
             }

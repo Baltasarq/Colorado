@@ -25,7 +25,7 @@ namespace Colorado.Core {
 		/// Initializes a new instance of the <see cref="Colorado.Core.Delimiter"/> class.
 		/// </summary>
 		/// <param name="c">The delimiter to use, as char.</param>
-		public Delimiter(char c)
+        public Delimiter(char c = CommaDelimiter)
 			: this( c.ToString() )
 		{
 		}

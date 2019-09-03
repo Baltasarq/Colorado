@@ -53,6 +53,8 @@
     <Compile Include="TestDecimalMark.cs" />
     <Compile Include="TestLoad.cs" />
     <Compile Include="TestDelimiter.cs" />
+    <Compile Include="TestExportOptions.cs" />
+    <Compile Include="TestImportOptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

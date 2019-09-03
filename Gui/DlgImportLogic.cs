@@ -18,9 +18,9 @@ namespace Colorado.Gui {
             get { return this.edFileName.Text; }
         }
 
-        public char Delimiter {
+        public Core.Delimiter Delimiter {
             get {
-                return new Core.Delimiter( this.cmbDelimiter.Entry.Text.Trim() ).Raw;
+                return new Core.Delimiter( this.cmbDelimiter.Entry.Text.Trim() );
             }
         }
 

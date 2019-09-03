@@ -10,14 +10,14 @@ namespace Colorado.Core {
 		private CsvDocument csvDocument = null;
 		private Position.Direction direction;
 
-        public Formula()
+        protected Formula()
         {
             this.csvDocument = null;
             this.position = null;
             this.direction = Position.Direction.Left;
         }
 
-        public Formula(CsvDocument doc, Position pos, Position.Direction dir)
+        protected Formula(CsvDocument doc, Position pos, Position.Direction dir)
         {
             this.csvDocument = doc;
             this.position = pos;

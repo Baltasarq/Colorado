@@ -11,7 +11,7 @@ namespace Colorado.Core.Importers {
         {
             string fn = this.Options.Path;
             bool useHeaders = this.Options.FirstRowIsForHeaders;
-            char delim = this.Options.Delimiter;
+            char delim = this.Options.Delimiter.Raw;
             var loader = new CsvDocumentPersistence();
 
             if ( delim == '\0' ) {
