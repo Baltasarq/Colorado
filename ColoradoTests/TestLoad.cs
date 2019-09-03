@@ -1,4 +1,6 @@
-﻿namespace ColoradoTests {
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
+
+namespace ColoradoTests {
     using System.IO;
 
     using NUnit.Framework;

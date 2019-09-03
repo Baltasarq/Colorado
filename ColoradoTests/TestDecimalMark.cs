@@ -1,9 +1,11 @@
-﻿using NUnit.Framework;
-using System;
-
-using Colorado.Core;
+﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
 namespace ColoradoTests {
+    using NUnit.Framework;
+    using System;
+
+    using Colorado.Core;
+
 	[TestFixture]
 	public class TestDecimalMark {
 		[Test]
