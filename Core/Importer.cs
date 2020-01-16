@@ -114,7 +114,7 @@ namespace Colorado.Core {
         /// <summary>
         /// Loads the document honoring the given id.
         /// </summary>
-        /// <param name="importId">The id for the importer.</param>
+        /// <param name="importOptions">A <see cref="ImportOptions"/> with the configuration.</param>
         public static CsvDocument Load(ImportOptions importOptions)
         {
             Importer importer = GetImporter( importOptions.ImportId );

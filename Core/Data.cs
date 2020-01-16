@@ -530,7 +530,7 @@ namespace Colorado.Core {
 		/// Assigns the headers contents.
 		/// </summary>
 		/// <param name="headers">
-		/// A <see cref="System.string[]"/> vector of headers.
+		/// A vector of headers.
 		/// </param>
 		internal void CreateNamedHeaders(string[] headers)
 		{

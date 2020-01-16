@@ -246,7 +246,9 @@ namespace Colorado.Core {
 					// Remove double quotes
 					toret = toret.Substring( 1 );
 
-					if ( toret[ toret.Length -1 ] == '"' ) {
+                    if ( toret.Length > 0
+					  && toret[ toret.Length -1 ] == '"' )
+                    {
 						toret = toret.Substring( 0, toret.Length -1 );
 					}
 				} else {

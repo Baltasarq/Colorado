@@ -41,9 +41,9 @@ namespace Colorado.Core {
         /// This is used in order to fill a row or a column from a start position.
         /// </summary>
         /// <param name="doc">The document in which to fill.</param>
-        /// <param name="r">Starting row</param>
-        /// <param name="c">Starting column</param>
-        /// <param name="c">Number of cells to affect.</param>
+        /// <param name="pos">A <see cref="Position"/> identifying the beginning for filling.</param>
+        /// <param name="n">Number of cells to affect.</param>
+        /// <param name="initValue">The starting value to fill with.</param>
         /// <param name="ft">The type of filling (fixed, increment, decrement...).</param>
         /// <param name="fd">Direction of filling (row, column...).</param>
         protected Filler(CsvDocument doc, Position pos, int n, string initValue, FillType ft, FillDirection fd)
