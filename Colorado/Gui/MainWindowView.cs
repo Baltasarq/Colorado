@@ -303,7 +303,7 @@ namespace Colorado.Gui {
 
             var opRemoveRows = this.removeRowsAction.CreateMenuItem();
             opRemoveRows.AddAccelerator( "activate", accelGroup, new Gtk.AccelKey(
-                Gdk.Key.Delete, Gdk.ModifierType.None, Gtk.AccelFlags.Visible) );
+                Gdk.Key.Delete, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible) );
 
             mFile.Append( opNew );
             mFile.Append( opOpen );
