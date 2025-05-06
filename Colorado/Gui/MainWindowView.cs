@@ -69,97 +69,81 @@ namespace Colorado.Gui {
 		void BuildIcons()
         {
 			this.ToolbarMode = Gtk.ToolbarStyle.Icons;
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
 
 			try {
-				this.Icon = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.colorado.png", 32, 32 );
+				this.Icon = new Gdk.Pixbuf( asm,
+					"Colorado.colorado.png", 32, 32 );
 
-				this.iconAbout = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.about.png", 32, 32 );
+				this.iconAbout = new Gdk.Pixbuf( asm,
+					"Colorado.about.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-about", 32, this.iconAbout );
 
-				this.iconAdd = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.add.png", 32, 32 );
+				this.iconAdd = new Gdk.Pixbuf( asm,
+					"Colorado.add.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-add", 32, this.iconAdd );
 
-				this.iconClear = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.clear.png", 32, 32 );
+				this.iconClear = new Gdk.Pixbuf( asm,
+					"Colorado.clear.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-clear", 32, this.iconClear );
 
-				this.iconClose = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.close.png", 32, 32 );
+				this.iconClose = new Gdk.Pixbuf( asm,
+					"Colorado.close.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-close", 32, this.iconClose );
 
-				this.iconCopy = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.copy.png", 32, 32 );
+				this.iconCopy = new Gdk.Pixbuf( asm,
+					"Colorado.copy.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-copy", 32, this.iconCopy );
 
-				this.iconExit = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.exit.png", 32, 32 );
+				this.iconExit = new Gdk.Pixbuf( asm,
+					"Colorado.exit.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-exit", 32, this.iconExit );
 
-				this.iconExport = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.export.png", 32, 32 );
+				this.iconExport = new Gdk.Pixbuf( asm,
+					"Colorado.export.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-export", 32, this.iconExport );
 
-				this.iconFind = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.find.png", 32, 32 );
+				this.iconFind = new Gdk.Pixbuf( asm,
+					"Colorado.find.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-find", 32, this.iconFind );
 
-				this.iconFormula = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.formula.png", 32, 32 );
+				this.iconFormula = new Gdk.Pixbuf( asm,
+					"Colorado.formula.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-formula", 32, this.iconFormula );
 
-				this.iconImport = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.import.png", 32, 32 );
+				this.iconImport = new Gdk.Pixbuf( asm,
+					"Colorado.import.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-import", 32, this.iconImport );
 
-				this.iconNew = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.new.png", 32, 32 );
+				this.iconNew = new Gdk.Pixbuf( asm,
+					"Colorado.new.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-new", 32, this.iconNew );
 
-				this.iconOpen = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.open.png", 32, 32 );
+				this.iconOpen = new Gdk.Pixbuf( asm,
+					"Colorado.open.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-open", 32, this.iconOpen );
 
-				this.iconPaste = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.paste.png", 32, 32 );
+				this.iconPaste = new Gdk.Pixbuf( asm,
+					"Colorado.paste.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-paste", 32, this.iconPaste );
 
-				this.iconProperties = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.properties.png", 32, 32 );
+				this.iconProperties = new Gdk.Pixbuf( asm,
+					"Colorado.properties.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-properties", 32, this.iconProperties );
 
-				this.iconRemove = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.remove.png", 32, 32 );
+				this.iconRemove = new Gdk.Pixbuf( asm,
+					"Colorado.remove.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-remove", 32, this.iconRemove );
 
-				this.iconRevert = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.revert.png", 32, 32 );
+				this.iconRevert = new Gdk.Pixbuf( asm,
+					"Colorado.revert.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-revert", 32, this.iconRevert );
 
-				this.iconSave = new Gdk.Pixbuf(
-					System.Reflection.Assembly.GetEntryAssembly(),
-					"Colorado.Res.save.png", 32, 32 );
+				this.iconSave = new Gdk.Pixbuf( asm,
+					"Colorado.save.png", 32, 32 );
 				Gtk.IconTheme.AddBuiltinIcon( "clrd-save", 32, this.iconSave );
 			} catch(System.Exception) {
+				// No icons -- get over it
 				this.ToolbarMode = Gtk.ToolbarStyle.Text;
 			}
 		}
@@ -222,6 +206,9 @@ namespace Colorado.Gui {
 
 			this.fillRowAction = new Gtk.Action( "fill_row", "_Fill row", "fill row", "paste" ) { IconName = "clrd-paste" };
             this.fillRowAction.Activated += (sender, e) => this.OnFillRow();
+            
+            this.sortRowsAction = new Gtk.Action( "sort_rows", "_Sort", "short rows", "sort" ) { IconName = "sort" };
+            this.sortRowsAction.Activated += (sender, e) => this.OnSortRows();
 
 			this.addColumnsAction = new Gtk.Action( "add_columns", "_Add columns", "add columns", "add" ) { IconName = "clrd-add" };
             this.addColumnsAction.Activated += (sender, e) => this.OnAddColumns();
@@ -343,6 +330,7 @@ namespace Colorado.Gui {
             mRows.Append( this.clearRowsAction.CreateMenuItem() );
             mRows.Append( this.copyRowAction.CreateMenuItem() );
             mRows.Append( this.fillRowAction.CreateMenuItem() );
+            mRows.Append( this.sortRowsAction.CreateMenuItem() );
             mColumns.Append( this.addColumnsAction.CreateMenuItem() );
             mColumns.Append( this.removeColumnsAction.CreateMenuItem() );
             mColumns.Append( this.clearColumnsAction.CreateMenuItem() );
@@ -443,6 +431,7 @@ namespace Colorado.Gui {
         Gtk.Action clearRowsAction;
         Gtk.Action copyRowAction;
         Gtk.Action fillRowAction;
+        Gtk.Action sortRowsAction;
         Gtk.Action addColumnsAction;
         Gtk.Action removeColumnsAction;
         Gtk.Action clearColumnsAction;

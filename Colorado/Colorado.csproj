@@ -10,8 +10,7 @@
     <RootNamespace>Colorado</RootNamespace>
     <AssemblyName>Colorado</AssemblyName>
     <StartupObject>Colorado.Gui.MainClass</StartupObject>
-    <ApplicationIcon>Res\colorado.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,17 +23,7 @@
     <ConsolePause>false</ConsolePause>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DocumentationFile>bin\Debug\Colorado.xml</DocumentationFile>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeClean</type>
-        </Command>
-        <Command>
-          <type>BeforeExecute</type>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -43,15 +32,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeExecute</type>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
     <PlatformTarget>x64</PlatformTarget>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug (x86)|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -145,27 +127,6 @@
     <Compile Include="Core\Importers\CsvImporter.cs" />
     <Compile Include="Core\Importers\XmlImporter.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\colorado.ico" />
-    <EmbeddedResource Include="Res\colorado.png" />
-    <EmbeddedResource Include="Res\close.png" />
-    <EmbeddedResource Include="Res\new.png" />
-    <EmbeddedResource Include="Res\open.png" />
-    <EmbeddedResource Include="Res\save.png" />
-    <EmbeddedResource Include="Res\about.png" />
-    <EmbeddedResource Include="Res\add.png" />
-    <EmbeddedResource Include="Res\clear.png" />
-    <EmbeddedResource Include="Res\copy.png" />
-    <EmbeddedResource Include="Res\exit.png" />
-    <EmbeddedResource Include="Res\export.png" />
-    <EmbeddedResource Include="Res\find.png" />
-    <EmbeddedResource Include="Res\import.png" />
-    <EmbeddedResource Include="Res\paste.png" />
-    <EmbeddedResource Include="Res\properties.png" />
-    <EmbeddedResource Include="Res\remove.png" />
-    <EmbeddedResource Include="Res\revert.png" />
-    <EmbeddedResource Include="Res\formula.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Res\" />
@@ -190,9 +151,31 @@
     <None Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CsMyLib\GtkUtil\GtkUtil.csproj">
-      <Project>{990E54DA-96E8-412B-8A4D-E79BDCA5F280}</Project>
+    <ProjectReference Include="..\..\CsMyLib\GtkUtil\GtkUtil.csproj">
+      <Project>{990e54da-96e8-412b-8a4d-e79bdca5f280}</Project>
       <Name>GtkUtil</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Res\about.png">
+      <LogicalName></LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Res\add.png" />
+    <EmbeddedResource Include="Res\clear.png" />
+    <EmbeddedResource Include="Res\close.png" />
+    <EmbeddedResource Include="Res\colorado.png" />
+    <EmbeddedResource Include="Res\copy.png" />
+    <EmbeddedResource Include="Res\exit.png" />
+    <EmbeddedResource Include="Res\export.png" />
+    <EmbeddedResource Include="Res\find.png" />
+    <EmbeddedResource Include="Res\formula.png" />
+    <EmbeddedResource Include="Res\import.png" />
+    <EmbeddedResource Include="Res\new.png" />
+    <EmbeddedResource Include="Res\open.png" />
+    <EmbeddedResource Include="Res\paste.png" />
+    <EmbeddedResource Include="Res\properties.png" />
+    <EmbeddedResource Include="Res\remove.png" />
+    <EmbeddedResource Include="Res\revert.png" />
+    <EmbeddedResource Include="Res\save.png" />
   </ItemGroup>
 </Project>

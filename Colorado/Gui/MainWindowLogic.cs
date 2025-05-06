@@ -3,6 +3,7 @@
  * Colorado, a csv-based spreadsheet
  */
 
+
 namespace Colorado.Gui {
     using System;
     using System.Collections.Generic;
@@ -124,6 +125,7 @@ namespace Colorado.Gui {
             this.copyColumnAction.Sensitive    = active;
             this.copyRowAction.Sensitive       = active;
             this.fillRowAction.Sensitive       = active;
+            this.sortRowsAction.Sensitive      = active;
             this.fillColumnAction.Sensitive    = active;
 
             this.findAction.Sensitive          = active;
@@ -1249,6 +1251,11 @@ namespace Colorado.Gui {
             }
 
             dlg.Destroy();
+        }
+
+        void OnSortRows()
+        {
+            
         }
 
         void OnTableClicked(Gtk.ButtonReleaseEventArgs args)
