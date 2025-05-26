@@ -1,9 +1,11 @@
-bin
-obj
-packages
+bin/
+obj/
+packages/
+dist/
 *.userprefs
 *~
 .vs/
+.vscode/
 
 # Compiled Object files
 *.slo
