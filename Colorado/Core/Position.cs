@@ -162,46 +162,50 @@ namespace Colorado.Core {
 		/// A <see cref="System.Int32"/> holding negative number if this is less than p,
 		/// 0 if they are equal, or positive number if is greater than p.
 		/// </returns>
-		public int CompareTo(Position p)
+		public int CompareTo(Position? p)
 		{
-			int toret = 0;
-			
-			if ( this.Row == p.Row )
-			{
-				toret = this.Column - p.Column;
-			}
-			else {
-				toret = ( ( this.Row - p.Row ) * this.Document.Data.NumColumns )
-						+ ( this.Column - p.Column );
-			}
-			
+            int toret = 1;
+
+            if ( p is not null ) {
+                toret = 0;
+
+                if ( this.Row == p.Row )
+                {
+                    toret = this.Column - p.Column;
+                }
+                else {
+                    toret = ( ( this.Row - p.Row ) * this.Document.Data.NumColumns )
+                            + ( this.Column - p.Column );
+                }
+            }
+
 			return toret;
 		}
-		
+
 		public override int GetHashCode()
 		{
 			return ( this.Row + this.Column );
 		}
-		
-		public override bool Equals(object obj)
+
+		public override bool Equals(object? obj)
 		{
 			bool toret = false;
-			
+
 			if ( obj is Position ) {
 				toret = ( this.CompareTo( (Position) obj) == 0 );
 			}
-			
+
 			return toret;
 		}
-		
+
 		public static bool operator < (Position x, Position y) {
 			return ( x.CompareTo( y ) < 0 );
 		}
-		
+
 		public static bool operator > (Position x, Position y) {
 			return ( x.CompareTo( y ) > 0 );
 		}
-		
+
 		public static bool operator == (Position x, Position y) {
 			return ( x.CompareTo( y ) == 0 );
 		}

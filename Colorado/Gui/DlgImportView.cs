@@ -4,9 +4,16 @@ namespace Colorado.Gui {
     using Core;
 
 	public partial class DlgImport : Gtk.Dialog {
-		public DlgImport(Gtk.Window parent) {
+		public DlgImport(Gtk.Window parent)
+		{
+			this.edFileName = new Gtk.Entry();
+			this.cmbDelimiter = new Gtk.ComboBoxText();
+			this.cmbType = new Gtk.ComboBoxText();
+			this.cmbType.Entry.IsEditable = false;
+			this.frmOptions = new Gtk.Frame( "<b>Options</b>" );
+			this.frmType = new Gtk.Frame( "<b>Format</b>" );
 			this.Build();
-			
+
 			this.Title = parent.Title + " import";
 			this.Icon = parent.Icon;
 			this.Parent = parent;
@@ -15,11 +22,11 @@ namespace Colorado.Gui {
             this.ShowAll();
 
 			// Last file name opened
-			lastFileName = ( (MainWindow) parent ).lastFileName;
+			lastFileName = ( (MainWindow) parent ).LastFileName;
             this.edFileName.Text = lastFileName;
             this.DetermineAcceptance();
             this.edFileName.Changed += (o, evt) => this.DetermineAcceptance();
-			
+
 			// Add delimiters to the delimiter combo
 			foreach(string delimiterName in Core.Delimiter.PredefinedDelimiterNames) {
 				this.cmbDelimiter.AppendText( delimiterName );
@@ -29,7 +36,7 @@ namespace Colorado.Gui {
             // Add types to the type combo
             foreach(Importer importer in Importer.GetAllImporters()) {
                 if ( importer.GetType() != typeof( Core.Importers.CsvImporter ) ) {
-                    this.cmbType.AppendText( importer.Id );                        
+                    this.cmbType.AppendText( importer.Id );
                 }
             }
             this.cmbType.InsertText( 0, Core.Importers.CsvImporter.Name );
@@ -41,17 +48,15 @@ namespace Colorado.Gui {
 
 		void Build()
         {
-            var hBoxType = new Gtk.HBox( false, 2 );
-			var hBoxFileName = new Gtk.HBox( false, 2 );
-			var hBoxDelimiter = new Gtk.HBox( false, 2 );
-			var vBoxFileName = new Gtk.VBox( false, 2 );
-			var vBoxOptions = new Gtk.VBox( false, 2 );
+            var hBoxType = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
+			var hBoxFileName = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
+			var hBoxDelimiter = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
+			var vBoxFileName = new Gtk.Box( Gtk.Orientation.Vertical, 2 );
+			var vBoxOptions = new Gtk.Box( Gtk.Orientation.Vertical, 2 );
 
             // Type selector
-            this.frmType = new Gtk.Frame( "<b>Format</b>" );
             ((Gtk.Label) this.frmType.LabelWidget ).UseMarkup = true;
             this.lblType = new Gtk.Label( "Type: " );
-            this.cmbType = new Gtk.ComboBox( new string[]{} );
             hBoxType.PackStart( this.lblType, false, false, 5 );
             hBoxType.PackStart( this.cmbType, true, true, 5 );
             this.frmType.Add( hBoxType );
@@ -60,7 +65,6 @@ namespace Colorado.Gui {
 			this.frmFileName = new Gtk.Frame( "<b>Name</b>" );
             ((Gtk.Label) this.frmFileName.LabelWidget ).UseMarkup = true;
 			this.lblFileName = new Gtk.Label( "File name:" );
-			this.edFileName = new Gtk.Entry();
 			this.btOpen = new Gtk.Button( Gtk.Stock.Open );
 			this.btOpen.Clicked += (sender, e) => this.OnOpen();
 			hBoxFileName.PackStart( this.lblFileName, false, false, 5 );
@@ -71,10 +75,8 @@ namespace Colorado.Gui {
 			this.frmFileName.Add( vBoxFileName );
 
 			// Options
-			this.frmOptions = new Gtk.Frame( "<b>Options</b>" );
             ((Gtk.Label) this.frmOptions.LabelWidget ).UseMarkup = true;
 			this.lblDelimiter = new Gtk.Label( "Delimiter" );
-			this.cmbDelimiter = new Gtk.ComboBoxEntry( new string[]{} );
 			this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row is for headers" );
 			hBoxDelimiter.PackStart( this.lblDelimiter, false, false, 5 );
 			hBoxDelimiter.PackStart( this.cmbDelimiter, true, true, 5 );
@@ -83,9 +85,9 @@ namespace Colorado.Gui {
 			this.frmOptions.Add( vBoxOptions );
 
 			// Layout
-            this.VBox.PackStart( this.frmType, true, true, 5 );
-			this.VBox.PackStart( this.frmFileName, true, true, 5 );
-			this.VBox.PackStart( this.frmOptions, true, true, 5 );
+            this.ContentArea.PackStart( this.frmType, true, true, 5 );
+			this.ContentArea.PackStart( this.frmFileName, true, true, 5 );
+			this.ContentArea.PackStart( this.frmOptions, true, true, 5 );
 
 			// Buttons
 			this.AddButton( Gtk.Stock.Cancel, Gtk.ResponseType.Cancel );
@@ -95,20 +97,22 @@ namespace Colorado.Gui {
 
         public void DetermineAcceptance()
         {
-            this.btOk.Sensitive = ( this.edFileName.Text.Trim().Length > 0 );
+			if ( this.btOk != null ) {
+            	this.btOk.Sensitive = ( this.edFileName.Text.Trim().Length > 0 );
+			}
         }
 
-        Gtk.Button btOk;
-        Gtk.Frame frmType;
-        Gtk.Label lblType;
-		Gtk.Frame frmFileName;
-		Gtk.Frame frmOptions;
-		Gtk.Label lblFileName;
-		Gtk.Entry edFileName;
-		Gtk.Button btOpen;
-		Gtk.CheckButton cbFirstRowForHeaders;
-		Gtk.Label lblDelimiter;
-		Gtk.ComboBoxEntry cmbDelimiter;
-        Gtk.ComboBox cmbType;
+        Gtk.Label? lblType;
+		Gtk.Frame? frmFileName;
+		Gtk.Label? lblFileName;
+		Gtk.Button? btOpen;
+		Gtk.CheckButton? cbFirstRowForHeaders;
+		Gtk.Label? lblDelimiter;
+		Gtk.Button? btOk;
+		readonly Gtk.Frame frmType;
+		readonly Gtk.Entry edFileName;
+		readonly Gtk.Frame frmOptions;
+		readonly Gtk.ComboBoxText cmbDelimiter;
+        readonly Gtk.ComboBoxText cmbType;
 	}
 }

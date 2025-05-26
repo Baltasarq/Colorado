@@ -1,181 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{12F5964C-2BDE-4379-915B-E55322B5DE75}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>Colorado</RootNamespace>
-    <AssemblyName>Colorado</AssemblyName>
-    <StartupObject>Colorado.Gui.MainClass</StartupObject>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>88dacd6c-a68b-49ac-b641-e4d5bedc1479</UserSecretsId>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DocumentationFile>bin\Debug\Colorado.xml</DocumentationFile>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x64</PlatformTarget>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug (x86)|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\x86\Debug (x86)</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release (x86)|x86' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\x86\Release (x86)</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>glib-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Json" />
+    <PackageReference Include="gtksharp" Version="3.24.24.95" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Core\AppInfo.cs" />
-    <Compile Include="Core\CsvDocument.cs" />
-    <Compile Include="Core\ExportOptions.cs" />
-    <Compile Include="Core\Formula.cs" />
-    <Compile Include="Core\Position.cs" />
-    <Compile Include="Core\Formulas\AverageFormula.cs" />
-    <Compile Include="Core\Formulas\CountFormula.cs" />
-    <Compile Include="Core\Formulas\CountNonBlankFormula.cs" />
-    <Compile Include="Core\Formulas\MaxFormula.cs" />
-    <Compile Include="Core\Formulas\MinFormula.cs" />
-    <Compile Include="Core\Formulas\ProductFormula.cs" />
-    <Compile Include="Core\Formulas\SubFormula.cs" />
-    <Compile Include="Core\Formulas\SumFormula.cs" />
-    <Compile Include="Gui\Main.cs" />
-    <Compile Include="Core\Filler.cs" />
-    <Compile Include="Core\Fillers\NumberFiller.cs" />
-    <Compile Include="Core\Fillers\FixedFiller.cs" />
-    <Compile Include="Core\Delimiter.cs" />
-    <Compile Include="Core\FormulaManager.cs" />
-    <Compile Include="Core\CsvDocumentPersistence.cs" />
-    <Compile Include="Core\Data.cs" />
-    <Compile Include="Gui\MainWindowView.cs" />
-    <Compile Include="Gui\MainWindowLogic.cs" />
-    <Compile Include="Gui\DlgFormulaeLogic.cs" />
-    <Compile Include="Gui\DlgFormulaeView.cs" />
-    <Compile Include="Gui\DlgExportLogic.cs" />
-    <Compile Include="Gui\DlgExportView.cs" />
-    <Compile Include="Gui\DlgFillView.cs" />
-    <Compile Include="Gui\DlgFillLogic.cs" />
-    <Compile Include="Gui\DlgFromToView.cs" />
-    <Compile Include="Gui\DlgFromToLogic.cs" />
-    <Compile Include="Gui\DlgImportView.cs" />
-    <Compile Include="Gui\DlgImportLogic.cs" />
-    <Compile Include="Gui\DlgIncDecView.cs" />
-    <Compile Include="Gui\DlgIncDecLogic.cs" />
-    <Compile Include="Gui\DlgPropertiesView.cs" />
-    <Compile Include="Gui\DlgPropertiesLogic.cs" />
-    <Compile Include="Core\DecimalMark.cs" />
-    <Compile Include="Core\Cfg\Locale.cs" />
-    <Compile Include="Core\Cfg\L10n.cs" />
-    <Compile Include="Core\Cfg\Config.cs" />
-    <Compile Include="Core\Exporter.cs" />
-    <Compile Include="Core\Exporters\HtmlExporter.cs" />
-    <Compile Include="Core\Exporters\MarkdownExporter.cs" />
-    <Compile Include="Core\Exporters\ExcelExporter.cs" />
-    <Compile Include="Core\Exporters\TxtExporter.cs" />
-    <Compile Include="Core\Exporters\CsvExporter.cs" />
-    <Compile Include="Core\Exporters\JsonExporter.cs" />
-    <Compile Include="Core\Exporters\XmlExporter.cs" />
-    <Compile Include="Core\Importer.cs" />
-    <Compile Include="Core\Importers\JsonImporter.cs" />
-    <Compile Include="Core\ImportOptions.cs" />
-    <Compile Include="Core\Importers\CsvImporter.cs" />
-    <Compile Include="Core\Importers\XmlImporter.cs" />
+    <ProjectReference Include="..\..\CsMyLib\GtkUtil\GtkUtil.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Res\" />
-    <Folder Include="Core\" />
-    <Folder Include="Gui\" />
-    <Folder Include="Core\Fillers\" />
-    <Folder Include="Core\Cfg\" />
-    <Folder Include="Core\Exporters\" />
-    <Folder Include="Core\Importers\" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-        </Policies>
-        <GtkDesignInfo generateGettext="False" />
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
-  <ItemGroup>
-    <None Include="ToDo.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CsMyLib\GtkUtil\GtkUtil.csproj">
-      <Project>{990e54da-96e8-412b-8a4d-e79bdca5f280}</Project>
-      <Name>GtkUtil</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Res\about.png">
-      <LogicalName></LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Res\add.png" />
-    <EmbeddedResource Include="Res\clear.png" />
-    <EmbeddedResource Include="Res\close.png" />
-    <EmbeddedResource Include="Res\colorado.png" />
-    <EmbeddedResource Include="Res\copy.png" />
-    <EmbeddedResource Include="Res\exit.png" />
-    <EmbeddedResource Include="Res\export.png" />
-    <EmbeddedResource Include="Res\find.png" />
-    <EmbeddedResource Include="Res\formula.png" />
-    <EmbeddedResource Include="Res\import.png" />
-    <EmbeddedResource Include="Res\new.png" />
-    <EmbeddedResource Include="Res\open.png" />
-    <EmbeddedResource Include="Res\paste.png" />
-    <EmbeddedResource Include="Res\properties.png" />
-    <EmbeddedResource Include="Res\remove.png" />
-    <EmbeddedResource Include="Res\revert.png" />
-    <EmbeddedResource Include="Res\save.png" />
-  </ItemGroup>
+
 </Project>

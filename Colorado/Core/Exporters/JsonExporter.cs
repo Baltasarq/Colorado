@@ -1,51 +1,53 @@
 ﻿// Colorado (c) 2015/19 Baltasar MIT License <baltasarq@gmail.com>
 
-namespace Colorado.Core.Exporters {
-    using System.IO;
-    using System.Text;
-    using System.Json;
 
-    public class JsonExporter: Exporter {
-        public const string Name = "JSON";
-        const string Extension = "json";
+namespace Colorado.Core.Exporters;
 
-        /// <summary>Export this data as JSON./// </summary>
-        public override void Save()
-        {
-            CsvDocument doc = this.Options.Document;
-            int[] columnsIncluded = this.Options.ColumnsIncluded;
-            string[] headers = doc.Data.Headers;
-            string fileName = this.Options.Path;
-            var root = new JsonArray();
 
-            for(int i = 0; i < doc.Data.NumRows; ++i) {
-                var obj = new JsonObject();
+using System.IO;
+using System.Text;
+using System.Text.Json.Nodes;
 
-                root.Add( obj );
+public class JsonExporter: Exporter {
+    public const string Name = "JSON";
+    const string Extension = "json";
 
-                if ( this.Options.IncludeRowNumbers ) {
-                    obj.Add( EtqId, i );
-                }
+    /// <summary>Export this data as JSON. </summary>
+    public override void Save()
+    {
+        CsvDocument doc = this.Options.Document;
+        int[] columnsIncluded = this.Options.ColumnsIncluded;
+        string[] headers = doc.Data.Headers;
+        string fileName = this.Options.Path;
+        var root = new JsonArray();
 
-                foreach(int j in columnsIncluded) {
-                    obj.Add( headers[ j ], doc.Data[ i, j ] );
-                }
+        for(int i = 0; i < doc.Data.NumRows; ++i) {
+            var obj = new JsonObject();
+
+            root.Add( obj );
+
+            if ( this.Options.IncludeRowNumbers ) {
+                obj.Add( EtqId, i );
             }
 
-            using(var f = new StreamWriter(
-                new FileStream( fileName, FileMode.Create, FileAccess.Write ),
-                Encoding.UTF8 ))
-            {
-                f.WriteLine( root.ToString() );
+            foreach(int j in columnsIncluded) {
+                obj.Add( headers[ j ], doc.Data[ i, j ] );
             }
-
-            return;
         }
 
-        /// <summary>Gets the name of the exporter.</summary>
-        public override string Id => Name;
+        using(var f = new StreamWriter(
+            new FileStream( fileName, FileMode.Create, FileAccess.Write ),
+            Encoding.UTF8 ))
+        {
+            f.WriteLine( root.ToString() );
+        }
 
-        /// <summary>Gets the extension for this exporter's output.</summary>
-        public override string FileExtension => Extension;
+        return;
     }
+
+    /// <summary>Gets the name of the exporter.</summary>
+    public override string Id => Name;
+
+    /// <summary>Gets the extension for this exporter's output.</summary>
+    public override string FileExtension => Extension;
 }

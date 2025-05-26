@@ -1,129 +1,132 @@
 ﻿// Colorado (c) 2015/19 Baltasar MIT License <baltasarq@gmail.com>
 
-namespace Colorado.Core.Importers
+
+namespace Colorado.Core.Importers;
+
+
+using System.IO;
+using System.Text.Json.Nodes;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Linq;
+
+public class JsonImporter : Importer
 {
-    using System.IO;
-    using System.Json;
-    using System.Collections.Generic;
+    public const string Name = "JSON";
+    const string Extension = "json";
 
-    public class JsonImporter : Importer
+    /// <summary>Import data from JSON.</summary>
+    public override CsvDocument Load()
     {
-        public const string Name = "JSON";
-        const string Extension = "json";
+        CsvDocument? toret = null;
+        JsonDocument jsonDoc = JsonDocument.Parse(
+                                        File.ReadAllText(
+                                            this.Options.Path ) );
 
-        /// <summary>Import data from JSON.</summary>
-        public override CsvDocument Load()
-        {
-            CsvDocument toret = null;
+        var array = LocateArray( JsonArray.Create( jsonDoc.RootElement ) );
 
-            using (var f = new StreamReader(
-                new FileStream(this.Options.Path, FileMode.Open, FileAccess.Read)))
-            {
-                var array = this.LocateArray( JsonValue.Load( f ) );
-
-                if ( array != null ) {
-                    toret = this.LoadFromJson( array );
-                } else {
-                    throw new FileLoadException( "no array found in json" );
-                }
-            }
-
-            return toret;
+        if ( array != null ) {
+            toret = this.LoadFromJson( array );
+        } else {
+            throw new FileLoadException( "no array found in json" );
         }
 
-        JsonArray LocateArray(JsonValue jsonValue)
-        {
-            JsonArray toret = null;
+        return toret;
+    }
 
-            if( jsonValue != null
-               && !( jsonValue is JsonArray ) )
-            {
-                if ( jsonValue is JsonObject jobj ) {
-                    foreach(KeyValuePair<string, JsonValue> values in jobj) {
-                        toret = this.LocateArray( values.Value );
+    static JsonArray? LocateArray(JsonNode? jsonNode)
+    {
+        JsonArray? toret = null;
 
-                        if ( toret != null ) {
-                            break;
+        if ( jsonNode is not null ) {
+            if ( jsonNode is not JsonArray ) {
+                if ( jsonNode is JsonObject jobj ) {
+                    foreach(KeyValuePair<string, JsonNode?> values in jobj) {
+                        if ( values.Value is not null ) {
+                            toret = LocateArray( values.Value );
+
+                            if ( toret != null ) {
+                                break;
+                            }
                         }
                     }
                 }
             } else {
-                toret = (JsonArray) jsonValue;
+                toret = jsonNode.AsArray();
             }
-
-            return toret;
         }
 
-        CsvDocument LoadFromJson(JsonArray array)
-        {
-            var rows = new List<List<string>>();
-            var headers = new Dictionary<string, int>();
-            var headerTitles = new List<string>();
-            var values = new List<JsonValue>();
+        return toret;
+    }
 
-            // For each "row"
-            foreach(JsonValue jvalue in array) {
-                rows.Add( new List<string>( headers.Count ) );
+    CsvDocument LoadFromJson(JsonArray array) {
+        var rows = new List<List<string>>();
+        var headers = new Dictionary<string, int>();
+        var headerTitles = new List<string>();
+        var values = new List<string>();
 
-                if ( jvalue is JsonObject jobj ) {
-                    // For each "column"
-                    headerTitles.AddRange( jobj.Keys );
-                    values.AddRange( jobj.Values );
+        // For each "row"
+        foreach(JsonNode? jvalue in array) {
+            rows.Add( new List<string>( headers.Count ) );
 
-                    for(int j = 0; j < headerTitles.Count; ++j) {
-                        int col;
+            if ( jvalue is JsonObject jobj ) {
+                // For each "column"
+                IList<KeyValuePair<string, JsonNode?>> dictJobj = jobj.ToList();
+                headerTitles.AddRange( dictJobj.Select( p => p.Key ) );
+                values.AddRange( dictJobj.Select( p => ( p.Value ?? "" ).ToString() ) );
 
-                        // Take header position
-                        if ( !headers.TryGetValue( headerTitles[ j ], out col ) )
-                        {
-                            headers.Add( headerTitles[ j ], j );
-                            col = j;
-                        }
+                for(int j = 0; j < headerTitles.Count; ++j) {
+                    int col;
 
-                        // Store value
-                        var row = rows[ rows.Count - 1 ];
-
-                        if ( row.Count <= col ) {
-                            row.AddRange( new string[ ( col - row.Count ) + 1 ] );
-                        }
-
-                        row[ col ] = RemoveQuotes( values[ j ].ToString() );
+                    // Take header position
+                    if ( !headers.TryGetValue( headerTitles[ j ], out col ) ) {
+                        headers.Add( headerTitles[ j ], j );
+                        col = j;
                     }
 
-                    // Clean up for next row
-                    headerTitles.Clear();
-                    values.Clear();
-                }
-            }
+                    // Store value
+                    var row = rows[ rows.Count - 1 ];
 
-            return this.Dump( headers, rows );
+                    if ( row.Count <= col ) {
+                        row.AddRange( new string[ ( col - row.Count ) + 1 ] );
+                    }
+
+                    row[ col ] = RemoveQuotes( values[ j ] );
+                }
+
+                // Clean up for next row
+                headerTitles.Clear();
+                values.Clear();
+            }
         }
 
-        /// <summary>Removes the quotes, if existing.</summary>
-        /// <param name="value">A string value.</param>
-        /// <returns>The given string, without quotes.</returns>
-        static string RemoveQuotes(string value)
-        {
-            string toret = value;
-
-            if ( toret.Length > 0 ) {
-                if ( value[ 0 ] == '"' ) {
-                    toret = toret.Substring( 1 );
-                }
-
-
-                if ( value[ value.Length - 1 ] == '"' ) {
-                    toret = toret.Substring( 0, toret.Length - 1 );
-                }
-            }
-
-            return toret;
-        }
-
-        /// <summary>Gets the name of the importer.</summary>
-        public override string Id => Name;
-
-        /// <summary>Gets the extension for this importer's output.</summary>
-        public override string FileExtension => Extension;
+        return this.Dump( headers, rows );
     }
+
+    /// <summary>Removes the quotes, if existing.</summary>
+    /// <param name="value">A string value.</param>
+    /// <returns>The given string, without quotes.</returns>
+    static string RemoveQuotes(string value)
+    {
+        string toret = value;
+
+        if ( toret.Length > 0 ) {
+            if ( value[ 0 ] == '"' ) {
+                toret = toret[ 1.. ];
+            }
+
+
+            if ( value[ ^1 ] == '"' ) {
+                toret = toret[ ..^1 ];
+            }
+        }
+
+        return toret;
+    }
+
+    /// <summary>Gets the name of the importer.</summary>
+    public override string Id => Name;
+
+    /// <summary>Gets the extension for this importer's output.</summary>
+    public override string FileExtension => Extension;
 }

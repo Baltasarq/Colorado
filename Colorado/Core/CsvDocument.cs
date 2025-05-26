@@ -156,8 +156,8 @@ namespace Colorado.Core {
             this.ClientUpdater?.Invoke( rowIndex, colIndex, value );
 		}
 
-		public ClientUpdate ClientUpdater;
-        private DecimalMark decimalMark;
+		public ClientUpdate? ClientUpdater;
+        private readonly DecimalMark decimalMark;
         private Delimiter delimiter;
         private string fileName;
         private bool surroundText;

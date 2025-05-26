@@ -1,11 +1,12 @@
 ﻿// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
+
 namespace Colorado.Gui {
     public partial class MainWindow {
         void Build()
         {
-            var vPanel = new Gtk.VBox( false, 2 );
-            var hPanel = new Gtk.HBox( false, 2 );
+            var vPanel = new Gtk.Box( Gtk.Orientation.Vertical, 2 );
+            var hPanel = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
 
             // Create components
             this.edFind = new Gtk.Entry( "Find..." );
@@ -17,7 +18,7 @@ namespace Colorado.Gui {
             this.tvTable = this.BuildTable();
 
             var swScroll = new Gtk.ScrolledWindow();
-            swScroll.AddWithViewport( this.tvTable );
+            swScroll.Add( this.tvTable );
 
             // Build'em all
 			this.BuildIcons();
@@ -206,7 +207,7 @@ namespace Colorado.Gui {
 
 			this.fillRowAction = new Gtk.Action( "fill_row", "_Fill row", "fill row", "paste" ) { IconName = "clrd-paste" };
             this.fillRowAction.Activated += (sender, e) => this.OnFillRow();
-            
+
             this.sortRowsAction = new Gtk.Action( "sort_rows", "_Sort", "short rows", "sort" ) { IconName = "sort" };
             this.sortRowsAction.Activated += (sender, e) => this.OnSortRows();
 
@@ -228,10 +229,9 @@ namespace Colorado.Gui {
 
         void BuildStatusBar()
         {
-            var hPanel = new Gtk.HBox( false, 2 );
+            var hPanel = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
             this.lblCount = new Gtk.Label( "..." );
             this.lblType = new Gtk.Label( "..." );
-
             this.sbStatus = new Gtk.Statusbar();
 
             hPanel.PackStart( this.lblType, true, false, 5 );

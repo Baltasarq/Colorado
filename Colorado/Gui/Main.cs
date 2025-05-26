@@ -1,7 +1,8 @@
-// Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
+// Colorado (c) 2015... 2023 Baltasar MIT License <baltasarq@gmail.com>
 /*
  * Colorado, a csv-based spreadsheet
  */
+
 
 namespace Colorado.Gui {
     using System.Diagnostics;
@@ -15,19 +16,19 @@ namespace Colorado.Gui {
 
 		static void Main(string[] args)
 		{
-			MainWindow win = null;
-			
+			MainWindow? win = null;
+
 			try {
                 CreateConsoleTracing();
-
 				Gtk.Application.Init();
 
-				if ( args.Length > 0 )
-						win = new MainWindow( args[ 0 ] );
-				else	win = new MainWindow();
-					
-				win.ShowAll();
+				if ( args.Length > 0 ) {
+					win = new MainWindow(args[0]);
+				} else {
+					win = new MainWindow();
+				}
 
+				win.ShowAll();
 				Gtk.Application.Run();
 			}
 			catch(System.Exception e) {
