@@ -3,10 +3,12 @@
  * Colorado, a csv-based spreadsheet
  */
 
+
 namespace Colorado.Core {
 	public static class AppInfo {
 		public const string Name = "Colorado";
-        public const string Version = "v1.2.9 20250509";
+		public const string RefName = "com.devbaltasarq.colorado";
+        public const string Version = "v1.3.0 20250509";
 		public const string Author = "baltasarq@gmail.com";
 		public const string Website = "http://baltasarq.info/";
 		public const string Comments = "A simple tool to view&edit TSV/CSV files";

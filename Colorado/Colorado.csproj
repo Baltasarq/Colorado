@@ -16,4 +16,8 @@
     <ProjectReference Include="..\..\CsMyLib\GtkUtil\GtkUtil.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="assets/*" />
+  </ItemGroup>
+
 </Project>
