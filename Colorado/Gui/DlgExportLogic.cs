@@ -19,7 +19,7 @@ public partial class DlgExport {
 
         string filter = "*." + Exporter.GetExporter( this.cmbOutput.ActiveText ).FileExtension;
 
-        if ( Util.DlgSave( AppInfo.Name,
+        if ( Misc.DlgSave( AppInfo.Name,
                             "Save as...",
                             (Gtk.Window) this.Parent,
                             ref lastFileName,
@@ -36,32 +36,42 @@ public partial class DlgExport {
 
     void OnOutputFormatChanged()
     {
-        // Prepare
-        if ( this.cmbOutput.Active < 0 ) {
-            this.cmbOutput.Active = 0;
+        if ( !reactingToFormatChanged ) {
+            reactingToFormatChanged = true;
+
+            // Prepare
+            if ( this.cmbOutput.Active < 0 ) {
+                this.cmbOutput.Active = 0;
+            }
+
+            if ( this.cmbDelimiter.Active < 0 ) {
+                this.cmbDelimiter.Active = 0;
+            }
+
+            if ( string.IsNullOrWhiteSpace( lastFileName )) {
+                lastFileName = "output_file.csv";
+            }
+
+            // Options
+            if ( this.cmbOutput.ActiveText == Core.Exporters.CsvExporter.Name ) {
+                this.frmCsvOptions.Visible = true;
+                this.frmDocOptions.Visible = false;
+            } else {
+                this.frmCsvOptions.Visible = false;
+                this.frmDocOptions.Visible = true;
+
+            }
+
+            // File name
+            var exporter = Exporter.GetExporter( this.cmbOutput.ActiveText );
+            lastFileName = System.IO.Path.ChangeExtension(
+                                                lastFileName,
+                                                "." + exporter.FileExtension );
+
+            this.edFile.Text = lastFileName;
+            this.edFile.Position = lastFileName.Length;
+            reactingToFormatChanged = false;
         }
-
-        if ( string.IsNullOrWhiteSpace( lastFileName ) ) {
-            lastFileName = "output_file.csv";
-        }
-
-        // Options
-        if ( this.cmbOutput.ActiveText == Core.Exporters.CsvExporter.Name )
-        {
-            this.frmCsvOptions.Visible = true;
-            this.frmDocOptions.Visible = false;
-        } else {
-            this.frmCsvOptions.Visible = false;
-            this.frmDocOptions.Visible = true;
-
-        }
-
-        // File name
-        var exporter = Exporter.GetExporter( this.cmbOutput.ActiveText );
-        lastFileName = System.IO.Path.ChangeExtension( lastFileName, "." + exporter.FileExtension );
-
-        this.edFile.Text = lastFileName;
-        this.edFile.Position = lastFileName.Length;
     }
 
     public string ExporterId {
@@ -115,5 +125,6 @@ public partial class DlgExport {
     }
 
     readonly CsvDocument document;
+    bool reactingToFormatChanged;
     public static string lastFileName = "";
 }

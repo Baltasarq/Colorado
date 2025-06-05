@@ -1,13 +1,14 @@
 // Colorado (c) 2015 Baltasar MIT License <baltasarq@gmail.com>
 
+
 namespace Colorado.Core {
     using System;
-	
+
 	public class Position : IComparable<Position> {
 		public enum Direction { Left, Up, Right, Down };
 
         /// <summary>
-        /// Creates a new position at 0,0 
+        /// Creates a new position at 0,0
         /// <param name="doc">
         /// A <see cref="CsvDocument"/> holding the document to be used as reference.
         /// </param>
@@ -19,7 +20,7 @@ namespace Colorado.Core {
         }
 
         /// <summary>
-        /// Creates a new position equals to the value of the given position 
+        /// Creates a new position equals to the value of the given position
         /// </summary>
         /// <param name="p">
         /// A <see cref="Position"/> holding the reference value.
@@ -49,49 +50,37 @@ namespace Colorado.Core {
             this.Row = row;
             this.Column = column;
         }
-		
-		/// <summary>
-		/// The document this position pertains to. 
-		/// </summary>
+
+		/// <summary>/// The document this position pertains to.</summary>
 		public CsvDocument Document {
 			get { return this.doc; }
 		}
-		
-		/// <summary>
-		/// The column number 
-		/// </summary>
+
+		/// <summary>The column number</summary>
 		public int X {
 			get { return this.Column; }
 			set { this.Column = value; }
 		}
-		
-		/// <summary>
-		/// The column number 
-		/// </summary>
+
+		/// <summary>The column number</summary>
 		public int Column {
 			get { return this.x; }
 			set { this.x = value; }
 		}
 
-		/// <summary>
-		/// The row number 
-		/// </summary>
+		/// <summary>The row number</summary>
 		public int Y {
 			get { return this.Row; }
 			set { this.Row = value; }
 		}
-		
-		/// <summary>
-		/// The row number 
-		/// </summary>
+
+		/// <summary>The row number</summary>
 		public int Row {
 			get { return this.y; }
 			set { this.y = value; }
 		}
-		
-		/// <summary>
-		/// Increment the position represented by tise object 
-		/// </summary>
+
+		/// <summary>Increment the position represented by this object</summary>
 		/// <param name="dir">
 		/// A <see cref="Direction"/> holding the direction in which the object should be incremented.
 		/// </param>
@@ -102,9 +91,9 @@ namespace Colorado.Core {
 		{
 			return this.Inc( dir, 1 );
 		}
-		
+
 		/// <summary>
-		/// Increment the position represented by this object 
+		/// Increment the position represented by this object
 		/// </summary>
 		/// <param name="dir">
 		/// A <see cref="Direction"/> holding the direction in which the object should be incremented.
@@ -118,7 +107,7 @@ namespace Colorado.Core {
 		public Position Inc(Direction dir, int delta)
 		{
 			var toret = new Position( this );
-			
+
 			if ( dir == Direction.Left ) {
 				toret.Column -= delta;
 			}
@@ -134,12 +123,13 @@ namespace Colorado.Core {
 			if ( dir == Direction.Down ) {
 				toret.Row += delta;
 			}
-			
+
 			return toret;
 		}
-		
+
 		/// <summary>
-		/// Decides whether the position represented by this object is valid for the document. 
+		/// Decides whether the position represented by this object
+		/// is valid for the document.
 		/// </summary>
 		/// <returns>
 		/// A <see cref="System.Boolean"/> holding true if this position is valid; false otherwise.
@@ -151,10 +141,8 @@ namespace Colorado.Core {
 			      && this.Row < doc.Data.NumRows
 			      && this.Column < doc.Data.NumColumns );
 		}
-		
-		/// <summary>
-		/// Returns the distance to another position, for comparison. 
-		/// </summary>
+
+		/// <summary>Returns the distance to another position, for comparison.</summary>
 		/// <param name="p">
 		/// A <see cref="Position"/> that is going to be compared with this one.
 		/// </param>
@@ -184,40 +172,44 @@ namespace Colorado.Core {
 
 		public override int GetHashCode()
 		{
-			return ( this.Row + this.Column );
+			return ( this.Row  * 11 ) + this.Column;
 		}
 
 		public override bool Equals(object? obj)
 		{
 			bool toret = false;
 
-			if ( obj is Position ) {
-				toret = ( this.CompareTo( (Position) obj) == 0 );
+			if ( obj is Position pos) {
+				toret = ( this.CompareTo( pos ) == 0 );
 			}
 
 			return toret;
 		}
 
-		public static bool operator < (Position x, Position y) {
+		public static bool operator < (Position x, Position y)
+		{
 			return ( x.CompareTo( y ) < 0 );
 		}
 
-		public static bool operator > (Position x, Position y) {
+		public static bool operator > (Position x, Position y)
+		{
 			return ( x.CompareTo( y ) > 0 );
 		}
 
-		public static bool operator == (Position x, Position y) {
+		public static bool operator == (Position x, Position y)
+		{
 			return ( x.CompareTo( y ) == 0 );
 		}
-		
-		public static bool operator != (Position x, Position y) {
+
+		public static bool operator != (Position x, Position y)
+		{
 			return ( x.CompareTo( y ) != 0 );
 		}
 
 
         private int x;
         private int y;
-        private CsvDocument doc;
+        private readonly CsvDocument doc;
 	}
 
 }

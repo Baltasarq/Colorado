@@ -43,25 +43,11 @@ public partial class DlgProperties {
         this.cmbDelimiter.Entry.Text = this.cmbDelimiter.ActiveText;
     }
 
-    public Delimiter Delimiter
-    {
-        get
-        {
-            return new Delimiter(this.cmbDelimiter.Entry.Text.Trim());
-        }
-    }
+    public Delimiter Delimiter => new Delimiter( this.cmbDelimiter.Entry.Text.Trim() );
 
-    public bool SurroundText {
-        get {
-            return this.cbSurroundWithDoubleQuotes.Active;
-        }
-    }
+    public bool SurroundText => this.cbSurroundWithDoubleQuotes.Active;
 
-    public bool FirstRowForHeaders {
-        get {
-            return this.cbFirstRowForHeaders.Active;
-        }
-    }
+    public bool FirstRowForHeaders => this.cbFirstRowForHeaders.Active;
 
     public int NumColumns {
         get {
@@ -81,11 +67,8 @@ public partial class DlgProperties {
         }
     }
 
-    public DecimalMark.DecimalSeparator DecimalMarkValue {
-        get {
-            return (DecimalMark.DecimalSeparator) this.cmbDecimalMark.Active;
-        }
-    }
+    public DecimalMark.DecimalSeparator DecimalMarkValue
+                    => (DecimalMark.DecimalSeparator) this.cmbDecimalMark.Active;
 
     private readonly CsvDocument document;
 }

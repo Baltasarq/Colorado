@@ -9,14 +9,10 @@ namespace Colorado.Gui;
 
 using System;
 using System.Collections.Generic;
-
 using Core;
-using Core.Cfg;
-using Gtk;
-using GtkUtil;
 
 
-public partial class MainWindow: Gtk.Window {
+public partial class MainWindow: Gtk.ApplicationWindow {
     public const int NumFixedColumns = 1;
     public const int NumFixedRows = 1;
 
@@ -24,35 +20,64 @@ public partial class MainWindow: Gtk.Window {
     const string LongFilePrefix = "...";
     const string NoNamedFile = "nonamed.csv";
 
-    public MainWindow()
-        : base(Gtk.WindowType.Toplevel)
+    public MainWindow(Gtk.Application app, string fileName = "")
+        : base( app )
     {
         this.Title = AppInfo.Name;
         this.lastFileName = "";
         this.txtToFind = "";
+        this.edFind = new Gtk.Entry( "Find..." );
+        this.tvTable = this.BuildTable();
+        this.popup = new Gtk.Menu();
+        this.menuBar = new Gtk.MenuBar();
+        this.tbTools = new Gtk.Toolbar { ToolbarStyle = this.ToolbarMode };
+        this.mRecent = new Gtk.Menu();
+        this.lblCount = new Gtk.Label( "..." );
+        this.lblType = new Gtk.Label( "..." );
+        this.sbStatus = new Gtk.Statusbar();
+
+        this.newAction = new ( "new", "_New", "new spreadsheet", this.iconNew );
+        this.openAction = new ( "open", "_Open", "open spreadhseet", this.iconOpen );
+        this.saveAction = new ( "save", "_Save", "save spreadhseet", this.iconSave );
+        this.saveAsAction = new ( "save_as", "Save _as...", "save spreadhseet as...", this.iconSave );
+        this.propertiesAction = new ( "properties", "_Properties", "properties", this.iconProperties );
+        this.closeAction = new ( "close", "_Close", "close spreadhseet", this.iconClose );
+        this.aboutAction = new ( "about", "_About", "about...", this.iconAbout );
+        this.importAction = new ( "import", "_Import", "import data", this.iconImport );
+        this.exportAction = new ( "export", "_Export", "export to...", this.iconExport );
+        this.revertAction = new ( "revert", "_Revert", "revert to file", this.iconRevert );
+        this.quitAction = new ( "quit", "_Quit", "quit", this.iconExit );
+        this.findAction = new ( "find", "_Find", "find...", this.iconFind );
+        this.findAgainAction = new ( "find_again", "_Find again", "find again", this.iconFind );
+        this.insertFormulaAction = new ( "insert_formula", "_Insert formula", "insert formula", this.iconFormula );
+        this.addRowsAction = new ( "add_rows", "_Add rows", "add rows", this.iconAdd );
+        this.removeRowsAction = new ( "remove_rows", "_Remove rows", "remove rows", this.iconRemove );
+        this.clearRowsAction = new ( "clear_rows", "_Clear rows", "clear rows", this.iconClear );
+        this.copyRowAction = new ( "copy_row", "_Copy row", "copy row", this.iconCopy );
+        this.sortRowsAction = new ( "sort_rows", "_Sort", "short rows", this.iconSort );
+        this.fillRowAction = new ( "fill_row", "_Fill row", "fill row", this.iconPaste );
+        this.addColumnsAction = new ( "add_columns", "_Add columns", "add columns", this.iconAdd );
+        this.removeColumnsAction = new ( "remove_columns", "_Remove columns", "remove columns", this.iconRemove );
+        this.clearColumnsAction = new ( "clear_Columns", "_Clear columns", "clear columns", this.iconRemove );
+        this.copyColumnAction = new ( "copy_column", "_Copy column", "copy column", this.iconCopy );
+        this.fillColumnAction = new ( "fill_column", "_Fill column", "fill column", this.iconPaste );
 
         this.Build();
 
         this.Document = null;
-        this.cfg = Config.Load();
+        this.cfg = Core.Cfg.Config.Load();
         this.LoadRecentFilesIntoMenu();
         this.ActivateIde( false );
-    }
 
-    public MainWindow(string fileName)
-        : this()
-    {
-        this.OpenDocument( fileName );
+        if ( !string.IsNullOrWhiteSpace( fileName ) ) {
+            this.OpenDocument( fileName );
+        }
     }
 
     /// <summary>Loads all the recent files into menu.</summary>
     void LoadRecentFilesIntoMenu()
     {
-        foreach(string fileName in this.cfg.RecentFiles) {
-            this.AppendRecentFileToMenu( fileName );
-        }
-
-        return;
+        this.cfg.RecentFiles.ToList<string>().ForEach( this.AppendRecentFileToMenu );
     }
 
     /// <summary>Appends a given recent file to the menu.</summary>
@@ -62,7 +87,7 @@ public partial class MainWindow: Gtk.Window {
         string fileNameOnly = System.IO.Path.GetFileName( fileName );
         var miFile = new Gtk.MenuItem( fileNameOnly );
 
-        this.cfg.RecentFiles = new string[]{ fileName };
+        this.cfg.RecentFiles = [ fileName ];
         this.mRecent.Append( miFile );
 
         miFile.Activated += (o, evt) => {
@@ -74,7 +99,6 @@ public partial class MainWindow: Gtk.Window {
         miFile.Show();
         this.cfg.Save();
     }
-
 
     void PrepareForDocument(CsvDocument? doc)
     {
@@ -106,38 +130,38 @@ public partial class MainWindow: Gtk.Window {
 
         this.sbStatus.Visible              = true;
 
-        this.openAction.Sensitive          = true;
-        this.newAction.Sensitive           = true;
-        this.importAction.Sensitive        = true;
-        this.quitAction.Sensitive          = true;
-        this.aboutAction.Sensitive         = true;
+        this.openAction.IsEnabled            = true;
+        this.newAction.IsEnabled           = true;
+        this.importAction.IsEnabled        = true;
+        this.quitAction.IsEnabled          = true;
+        this.aboutAction.IsEnabled         = true;
 
-        this.saveAction.Sensitive          = active;
-        this.saveAsAction.Sensitive        = active;
-        this.revertAction.Sensitive = active;
-        this.exportAction.Sensitive       = active;
-        this.closeAction.Sensitive         = active;
-        this.propertiesAction.Sensitive    = active;
+        this.saveAction.IsEnabled          = active;
+        this.saveAsAction.IsEnabled        = active;
+        this.revertAction.IsEnabled        = active;
+        this.exportAction.IsEnabled        = active;
+        this.closeAction.IsEnabled         = active;
+        this.propertiesAction.IsEnabled    = active;
 
-        this.addRowsAction.Sensitive       = active;
-        this.addColumnsAction.Sensitive    = active;
-        this.removeRowsAction.Sensitive    = active;
-        this.removeColumnsAction.Sensitive = active;
-        this.clearRowsAction.Sensitive      = active;
-        this.clearColumnsAction.Sensitive   = active;
-        this.insertFormulaAction.Sensitive = active;
-        this.copyColumnAction.Sensitive    = active;
-        this.copyRowAction.Sensitive       = active;
-        this.fillRowAction.Sensitive       = active;
-        this.sortRowsAction.Sensitive      = active;
-        this.fillColumnAction.Sensitive    = active;
+        this.addRowsAction.IsEnabled       = active;
+        this.addColumnsAction.IsEnabled    = active;
+        this.removeRowsAction.IsEnabled    = active;
+        this.removeColumnsAction.IsEnabled = active;
+        this.clearRowsAction.IsEnabled     = active;
+        this.clearColumnsAction.IsEnabled  = active;
+        this.insertFormulaAction.IsEnabled = active;
+        this.copyColumnAction.IsEnabled    = active;
+        this.copyRowAction.IsEnabled       = active;
+        this.fillRowAction.IsEnabled       = active;
+        this.sortRowsAction.IsEnabled      = active;
+        this.fillColumnAction.IsEnabled    = active;
 
-        this.findAction.Sensitive          = active;
-        this.findAgainAction.Sensitive     = active;
+        this.findAction.IsEnabled          = active;
+        this.findAgainAction.IsEnabled     = active;
 
         this.ShowProjectInfo();
         this.SetCurrentCell( 0, 0, false );
-        Util.UpdateUI();
+        GtkUtil.Misc.UpdateUI();
     }
 
     protected void ShowDocument()
@@ -154,7 +178,7 @@ public partial class MainWindow: Gtk.Window {
     protected void ShowDocument(int numRow)
     {
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -210,7 +234,7 @@ public partial class MainWindow: Gtk.Window {
                 listStore.AppendValues( row.ToArray() );
             }
         } catch(Exception e) {
-            Util.MsgError( this, AppInfo.Name, "Error building view: '" + e.Message + '\'' );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Error building view: '" + e.Message + '\'' );
         }
 
         this.tvTable.EnableGridLines = Gtk.TreeViewGridLines.Both;
@@ -248,7 +272,7 @@ public partial class MainWindow: Gtk.Window {
     void OnFind()
     {
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -292,15 +316,10 @@ public partial class MainWindow: Gtk.Window {
         try {
             var loader = new CsvDocumentPersistence();
 
-            if ( delim == '\0' ) {
-                loader.Load( fn, firstRowForHeaders: useHeaders );
-            } else {
-                loader.Load( fn, delim, useHeaders );
-            }
-
+            loader.Load( fn, delim, firstRowForHeaders: useHeaders );
             this.PrepareForDocument( loader.Document );
         } catch(Exception e) {
-            Util.MsgError(
+            GtkUtil.Misc.MsgError(
                         this, AppInfo.Name,
                         "Error while loading file: '" + e.Message + '\'' );
             this.Document = null;
@@ -315,7 +334,7 @@ public partial class MainWindow: Gtk.Window {
         bool toret = true;
 
         if ( this.Document != null ) {
-            if ( Util.Ask( this, AppInfo.Name,
+            if ( GtkUtil.Misc.Ask( this, AppInfo.Name,
                             "Close spreadsheet '" + this.Document.FileName + "' ?" ) )
             {
                 this.CloseDocument();
@@ -333,7 +352,7 @@ public partial class MainWindow: Gtk.Window {
           && this.Document.Changed )
         {
             // Save the document, if needed
-            if ( Util.Ask( this, AppInfo.Name,
+            if ( GtkUtil.Misc.Ask( this, AppInfo.Name,
                                     "Save spreadsheet '"
                                     + this.Document.FileName + "' ?" ) )
             {
@@ -355,7 +374,7 @@ public partial class MainWindow: Gtk.Window {
                 this.LastFileName = ".";
             }
 
-            if ( Util.DlgOpen( AppInfo.Name, "Open spreadsheet",
+            if ( GtkUtil.Misc.DlgOpen( AppInfo.Name, "Open spreadsheet",
                                 this,
                                 ref this.lastFileName,
                                 CsvDocumentPersistence.FileFilter[ 0 ] ) )
@@ -371,14 +390,14 @@ public partial class MainWindow: Gtk.Window {
     {
         this.sbStatus.Pop( 1 );
         this.sbStatus.Push( 1, "Ready" );
-        Util.UpdateUI();
+        GtkUtil.Misc.UpdateUI();
     }
 
     public void SetStatus(string msg)
     {
         this.sbStatus.Pop( 1 );
         this.sbStatus.Push( 1, msg );
-        Util.UpdateUI();
+        GtkUtil.Misc.UpdateUI();
     }
 
     public void SetTitle()
@@ -457,7 +476,7 @@ public partial class MainWindow: Gtk.Window {
                     this.PrepareForDocument( importer.Load() );
                 }
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name,
+                GtkUtil.Misc.MsgError( this, AppInfo.Name,
                                         "unable to import: " + exc.Message );
                 this.PrepareForDocument( null );
             }
@@ -563,7 +582,7 @@ public partial class MainWindow: Gtk.Window {
 
                 this.Document.Changed = true;
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, "Passing coordinates to data:\n"
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, "Passing coordinates to data:\n"
                     + "Rows: " + this.Document.Data.NumRows + "\n"
                     + "Columns: " + this.Document.Data.NumColumns + "\n"
                     + exc.Message
@@ -571,7 +590,7 @@ public partial class MainWindow: Gtk.Window {
             }
         } catch(Exception exc)
         {
-            Util.MsgError( this, AppInfo.Name, exc.Message );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
         }
 
         Exit:
@@ -593,9 +612,9 @@ public partial class MainWindow: Gtk.Window {
 
                     this.SetTitle();
                 }
-            } else Util.MsgError( this, AppInfo.Name, "No document loaded" );
+            } else GtkUtil.Misc.MsgError( this, AppInfo.Name, "No document loaded" );
         } catch(Exception exc) {
-            Util.MsgError( this, AppInfo.Name, exc.Message );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             this.SetStatus();
         }
 
@@ -615,7 +634,7 @@ public partial class MainWindow: Gtk.Window {
 
             // Ask for name
             if ( this.Document is not null ) {
-                if ( Util.DlgSave(
+                if ( GtkUtil.Misc.DlgSave(
                             AppInfo.Name, "Save spreadsheet as...",
                             this,
                             ref this.lastFileName,
@@ -629,11 +648,11 @@ public partial class MainWindow: Gtk.Window {
                     this.SetStatus();
                 }
             } else {
-                Util.MsgError( this, AppInfo.Name, "No document loaded" );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, "No document loaded" );
                 this.SetStatus();
             }
         } catch(Exception exc) {
-            Util.MsgError( this, AppInfo.Name, exc.Message );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
         }
     }
 
@@ -662,19 +681,19 @@ public partial class MainWindow: Gtk.Window {
                         options.Delimiter.Name = dlg.DelimiterValue;
 
                         Exporter.Save( options );
-                        Util.MsgInfo( this, AppInfo.Name,
+                        GtkUtil.Misc.MsgInfo( this, AppInfo.Name,
                                         options.Exporter.FileExtension
                                         + " file generated" );
                     }
                 } catch(Exception exc) {
-                    Util.MsgError( this, AppInfo.Name, exc.Message );
+                    GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
                 }
             }
 
             dlg.Destroy();
 
         } else {
-            Util.MsgError( this, AppInfo.Name, "No document loaded" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "No document loaded" );
         }
 
         return;
@@ -743,7 +762,7 @@ public partial class MainWindow: Gtk.Window {
 
         // Check rows and headers size
         if ( this.Document.Data.NumColumns > dlg.NumColumns ) {
-            if ( !Util.Ask( this, AppInfo.Name, ColDataLoss ) ) {
+            if ( !GtkUtil.Misc.Ask( this, AppInfo.Name, ColDataLoss ) ) {
                 dlg.NumColumns = this.Document.Data.NumColumns;
                 dlg.NumRows = this.Document.Data.NumRows;
                 goto Exit;
@@ -751,7 +770,7 @@ public partial class MainWindow: Gtk.Window {
         }
 
         if ( this.Document.Data.NumRows > dlg.NumRows ) {
-            if ( !Util.Ask( this, AppInfo.Name, RowDataLoss ) ) {
+            if ( !GtkUtil.Misc.Ask( this, AppInfo.Name, RowDataLoss ) ) {
                 dlg.NumColumns = this.Document.Data.NumColumns;
                 dlg.NumRows = this.Document.Data.NumRows;
                 goto Exit;
@@ -787,7 +806,7 @@ public partial class MainWindow: Gtk.Window {
                 if ( answer == Gtk.ResponseType.Apply ) {
                     this.ApplyChangedProperties( dlg );
                     this.UpdateDocumentView( oldRows, oldColumns );
-                    Util.UpdateUI();
+                    GtkUtil.Misc.UpdateUI();
                     oldRows = this.Document.Data.NumRows;
                     oldColumns = this.Document.Data.NumColumns;
                 }
@@ -799,7 +818,7 @@ public partial class MainWindow: Gtk.Window {
             this.UpdateDocumentView( oldRows, oldColumns );
             dlg.Destroy();
         } else {
-            Util.MsgError(this, AppInfo.Name, "No document loaded");
+            GtkUtil.Misc.MsgError(this, AppInfo.Name, "No document loaded");
         }
 
         return;
@@ -852,7 +871,7 @@ public partial class MainWindow: Gtk.Window {
             this.GetCurrentCell( out int row, out int col );
             this.FindText( row + 1 );
         } else {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
         }
 
         return;
@@ -905,7 +924,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Get position
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -926,7 +945,7 @@ public partial class MainWindow: Gtk.Window {
                 this.Document.Data.CleanRows( 0, rowBegin, rowEnd );
                 this.RefreshRows( 0, rowBegin, rowEnd );
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -937,7 +956,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Chk
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -959,7 +978,7 @@ public partial class MainWindow: Gtk.Window {
                 this.Document.Data.CleanColumns( row, colBegin, colEnd );
                 ShowDocument();
             } catch (System.Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -970,7 +989,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Chk
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -1006,7 +1025,7 @@ public partial class MainWindow: Gtk.Window {
 
                 this.ShowDocument();
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -1017,7 +1036,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Chk
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -1051,7 +1070,7 @@ public partial class MainWindow: Gtk.Window {
 
                 this.ShowDocument();
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -1064,9 +1083,9 @@ public partial class MainWindow: Gtk.Window {
 
         // Chk
         if ( this.Document != null ) {
-            if ( Util.Ask( this, AppInfo.Name, "Revert to the file on disk. Are you sure?" ) )
+            if ( GtkUtil.Misc.Ask( this, AppInfo.Name, "Revert to the file on disk. Are you sure?" ) )
             {
-                // Store the parameters and reload  
+                // Store the parameters and reload
                 var fileName = this.Document.FileName;
                 var firstRowForHeaders = this.Document.Data.FirstRowContainsHeaders;
                 char delimiter = this.Document.DelimiterValue[ 0 ];
@@ -1082,11 +1101,11 @@ public partial class MainWindow: Gtk.Window {
                 } catch(Exception exc)
                 {
                     this.Document = oldDocument;
-                    Util.MsgError( this, AppInfo.Name, exc.Message );
+                    GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
                 }
             }
         } else {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
         }
 
         return;
@@ -1096,7 +1115,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Chk
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -1118,7 +1137,7 @@ public partial class MainWindow: Gtk.Window {
                 this.ShowDocument();
                 this.SetStatus();
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -1129,7 +1148,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Chk
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -1151,7 +1170,7 @@ public partial class MainWindow: Gtk.Window {
                 this.ShowDocument();
                 this.SetStatus();
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -1178,14 +1197,14 @@ public partial class MainWindow: Gtk.Window {
                     this.ShowDocument();
                     this.SetStatus();
                 } catch(Exception exc) {
-                    Util.MsgError( this, AppInfo.Name, exc.Message );
+                    GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
                 }
             }
 
             dlg.Destroy();
 
         } else {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
         }
 
         return;
@@ -1195,7 +1214,7 @@ public partial class MainWindow: Gtk.Window {
     {
         // Chk
         if ( this.Document == null ) {
-            Util.MsgError( this, AppInfo.Name, "Document does not exist" );
+            GtkUtil.Misc.MsgError( this, AppInfo.Name, "Document does not exist" );
             return;
         }
 
@@ -1216,7 +1235,7 @@ public partial class MainWindow: Gtk.Window {
                 this.ShowDocument();
                 this.SetStatus();
             } catch(Exception exc) {
-                Util.MsgError( this, AppInfo.Name, exc.Message );
+                GtkUtil.Misc.MsgError( this, AppInfo.Name, exc.Message );
             }
         }
 
@@ -1243,7 +1262,7 @@ public partial class MainWindow: Gtk.Window {
 
                 while ( filler.NumCells > 0 ) {
                     filler.DoIt();
-                    Util.UpdateUI();
+                    GtkUtil.Misc.UpdateUI();
                 }
 
                 this.ShowDocument( row );
@@ -1273,7 +1292,7 @@ public partial class MainWindow: Gtk.Window {
 
                 while ( filler.NumCells > 0 ) {
                     filler.DoIt();
-                    Util.UpdateUI();
+                    GtkUtil.Misc.UpdateUI();
                 }
 
                 this.ShowDocument( row );
@@ -1433,7 +1452,7 @@ public partial class MainWindow: Gtk.Window {
             }
 
             if( col < 0
-                || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
+             || col >= ( this.Document.Data.NumColumns + NumFixedColumns ) )
             {
                 throw new ArgumentException(
                                     "invalid column to set: " + col.ToString(),
@@ -1462,13 +1481,16 @@ public partial class MainWindow: Gtk.Window {
             // Fire dialog
             if ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok ) {
                 // Get data from dialog
-                Formula f = Formula.GetFormula( dlg.Formula );
-                f.Document = this.Document;
-                f.Direction = dlg.Direction;
-                f.Position = new Position( this.Document, row, col );
+                Formula? f = Formula.GetFormula( dlg.Formula );
 
-                // Add formula to document
-                this.Document.FormulaManager.AddFormula( f );
+                if ( f is not null ) {
+                    f.Document = this.Document;
+                    f.Direction = dlg.Direction;
+                    f.Position = new Position( this.Document, row, col );
+
+                    // Add formula to document
+                    this.Document.FormulaManager.AddFormula( f );
+                }
             }
 
             dlg.Destroy();

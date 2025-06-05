@@ -14,14 +14,14 @@ namespace Colorado.Core.Fillers {
                 this.Delta = -1;
             }
 
-            this.DivideValue();
+            ( this.StrValue, this.NumValue ) = this.DivideValue();
         }
 
         /// <summary>
         /// Gets the string of the value, and divides it in the numeric and
         /// alpha part.
         /// </summary>
-        protected void DivideValue()
+        protected (string, int) DivideValue()
         {
             string strNum = "";
             int pos = 0;
@@ -63,7 +63,7 @@ namespace Colorado.Core.Fillers {
 
             // End
             this.NumValue = int.Parse( strNum );
-            return;
+            return ( this.StrValue, this.NumValue );
         }
 
         /// <summary>

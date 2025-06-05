@@ -17,7 +17,7 @@ namespace Colorado.Core {
         /// Gets the export options.
         /// </summary>
         /// <value>The <see cref="ExportOptions"/>.</value>
-        public ExportOptions Options {
+        public required ExportOptions Options {
             get; set;
         }
 
@@ -31,26 +31,32 @@ namespace Colorado.Core {
             get;
         }
 
-        static void InitDictionary()
+        static Dictionary<string, Exporter> InitDictionary()
         {
             if ( exporters == null ) {
                 Type exporterType = typeof( Exporter );
                 exporters = new Dictionary<string, Exporter>();
 
-                IEnumerable<Type> types = Assembly.GetAssembly( exporterType ).GetTypes();
+                IEnumerable<Type>? types = Assembly.GetAssembly( exporterType )?.GetTypes();
 
-                foreach (Type type in types) {
-                    if ( type.IsClass
-                        && !type.IsAbstract
-                        && type.IsSubclassOf( exporterType ) )
-                    {
-                        var name = (string) type.GetField( "Name" ).GetValue( null );
-                        exporters.Add( name, (Exporter) Activator.CreateInstance( type ) );
+                if ( types is not null ) {
+                    foreach (Type type in types) {
+                        if ( type.IsClass
+                            && !type.IsAbstract
+                            && type.IsSubclassOf( exporterType ) )
+                        {
+                            var name = (string) ( type.GetField( "Name" )?.GetValue( null ) ?? "" );
+                            Exporter? exporter = (Exporter?) Activator.CreateInstance( type );
+
+                            if ( exporter is not null )  {
+                                exporters.Add( name, exporter );
+                            }
+                        }
                     }
                 }
             }
 
-            return;
+            return exporters;
         }
 
         /// <summary>
@@ -60,7 +66,14 @@ namespace Colorado.Core {
         /// <param name="id">The string identifier.</param>
         public static Exporter GetExporter(string id)
         {
-            InitDictionary();
+            System.Console.WriteLine( $"GetExporter({id}): Starting" );
+
+            exporters = InitDictionary();
+
+            System.Console.WriteLine( $"#exporters: {exporters.Count}" );
+            foreach (KeyValuePair<string, Exporter> exporterPair in exporters) {
+                System.Console.WriteLine( $"#exporter: {exporterPair.Key}/{exporterPair.Value.Id}" );
+            }
             return exporters[ id ];
         }
 
@@ -71,10 +84,8 @@ namespace Colorado.Core {
         public static Exporter[] GetAllExporters()
         {
             if ( allExporters == null ) {
-                InitDictionary();
-
-                allExporters = new Exporter[ exporters.Count ];
-                exporters.Values.CopyTo( allExporters, 0 );
+                exporters = InitDictionary();
+                allExporters = exporters.Values.ToList<Exporter>().ToArray();
             }
 
             return allExporters;
@@ -95,8 +106,7 @@ namespace Colorado.Core {
             return;
         }
 
-
-        static Dictionary<string, Exporter> exporters;
-        static Exporter[] allExporters;
+        static Dictionary<string, Exporter>? exporters;
+        static Exporter[]? allExporters;
     }
 }

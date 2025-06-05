@@ -8,7 +8,7 @@
         public const string EtqData = "data";
         public const string EtqRow = "row";
 
-        /// <summary>Export this data as XML./// </summary>
+        /// <summary>Export this data as XML.</summary>
         public override void Save()
         {
             CsvDocument doc = this.Options.Document;
@@ -16,33 +16,31 @@
             string[] headers = doc.Data.Headers;
             string fileName = this.Options.Path;
 
-            using(var f = XmlWriter.Create(
-                new FileStream( fileName, FileMode.Create, FileAccess.Write )))
-            {
-                f.WriteStartDocument( true );
+            using var f = XmlWriter.Create(
+                new FileStream( fileName, FileMode.Create, FileAccess.Write ));
 
-                f.WriteStartElement( EtqData );
+            f.WriteStartDocument( true );
+            f.WriteStartElement( EtqData );
 
-                for(int i = 0; i < doc.Data.NumRows; ++i) {
-                    f.WriteStartElement( EtqRow );
+            for(int i = 0; i < doc.Data.NumRows; ++i) {
+                f.WriteStartElement( EtqRow );
 
-                    if ( this.Options.IncludeRowNumbers ) {
-                        f.WriteStartAttribute( EtqId );
-                        f.WriteValue( i );
-                        f.WriteEndAttribute();
-                    }
+                if ( this.Options.IncludeRowNumbers ) {
+                    f.WriteStartAttribute( EtqId );
+                    f.WriteValue( i );
+                    f.WriteEndAttribute();
+                }
 
-                    foreach(int j in columnsIncluded) {
-                        f.WriteStartElement( headers[j] );
-                        f.WriteString( doc.Data[ i, j ] );
-                        f.WriteEndElement();
-                    }
-
+                foreach(int j in columnsIncluded) {
+                    f.WriteStartElement( headers[j] );
+                    f.WriteString( doc.Data[ i, j ] );
                     f.WriteEndElement();
                 }
 
                 f.WriteEndElement();
             }
+
+            f.WriteEndElement();
 
             return;
         }

@@ -26,14 +26,8 @@ namespace Colorado.Core {
             this.Delimiter = doc.Delimiter;
 			this.QuotedText = doc.SurroundText;
 
-			this.FillDefaultColumnsIncluded();
+			this.ColumnsIncluded = Enumerable.Range( 0, this.Document.Data.NumColumns ).ToArray();
 		}
-
-        public void FillDefaultColumnsIncluded()
-        {
-            this.ColumnsIncluded =
-                    Enumerable.Range( 0, this.Document.Data.NumColumns ).ToArray();
-        }
 
         /// <summary>
         /// Returns whether or not a given column index is included or not.
@@ -57,7 +51,7 @@ namespace Colorado.Core {
 		public bool QuotedText {
             get; set;
 		}
-		
+
 		/// <summary>
 		/// Gets or sets the delimiter to use while exporting.
 		/// This is only used when the export format is CSV
@@ -66,14 +60,14 @@ namespace Colorado.Core {
         public Delimiter Delimiter {
             get; private set;
         }
-		
+
 		/// <summary>
 		/// Gets the whole set of selected fields.
 		/// </summary>
 		public int[] ColumnsIncluded {
             get; set;
 		}
-		
+
 		/// <summary>
 		/// Name of the file for exportation
 		/// </summary>
@@ -87,7 +81,7 @@ namespace Colorado.Core {
 		public bool IncludeRowNumbers {
             get; set;
 		}
-		
+
 		/// <summary>
 		/// Include or not a margin line for the border of the table.
 		/// </summary>
@@ -116,10 +110,6 @@ namespace Colorado.Core {
         /// </summary>
         /// <value>The <see cref="Exporter"/>.</value>
         /// <seealso cref="Exporter.GetExporter"/>
-        public Exporter Exporter {
-            get {
-                return Exporter.GetExporter( this.ExporterId );
-            }
-        }
+        public Exporter Exporter => Exporter.GetExporter( this.ExporterId );
 	}
 }

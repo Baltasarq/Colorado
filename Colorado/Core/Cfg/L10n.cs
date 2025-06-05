@@ -1,11 +1,12 @@
 ﻿// Colorado (c) 2015 MIT License <baltasarq@gmail.com>
 
+
 namespace Colorado.Core.Cfg {
     using System.Globalization;
     using System.Collections.ObjectModel;
 
     /// <summary>
-    /// The localization 
+    /// The localization
     /// </summary>
     public static class L10n {
         /// <summary>An identifier for localized strings.</summary>
@@ -16,20 +17,18 @@ namespace Colorado.Core.Cfg {
         };
 
         ///<summary>The collection of localized Spanish strings.</summary>
-        public static readonly ReadOnlyCollection<string> StringsEN =
-            new ReadOnlyCollection<string>( new string[] {
+        public static readonly ReadOnlyCollection<string> StringsEN = new([
             "File",
             "Edit",
             "Help",
-        });
+        ]);
 
         ///<summary>The collection of localized Spanish strings.</summary>
-        public static readonly ReadOnlyCollection<string> StringsES =
-            new ReadOnlyCollection<string>( new string[] {
+        public static readonly ReadOnlyCollection<string> StringsES = new([
             "Archivo",
             "Editar",
             "Ayuda",
-        });
+        ]);
 
         private static ReadOnlyCollection<string> strings = StringsEN;
 
@@ -52,16 +51,6 @@ namespace Colorado.Core.Cfg {
         /// <summary>Gets the localized string for the given id.</summary>
         /// <returns>The localized string.</returns>
         /// <param name="id">An identifier, as an <see cref="T:Id"/>.</param>
-        public static string Get(Id id)
-        {
-            string toret = null;
-            int numId = (int) id;
-
-            if ( numId < strings.Count ) {
-                toret = strings[ numId ];
-            }
-
-            return toret;
-        }
+        public static string Get(Id id) => strings[ (int) id ];
     }
 }

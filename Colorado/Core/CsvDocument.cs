@@ -23,7 +23,7 @@ namespace Colorado.Core {
 			this.FormulaManager = new FormulaManager( this );
             this.HasName = false;
 		}
-		
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Colorado.Core.CsvDocument"/> class.
         /// </summary>
@@ -56,7 +56,7 @@ namespace Colorado.Core {
                 this.HasName = true;
             }
 		}
-		
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="T:Colorado.Core.CsvDocument"/>
         /// has been assigned a file name.
@@ -65,7 +65,7 @@ namespace Colorado.Core {
 		public bool HasName {
             get; private set;
 		}
-		
+
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Colorado.Core.CsvDocument"/> should surround text.
         /// </summary>

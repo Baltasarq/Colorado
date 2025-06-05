@@ -24,37 +24,39 @@ namespace Colorado.Core.Importers
                 docXml.Load( f );
             }
 
+            XmlNodeList? nodeList = docXml.DocumentElement?.ChildNodes;
+
             // For each "row"
-            foreach(XmlNode node in docXml.DocumentElement.ChildNodes) {
-                rows.Add( new List<string>( headers.Count ) );
+            if ( nodeList is not null ) {
+                foreach(XmlNode node in nodeList) {
+                    rows.Add( new List<string>( headers.Count ) );
 
-                // For each "column"
-                var childs = node.ChildNodes;
-                for(int j = 0; j < childs.Count; ++j) {
-                    var subNode = childs[ j ];
-                    var header = subNode.Name;
-                    int col;
+                    // For each "column"
+                    var childs = node.ChildNodes;
+                    for(int j = 0; j < childs.Count; ++j) {
+                        var subNode = childs[ j ];
+                        string header = subNode?.Name ?? "col";
 
 
-                    // Take header position
-                    if ( !headers.TryGetValue( header, out col ) )
-                    {
-                        headers.Add( header, j );
-                        col = j;
+                        // Take header position
+                        if ( !headers.TryGetValue( header, out int col ) ) {
+                            headers.Add( header, j );
+                            col = j;
+                        }
+
+                        // Store value
+                        var row = rows[ ^1 ];
+
+                        if ( row.Count <= col ) {
+                            row.AddRange( new string[ ( col - row.Count ) + 1 ] );
+                        }
+
+                        row[ col ] = subNode?.InnerText ?? "#ERR!";
                     }
-
-                    // Store value
-                    var row = rows[ rows.Count - 1 ];
-
-                    if ( row.Count <= col ) {
-                        row.AddRange( new string[ ( col - row.Count ) + 1 ] );
-                    }
-
-                    row[ col ] = subNode.InnerText;
                 }
             }
 
-            return this.Dump( headers, rows );
+            return Dump( headers, rows );
         }
 
         /// <summary>Gets the name of the importer.</summary>

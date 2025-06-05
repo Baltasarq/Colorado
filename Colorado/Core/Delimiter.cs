@@ -9,23 +9,22 @@ namespace Colorado.Core {
         public const char SemicolonDelimiter = ';';
         public const char ColonDelimiter = ':';
         public const char TabDelimiter = '\t';
-        public static readonly ReadOnlyCollection<char> PredefinedDelimiters =
-            new ReadOnlyCollection<char>(
-                new char[]{ TabDelimiter, ColonDelimiter, SemicolonDelimiter, CommaDelimiter  }
-            );
-		public static readonly ReadOnlyCollection<string> PredefinedDelimiterNames =
-			new ReadOnlyCollection<string>(
-                new string[]{ TabDelimiterName,
-                              ColonDelimiter.ToString(),
-                              SemicolonDelimiter.ToString(),
-                              CommaDelimiter.ToString() }
-			);
+        public static readonly ReadOnlyCollection<char> PredefinedDelimiters = new ([
+                            TabDelimiter,
+                            ColonDelimiter,
+                            SemicolonDelimiter,
+                            CommaDelimiter ]);
+		public static readonly ReadOnlyCollection<string> PredefinedDelimiterNames = new ([
+                            TabDelimiterName,
+                            ColonDelimiter.ToString(),
+                            SemicolonDelimiter.ToString(),
+                            CommaDelimiter.ToString() ]);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Colorado.Core.Delimiter"/> class.
 		/// </summary>
 		/// <param name="c">The delimiter to use, as char.</param>
-        public Delimiter(char c = CommaDelimiter)
+        public Delimiter(char c = TabDelimiter)
 			: this( c.ToString() )
 		{
 		}
@@ -33,7 +32,8 @@ namespace Colorado.Core {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Colorado.Core.Delimiter"/> class.
 		/// </summary>
-		/// <param name="d">The delimiter to use, as a string (can be special).</param>
+		/// <param name="d">The delimiter to use, as a string
+        ///                 (can be one of ).</param>
 		public Delimiter(string d)
 		{
 			this.Name = d;
@@ -61,7 +61,7 @@ namespace Colorado.Core {
                 return;
             }
         }
-                    
+
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents the current
         /// <see cref="Colorado.Core.Delimiter"/>.
@@ -70,7 +70,7 @@ namespace Colorado.Core {
         /// that represents the current <see cref="Colorado.Core.Delimiter"/>.</returns>
 		public override string ToString()
 		{
-			return Raw.ToString();
+			return this.Raw.ToString();
 		}
 
 		/// <summary>

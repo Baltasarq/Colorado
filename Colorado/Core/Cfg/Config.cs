@@ -25,7 +25,7 @@
                 this.ReadConfiguration();
             } catch(IOException exc) {
                 Trace.WriteLine( "Reading cfg: " + exc.Message + exc.StackTrace );
-                throw exc;
+                throw;
             }
 
             return;
@@ -34,7 +34,7 @@
         protected void ReadConfiguration()
         {
             string line;
-            StreamReader file = null;
+            StreamReader? file = null;
 
             // Chk whether the file exists or not.
             try {
@@ -48,9 +48,8 @@
             }
 
             // Now yes, try to read the config file.
-            line = file.ReadLine();
+            line = file.ReadLine() ?? "";
             while( !file.EndOfStream ) {
-                int pos = line.IndexOf( '=' );
                 string[] lineParts = line.Split( '=' );
 
                 if ( lineParts.Length == 2 ) {
@@ -72,14 +71,14 @@
                                         numOfReadFileNames - MaxNumRecentFiles,
                                         fileNames,
                                         0,
-                                       MaxNumRecentFiles );
+                                        MaxNumRecentFiles );
                         }
 
                         this.RecentFiles = fileNames;
                     }
                 }
 
-                line = file.ReadLine();
+                line = file.ReadLine() ?? "";
             }
 
             file.Close();

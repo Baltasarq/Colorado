@@ -22,15 +22,19 @@ public partial class DlgProperties : Gtk.Dialog
         };
 
         this.document = doc;
+        this.listHeaders = new Gtk.TreeView();
         this.frmHeaders = new Gtk.Frame( "<b>Headers</b>" );
         this.sbColumns = new Gtk.SpinButton( 1, int.MaxValue, 1 );
         this.sbRows = new Gtk.SpinButton( 0, int.MaxValue, 1 );
-        this.cmbDelimiter = new Gtk.ComboBoxText();
-        this.cmbDelimiter.Add( new Gtk.Entry() );
+        this.cmbDelimiter = Gtk.ComboBoxText.NewWithEntry();
         this.cmbDecimalMark = new Gtk.ComboBoxText();
         this.cbSurroundWithDoubleQuotes = new Gtk.CheckButton( "Surround text with double quotes" );
         this.cbFirstRowForHeaders = new Gtk.CheckButton( "First row contains the headers" );
         this.frmProperties = new Gtk.Frame( "<b>Properties</b>" );
+        this.lblRows = new Gtk.Label( "Rows" );
+        this.lblColumns = new Gtk.Label( "Columns" );
+        this.lblDelimiter = new Gtk.Label( "Delimiter" );
+        this.lblDecimalMark = new Gtk.Label( "Decimal mark" );
 
         // Combobox activation
         this.cmbDelimiter.Changed += (o, e) => this.OnDelimiterChosen();
@@ -57,7 +61,7 @@ public partial class DlgProperties : Gtk.Dialog
 
     private void Build()
     {
-        var hBox = new Gtk.Box( Gtk.Orientation.Horizontal, 2);
+        var hBox = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
 
         this.BuildHeadersFrame();
         this.BuildPropertiesFrame();
@@ -78,7 +82,6 @@ public partial class DlgProperties : Gtk.Dialog
         var swScroll = new Gtk.ScrolledWindow();
 
         ((Gtk.Label)this.frmHeaders.LabelWidget).UseMarkup = true;
-        this.listHeaders = new Gtk.TreeView();
         this.listHeaders.EnableSearch = false;
         swScroll.Add( this.listHeaders );
         this.frmHeaders.Add( swScroll );
@@ -108,22 +111,18 @@ public partial class DlgProperties : Gtk.Dialog
         var hBoxDecimalMark = new Gtk.Box( Gtk.Orientation.Horizontal, 2 );
 
         // Rows
-        this.lblRows = new Gtk.Label( "Rows" );
         hBoxRows.PackStart( this.lblRows, false, false, 5 );
         hBoxRows.PackStart( this.sbRows, true, true, 5 );
 
         // Columns
-        this.lblColumns = new Gtk.Label( "Columns" );
         hBoxColumns.PackStart( this.lblColumns, false, false, 5 );
         hBoxColumns.PackStart( this.sbColumns, true, true, 5 );
 
         // Delimiter
-        this.lblDelimiter = new Gtk.Label( "Delimiter" );
         hBoxDelimiter.PackStart( this.lblDelimiter, false, false, 5 );
         hBoxDelimiter.PackStart( this.cmbDelimiter, true, true, 5 );
 
         // Decimal mark
-        this.lblDecimalMark = new Gtk.Label( "Decimal mark" );
         hBoxDecimalMark.PackStart( this.lblDecimalMark, false, false, 5 );
         hBoxDecimalMark.PackStart( this.cmbDecimalMark, true, true, 5 );
 
@@ -138,16 +137,14 @@ public partial class DlgProperties : Gtk.Dialog
         this.frmProperties.Add( vBox );
 
         // Add delimiters to its combo
-        foreach (string delimiter in Delimiter.PredefinedDelimiterNames)
-        {
+        foreach (string delimiter in Delimiter.PredefinedDelimiterNames) {
             cmbDelimiter.AppendText( delimiter );
         }
 
         this.cmbDelimiter.Entry.Text = Delimiter.GetName( this.document.DelimiterValue );
 
         // Add decimal separators to its combo
-        foreach (char separator in DecimalMark.DecimalSeparatorChar)
-        {
+        foreach (char separator in DecimalMark.DecimalSeparatorChar) {
             cmbDecimalMark.AppendText( separator.ToString() );
         }
 
@@ -155,11 +152,11 @@ public partial class DlgProperties : Gtk.Dialog
     }
 
 
-    private Gtk.TreeView? listHeaders;
-    private Gtk.Label? lblRows;
-    private Gtk.Label? lblColumns;
-    private Gtk.Label? lblDelimiter;
-    private Gtk.Label? lblDecimalMark;
+    private readonly Gtk.TreeView listHeaders;
+    private readonly Gtk.Label lblRows;
+    private readonly Gtk.Label lblColumns;
+    private readonly Gtk.Label lblDelimiter;
+    private readonly Gtk.Label lblDecimalMark;
     private readonly Gtk.CheckButton cbSurroundWithDoubleQuotes;
     private readonly Gtk.CheckButton cbFirstRowForHeaders;
     private readonly Gtk.SpinButton sbRows;

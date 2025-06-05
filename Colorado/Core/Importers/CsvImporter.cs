@@ -14,12 +14,7 @@ namespace Colorado.Core.Importers {
             char delim = this.Options.Delimiter.Raw;
             var loader = new CsvDocumentPersistence();
 
-            if ( delim == '\0' ) {
-                loader.Load( fn, firstRowForHeaders: useHeaders );
-            } else {
-                loader.Load( fn, delim, useHeaders );
-            }
-
+            loader.Load( fn, delim, firstRowForHeaders: useHeaders );
             return loader.Document;
         }
 

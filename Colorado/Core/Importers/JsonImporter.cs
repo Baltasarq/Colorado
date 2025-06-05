@@ -100,7 +100,7 @@ public class JsonImporter : Importer
             }
         }
 
-        return this.Dump( headers, rows );
+        return Dump( headers, rows );
     }
 
     /// <summary>Removes the quotes, if existing.</summary>

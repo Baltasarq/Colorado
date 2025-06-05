@@ -8,11 +8,11 @@ namespace Colorado.Core {
 
 	public class CsvDocumentPersistence {
         /// <summary>The available file extensions for CSV documents.</summary>
-		public static ReadOnlyCollection<string> FileExtension = new ReadOnlyCollection<string>(new string[]{ "csv", "tsv" } );
+		public static ReadOnlyCollection<string> FileExtension = new( [ "csv", "tsv" ] );
 
         /// <summary>The file filters for the available extensions.</summary>
-        public static ReadOnlyCollection<string> FileFilter = new ReadOnlyCollection<string>(
-            new string[]{ "*." + FileExtension[ 0 ], "*." + FileExtension[ 1 ] } );
+        public static ReadOnlyCollection<string> FileFilter = new(
+            [ "*." + FileExtension[ 0 ], "*." + FileExtension[ 1 ] ] );
 
         /// <summary>Extension for temporary files.</summary>
 		public const string TempExtension = "tmp";
@@ -20,15 +20,16 @@ namespace Colorado.Core {
         /// <summary>Spaces. Beware of including delimiters such tabs.</summary>
         public const string Spaces = " \n\r";
 
-		public CsvDocumentPersistence()
+		public CsvDocumentPersistence(CsvDocument? doc = null)
         {
-			this.Document = null;
-		}
-
-		public CsvDocumentPersistence(CsvDocument doc)
-            :this()
-        {
-			this.Document = doc;
+            if ( doc is null ) {
+                this.Document = new CsvDocument( 0, 0 ) {
+                                    FileName = "unknown.csv",
+                                    SurroundText = false
+                                };
+            } else {
+			    this.Document = doc;
+            }
 		}
 
 		public static void PrepareFileName(ref string fileName)
@@ -53,7 +54,7 @@ namespace Colorado.Core {
 
 			return;
 		}
-			
+
         /// <summary>
         /// Strips spaces from a text line, trimming it.
         /// Note this is needed because the TAB delimiter is part of the spaces
@@ -61,7 +62,7 @@ namespace Colorado.Core {
         /// </summary>
         /// <returns>The line passed, without spaces to the right or left</returns>
         /// <param name="line">The string to trim</param>
-        public static string TrimSpaces(string line)
+        static string TrimSpaces(string line)
         {
             int lIndex = 0;
             int rIndex = line.Length - 1;
@@ -75,14 +76,14 @@ namespace Colorado.Core {
                 {
                     ++lIndex;
                 }
-                    
+
                 // Trim right
                 while( rIndex >= lIndex
-                    && Spaces.IndexOf( line[ rIndex ] ) != -1  ) 
+                    && Spaces.IndexOf( line[ rIndex ] ) != -1  )
                 {
                     --rIndex;
                 }
-                    
+
                 toret = line.Substring( lIndex, rIndex - lIndex + 1 );
             }
 
@@ -91,7 +92,7 @@ namespace Colorado.Core {
 
         static void Read(TextReader reader, bool firstRowForHeaders, List<string> dynLines, ref string headers)
         {
-            string line;
+            string? line;
 
             while ( ( line = reader.ReadLine() ) != null )
             {
@@ -116,8 +117,7 @@ namespace Colorado.Core {
 
         public void Load(string fileName, char delimiter = '\0', bool firstRowForHeaders = true)
         {
-            using (var reader = new StreamReader( fileName ) )
-            {
+            using (var reader = new StreamReader( fileName ) ) {
                 this.Load( reader, delimiter, firstRowForHeaders );
             }
 
@@ -356,46 +356,42 @@ namespace Colorado.Core {
 
         public void SaveCsvData(ExportOptions options)
 		{
-			StreamWriter file = null;
 			string fileName = Path.GetTempFileName();
-            Func<string, string, string> prepareCellForSaving = null;
+            Func<string, string, string> prepareCellForSaving = (cell, delimiter) => cell ?? "";
 
-			try {
-				// Decide whether to use quotes or not
+            try {
+                using var file = new StreamWriter( fileName );
+
+                // Decide whether to use quotes or not
                 if ( options.QuotedText ) {
                     prepareCellForSaving = QuoteCellForSaving;
-                } else {
-                    prepareCellForSaving = (cell, delimiter) => cell ?? "";
                 }
 
-				// Open file for saving
-				file = new StreamWriter( fileName );
-
-				// Write headers
-				if ( options.IncludeRowNumbers ) {
-					file.Write( "#" + Document.DelimiterValue );
-				}
+                // Write headers
+                if ( options.IncludeRowNumbers ) {
+                    file.Write( "#" + Document.DelimiterValue );
+                }
 
                 for(int i = 0; i < options.ColumnsIncluded.Length; ++i) {
                     int colIndex = options.ColumnsIncluded[ i ];
 
-					file.Write(
+                    file.Write(
                         prepareCellForSaving(
                             Document.Data.ColumnInfo[ colIndex ].Header,
                             this.Document.DelimiterValue ) );
 
-					if ( i < ( options.ColumnsIncluded.Length -1 ) ) {
-						file.Write( options.Delimiter );
-					}
-				}
+                    if ( i < ( options.ColumnsIncluded.Length -1 ) ) {
+                        file.Write( options.Delimiter );
+                    }
+                }
 
-				file.WriteLine();
+                file.WriteLine();
 
-				// Write each row
+                // Write each row
                 for(int row = 0; row < Document.Data.NumRows; ++row) {
-					if ( options.IncludeRowNumbers ) {
+                    if ( options.IncludeRowNumbers ) {
                         file.Write( Convert.ToString( row +1 ) + Document.DelimiterValue );
-					}
+                    }
 
                     for(int i = 0; i < options.ColumnsIncluded.Length; ++i) {
                         int colIndex = options.ColumnsIncluded[ i ];
@@ -405,27 +401,23 @@ namespace Colorado.Core {
                                 this.Document.Data[ row, colIndex ],
                                 this.Document.DelimiterValue ) );
 
-						if ( i < ( options.ColumnsIncluded.Length - 1 ) ) {
-							file.Write( options.Delimiter );
-						}
-					}
+                        if ( i < ( options.ColumnsIncluded.Length - 1 ) ) {
+                            file.Write( options.Delimiter );
+                        }
+                    }
 
-					file.WriteLine();
-				}
+                    file.WriteLine();
+                }
 
                 Document.Changed = false;
-				file.Close();
-				File.Copy( fileName, options.Path, true );
-				File.Delete( fileName );
-			} catch(Exception) {
-				throw;
-			}
-			finally {
-				if ( file != null ) {
-					file.Close();
-					File.Delete( fileName );
-				}
-			}
+                file.Close();
+                File.Copy( fileName, options.Path, true );
+                File.Delete( fileName );
+            } finally {
+                if ( File.Exists( fileName ) ) {
+                    File.Delete( fileName );
+                }
+            }
 
 			return;
 		}
@@ -441,9 +433,10 @@ namespace Colorado.Core {
         {
             string toret = cell ?? "";
 
+            cell ??= "";
+
             // Take into account delimiters...
-            var delimitersAndSpace = new HashSet<char>( Delimiter.PredefinedDelimiters )
-            {
+            var delimitersAndSpace = new HashSet<char>( Delimiter.PredefinedDelimiters ) {
                 // ...and spaces...
                 ' ',
                 // ...and the current delimiter of the document (could be repeated)

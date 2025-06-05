@@ -1,5 +1,6 @@
 ﻿// Colorado (c) 2015/19 Baltasar MIT License <baltasarq@gmail.com>
 
+
 namespace Colorado.Core {
     using System;
     using System.Reflection;
@@ -18,7 +19,7 @@ namespace Colorado.Core {
         }
 
         /// <summary>Gets the extension for this importer's output.</summary>
-        public ImportOptions Options {
+        public required ImportOptions Options {
             get; set;
         }
 
@@ -39,7 +40,7 @@ namespace Colorado.Core {
         ///     The external list are the rows, while the internal lists are
         ///     the columns.
         /// </param>
-        protected CsvDocument Dump(Dictionary<string, int> headers, List<List<string>> rows)
+        protected static CsvDocument Dump(Dictionary<string, int> headers, List<List<string>> rows)
         {
             // Create the CSV document
             var toret = new CsvDocument( rows.Count, headers.Count );
@@ -47,7 +48,6 @@ namespace Colorado.Core {
             // Set the headers
             var sortedHeaders = new List<KeyValuePair<string, int>>( headers );
             sortedHeaders.Sort( (pair1, pair2) => pair1.Value.CompareTo( pair2.Value ) );
-
             toret.Data.Headers = sortedHeaders.ConvertAll<string>( pair => pair.Key ).ToArray();
 
             // Load the data
@@ -62,26 +62,38 @@ namespace Colorado.Core {
             return toret;
         }
 
-        static void InitDictionary()
+        static Dictionary<string, Importer> InitDictionary()
         {
             if ( importers == null ) {
+                importers = [];
+
                 Type importerType = typeof( Importer );
-                importers = new Dictionary<string, Importer>();
+                var asm = Assembly.GetAssembly( importerType );
 
-                IEnumerable<Type> types = Assembly.GetAssembly( importerType ).GetTypes();
+                if ( asm is not null ) {
+                    IEnumerable<Type> types = asm.GetTypes();
 
-                foreach (Type type in types) {
-                    if ( type.IsClass
-                        && !type.IsAbstract
-                        && type.IsSubclassOf( importerType ) )
-                    {
-                        var name = (string) type.GetField( "Name" ).GetValue( null );
-                        importers.Add( name, (Importer) Activator.CreateInstance( type ) );
+                    foreach (Type type in types) {
+                        if ( type.IsClass
+                          && !type.IsAbstract
+                          && type.IsSubclassOf( importerType ) )
+                        {
+                            var nameField = type.GetField( "Name" );
+
+                            if ( nameField is not null ) {
+                                var name = (string) ( nameField.GetValue( null ) ?? "" );
+                                Importer? importTypeInstance = (Importer?) Activator.CreateInstance( type );
+
+                                if ( importTypeInstance is not null ) {
+                                    importers.Add( name, importTypeInstance );
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            return;
+            return importers;
         }
 
         /// <summary>
@@ -91,7 +103,7 @@ namespace Colorado.Core {
         /// <param name="id">The string identifier.</param>
         public static Importer GetImporter(string id)
         {
-            InitDictionary();
+            importers = InitDictionary();
             return importers[ id ];
         }
 
@@ -99,13 +111,12 @@ namespace Colorado.Core {
         /// Gets all importers.
         /// </summary>
         /// <returns>All the available <see cref="Importer"/> objects.</returns>
-        public static Importer[] GetAllImporters()
+        public static IList<Importer> GetAllImporters()
         {
             if ( allImporters == null ) {
-                InitDictionary();
+                importers = InitDictionary();
 
-                allImporters = new Importer[ importers.Count ];
-                importers.Values.CopyTo( allImporters, 0 );
+                allImporters = importers.Values.ToList().AsReadOnly();
             }
 
             return allImporters;
@@ -123,7 +134,7 @@ namespace Colorado.Core {
             return importer.Load();
         }
 
-        static Dictionary<string, Importer> importers;
-        static Importer[] allImporters;
+        static Dictionary<string, Importer>? importers;
+        static IList<Importer>? allImporters;
     }
 }

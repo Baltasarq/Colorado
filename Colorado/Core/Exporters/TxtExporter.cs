@@ -1,8 +1,7 @@
 ﻿// Colorado (c) 2015/18 Baltasar MIT License <baltasarq@gmail.com>
 
 
-namespace Colorado.Core.Exporters
-{
+namespace Colorado.Core.Exporters {
     using System.Text;
     using System.IO;
 

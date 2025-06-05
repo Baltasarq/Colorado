@@ -8,12 +8,7 @@ namespace Colorado.Core {
 		public FormulaManager(CsvDocument doc)
 		{
 			this.document = doc;
-			this.PrepareFormulas();
-		}
-
-		private void PrepareFormulas()
-		{
-			this.formulas = new List<Formula>();
+			this.formulas = [];
 			this.AllowFormulaUpdating = true;
 		}
 
@@ -81,7 +76,7 @@ namespace Colorado.Core {
 		/// <param name="newPos">
 		/// A <see cref="Position"/> holding the position to move the formula to.
 		/// </param>
-		public void MoveFormula(Formula f, Position newPos)
+		public static void MoveFormula(Formula f, Position newPos)
 		{
 			f.Position = newPos;
 		}
