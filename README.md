@@ -21,7 +21,7 @@ Then, go to the [Colorado's releases section](http://github.com/baltasarq/Colora
 Just open a terminal and type:
 
 ```
-$ dotnet Testy.dll
+$ dotnet Colorado.dll
 ```
 
 # Compilation
