@@ -14,7 +14,7 @@ Technologies:
 - <a href="http://www.dotnet.microsoft.com">dotnet 9.0 runtime</a>.
 - <a href="http://www.gtk.org/">Gtk 3</a>.
 
-Then, go to the [Colorado's releases section](http://github.com/baltasarq/Colorado/releases/latest) and grab the *Testy.dll* file.
+Then, go to the [Colorado's releases section](http://github.com/baltasarq/Colorado/releases/latest) and grab the *Colorado.dll* file.
 
 ## Execution:
 
