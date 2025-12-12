@@ -1,9 +1,0 @@
-{
-  "sdk": {
-    "version": "9.0.4",
-    "rollForward": "latestFeature",
-    "paths": [
-        "/home/baltasarq/bin/dotnet"
-    ]
-  }
-}
