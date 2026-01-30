@@ -1481,15 +1481,19 @@ public partial class MainWindow: Gtk.ApplicationWindow {
             // Fire dialog
             if ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok ) {
                 // Get data from dialog
-                Formula? f = Formula.GetFormula( dlg.Formula );
+                Formula? f = Formula.GetFormula(
+                                        dlg.Formula,
+                                        this.Document,
+                                        new Position( this.Document, row, col ),
+                                        dlg.Direction );
 
                 if ( f is not null ) {
-                    f.Document = this.Document;
-                    f.Direction = dlg.Direction;
-                    f.Position = new Position( this.Document, row, col );
-
-                    // Add formula to document
                     this.Document.FormulaManager.AddFormula( f );
+                } else {
+                    GtkUtil.Misc.MsgError(
+                                    this,
+                                    AppInfo.Name,
+                                    "Internal: formula not found." );
                 }
             }
 

@@ -19,7 +19,7 @@ namespace Colorado.Core {
 		/// Returns the document this formula will be applied to
 		/// </summary>
 		public CsvDocument Document {
-			get; set;
+			get;
 		}
 
 		public Position Position {
@@ -27,7 +27,7 @@ namespace Colorado.Core {
 		}
 
 		public Position.Direction Direction {
-			get; set;
+			get;
 		}
 
 		public abstract double DoIt();
@@ -87,11 +87,28 @@ namespace Colorado.Core {
 			return toret;
 		}
 
-		public static Formula? GetFormula(int i)
+		/// <summary>Gets a <see cref="Formula"/> from its type.</summary>
+		/// <seealso cref="Formula.GetAllFormulas"/>
+		/// <param name="i">The position in the collection of formulas.</param>
+		/// <param name="doc">The <see cref="CsvDocument"/>.</param>
+		/// <param name="pos">The <see cref="Position"> in the document.</param>
+		/// <param name="dir">The <see cref="Position.Direction" in the document.</param>
+		/// <returns>The corresponding formula, already created and configured.</returns>
+		public static Formula? GetFormula(int i, CsvDocument doc, Position pos, Position.Direction dir)
 		{
-			return (Formula?) Activator.CreateInstance( GetAllFormulas()[ i ] );
+			Formula? toret = null;
+
+			try {
+				toret = (Formula?) Activator.CreateInstance(
+												GetAllFormulas()[ i ], [ doc, pos, dir] );
+			} catch(Exception) {
+				toret = null;
+			}
+
+			return toret;
 		}
 
+		/// <summary>The id of the formula, <see cref="Id"/>.</summary>
 		public abstract string Name {
 			get;
 		}

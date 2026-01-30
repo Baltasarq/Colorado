@@ -2,7 +2,6 @@ using System;
 
 namespace Colorado.Core {
 	public class SumFormula : Formula  {
-
 		public SumFormula(CsvDocument doc, Position pos, Position.Direction dir)
 			: base( doc, pos, dir )
 		{
