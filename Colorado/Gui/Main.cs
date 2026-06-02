@@ -1,4 +1,4 @@
-// Colorado (c) 2015... 2023 Baltasar MIT License <baltasarq@gmail.com>
+// Colorado (c) 2015... 2026 Baltasar MIT License <baltasarq@gmail.com>
 /*
  * Colorado, a csv-based spreadsheet
  */
@@ -27,19 +27,22 @@ namespace Colorado.Gui {
 
 			try {
 				CreateConsoleTracing();
-				var app = new Gtk.Application( AppInfo.RefName,
-												GLib.ApplicationFlags.HandlesCommandLine
-												| GLib.ApplicationFlags.HandlesOpen );
+				var app = new Gtk.Application( null, GLib.ApplicationFlags.None );
+				Gtk.Window? winMain = null;
 
-				Gtk.Application.Init();
+				app.Startup += (_, _) => {
+					winMain = new MainWindow( app, arg );
+					winMain.ShowAll();
+				};
 
-				win = new MainWindow( app, arg );
-				win.ShowAll();
+				app.Activated += (_, _) => winMain?.Present();
 
-				Gtk.Application.Run();
+				( (GLib.Application) app ).Run();
 			} catch (System.Exception e) {
 				Trace.WriteLine( "CRITICAL error: " + e.Message + e.StackTrace );
 				GtkUtil.Misc.MsgError( win, Core.AppInfo.Name, e.Message );
+			} finally {
+				Trace.Close();
 			}
 		}
 	}
