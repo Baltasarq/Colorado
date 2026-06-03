@@ -16,10 +16,7 @@ public partial class DlgProperties : Gtk.Dialog
     /// <param name="doc">Document.</param>
     public DlgProperties(Gtk.Window parent, CsvDocument doc)
     {
-        var minSize = new Gdk.Geometry {
-            MinWidth = 400,
-            MinHeight = 300
-        };
+        var minSize = new Gdk.Size( 640, 480 );
 
         this.document = doc;
         this.listHeaders = new Gtk.TreeView();
@@ -47,8 +44,8 @@ public partial class DlgProperties : Gtk.Dialog
         this.TransientFor = parent;
         this.SetPosition(Gtk.WindowPosition.CenterOnParent);
         this.WindowPosition = Gtk.WindowPosition.CenterOnParent;
-        this.SetDefaultSize(minSize.MinHeight, minSize.MinWidth);
-        this.SetGeometryHints(this, minSize, Gdk.WindowHints.MinSize);
+        this.SetDefaultSize( minSize.Height, minSize.Width );
+        this.SetSizeRequest( minSize.Height, minSize.Width );
 
         // Sync info
         this.sbRows.Value = document.Data.NumRows;

@@ -290,14 +290,6 @@ namespace Colorado.Core {
 		}
 
 		/// <summary>
-		/// An adapter for cleaning rows, always starting from the first col.
-		/// </summary>
-		public void CleanRows(int posBeg, int posEnd)
-		{
-			this.CleanRows( 0, posBeg, posEnd );
-		}
-
-		/// <summary>
 		/// Cleans the contents of some rows. Can throw ApplicationException
 		/// when detecting invalid parameters (negative, etc.)
 		/// </summary>
@@ -310,7 +302,7 @@ namespace Colorado.Core {
 		/// <param name="colStart">
 		/// A <see cref="System.Int32"/> representing the starting column
 		/// </param>
-		public void CleanRows(int colStart, int posBeg, int posEnd)
+		public void CleanRows(int posBeg, int posEnd, int colStart = 0)
 		{
 			// Check
 			ChkValue( posBeg, 0, NumRows, "beginning row" );
@@ -332,14 +324,6 @@ namespace Colorado.Core {
 		}
 
 		/// <summary>
-		/// An adapter for cleanColumns, always starting from first row.
-		/// </summary>
-		public void CleanColumns(int posBeg, int posEnd)
-		{
-			CleanColumns( 0, posBeg, posEnd );
-		}
-
-		/// <summary>
 		/// Cleans the contents of some columns. Can throw ApplicationException
 		/// when detecting invalid parameters (negative, etc.)
 		/// </summary>
@@ -352,7 +336,7 @@ namespace Colorado.Core {
 		/// <param name="posEnd">
 		/// A <see cref="System.Int32"/> representing the last column (included)
 		/// </param>
-		public void CleanColumns(int rowStart, int posBeg, int posEnd)
+		public void CleanColumns(int posBeg, int posEnd, int rowStart = 0)
 		{
 			// Check
 			ChkValue( posBeg, 0, NumColumns, "the beginning column" );
