@@ -11,7 +11,7 @@ Concepts:
 In order for **Colorado** to work correctly, it will need **dotnet** and **Gtk** installed.
 
 Technologies:
-- <a href="http://www.dotnet.microsoft.com">dotnet 9.0 runtime</a>.
+- <a href="http://www.dotnet.microsoft.com">dotnet 10.0 runtime</a>.
 - <a href="http://www.gtk.org/">Gtk 3</a>.
 
 Then, go to the [Colorado's releases section](http://github.com/baltasarq/Colorado/releases/latest) and grab the *Colorado.dll* file.
@@ -29,3 +29,8 @@ $ dotnet Colorado.dll
 Uses the <a target="_blank" href="http://github.com/baltasarq/GtkUtil/releases/">GtkUtil</a> project, already included.
 
 This project follows the conventions of any C# solution. Feel free to use your editor of choice.
+
+```
+$ cd Colorado/Colorado
+$ dotnet build
+```
